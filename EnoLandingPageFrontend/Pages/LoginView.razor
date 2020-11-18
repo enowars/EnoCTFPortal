@@ -1,0 +1,22 @@
+﻿@page "/login"
+
+@inject NavigationManager NavigationManager
+@using EnoLandingPageFrontend.Data
+@inject WeatherForecastService ForecastService
+
+<h1>Login</h1>
+
+<p>Login via <a href="https://ctftime.org">CTFTime.org</a></p>
+
+<button><a href="loginpage?redirectUri=/">Log In</a></button>
+
+@code {
+    protected void OauthChallenge()
+    {
+        var uri = new Uri(NavigationManager.Uri)
+            .GetComponents(UriComponents.PathAndQuery, UriFormat.Unescaped);
+        var challengeUri = "/LoginPage?provider=OAuth&redirectUri=" + System.Net.WebUtility.UrlEncode(uri);
+        NavigationManager.NavigateTo(challengeUri, true);
+    }
+}
+

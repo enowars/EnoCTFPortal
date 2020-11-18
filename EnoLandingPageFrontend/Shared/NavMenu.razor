@@ -8,18 +8,33 @@
 <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
     <ul class="nav flex-column">
         <li class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="oi oi-home" aria-hidden="true"></span> Home
+            <NavLink class="nav-link" href="adforbeginners">
+                <span class="oi oi-list-rich" aria-hidden="true"></span>A/D CTF for Beginners
             </NavLink>
         </li>
         <li class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="oi oi-plus" aria-hidden="true"></span> Counter
+            <NavLink class="nav-link" href="network">
+                <span class="oi oi-list-rich" aria-hidden="true"></span>Network
             </NavLink>
         </li>
         <li class="nav-item px-3">
-            <NavLink class="nav-link" href="fetchdata">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Fetch data
+            <NavLink class="nav-link" href="rules">
+                <span class="oi oi-list-rich" aria-hidden="true"></span>Rules
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="faq">
+                <span class="oi oi-list-rich" aria-hidden="true"></span>FAQ
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="team">
+                <span class="oi oi-list-rich" aria-hidden="true"></span>Team Information
+            </NavLink>
+        </li>
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="login">
+                <span class="oi oi-list-rich" aria-hidden="true"></span>Login
             </NavLink>
         </li>
     </ul>
@@ -28,7 +43,7 @@
 @code {
     private bool collapseNavMenu = true;
 
-    private string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
     private void ToggleNavMenu()
     {

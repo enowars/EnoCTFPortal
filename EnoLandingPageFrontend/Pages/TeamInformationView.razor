@@ -1,0 +1,43 @@
+﻿@page "/team"
+
+@using EnoLandingPageFrontend.Data
+@using EnoLandingPageCore
+@inject EnoLandingPageDataService DataService
+
+<h3>TeamInformation</h3>
+@if (teamInformation != null)
+{
+    <div>
+        <span>External IP Address:</span>
+        <code>@(teamInformation.ExternalIpAddress ?? "t.b.d.")</code>
+    </div>
+    <div>
+        <span>Root Password:</span>
+        <code>@(teamInformation.RootPassword ?? "t.b.d.")</code>
+    </div>
+    <div>
+        <span>Internal IP Address:</span>
+        <code>@(teamInformation.InternalIpAddress ?? "t.b.d.")</code>
+    </div>
+    <div>
+        <span>Vulnbox Status:</span>
+        <code>@teamInformation.VulnboxStatus</code>
+    </div>
+    <div>
+        <span>Vpn Configuration:</span>
+        <code>@(teamInformation.VpnConfig ?? "t.b.d.")</code>
+    </div>
+}
+else
+{
+
+}
+
+@code {
+    private TeamInfo? teamInformation;
+
+    protected override async Task OnInitializedAsync()
+    {
+        teamInformation = await DataService.GetTeamInfo();
+    }
+}

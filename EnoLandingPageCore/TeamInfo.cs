@@ -6,14 +6,14 @@ namespace EnoLandingPageCore
 {
     public enum VulnboxStatus
     {
+        Stopped,
         Running,
-        Stopped
     }
 
     public record TeamInfo(
-        string VpnConfig,
-        string RootPassword,
+        string? VpnConfig,
+        string? RootPassword,
         string? ExternalIpAddress,
-        string InternalIpAddress,
-        VulnboxStatus VulnboxStatus);
+        string? InternalIpAddress,
+        VulnboxStatus? VulnboxStatus);
 }
