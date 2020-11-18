@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "EnoLandingPageFrontend": {
+      "commandName": "Project",
+      "dotnetRunMessages": "true",
+      "applicationUrl": "http://localhost",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}
