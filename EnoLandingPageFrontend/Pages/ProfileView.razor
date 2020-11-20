@@ -1,0 +1,68 @@
+﻿@page "/profile"
+
+@using EnoLandingPageFrontend.Services
+@using EnoLandingPageCore
+@inject EnoLandingPageDataService DataService
+
+
+@if (teamInformation != null && ctfInfo != null)
+{
+    <h3>@(teamInformation.TeamName)</h3>
+    @if (!teamInformation.Confirmed)
+    {
+        <div class="alert alert-success" role="alert">
+            Your participation hasn't been confirmed yet!
+        </div>
+        @if (ctfInfo.StartTime.AddHours(-ctfInfo.RegistrationCloseHours) > DateTime.UtcNow)
+        {
+            <p>Please check in once the registration closes at @(ctfInfo.StartTime.AddHours(-ctfInfo.RegistrationCloseHours).ToString())</p>
+        }
+        else
+        {
+            <button @onclick="CheckIn">Check In!</button>
+        }
+    }
+    else
+    {
+        <div class="alert alert-success" role="alert">
+            Your participation has been confirmed!
+        </div>
+    }
+    <div>
+        <div>External IP Address:</div>
+        <code>@(teamInformation.ExternalIpAddress ?? "t.b.d.")</code>
+    </div>
+    <div>
+        <div>Root Password:</div>
+        <code>@(teamInformation.RootPassword ?? "t.b.d.")</code>
+    </div>
+    <div>
+        <div>Internal IP Address:</div>
+        <code>@(teamInformation.InternalIpAddress ?? "t.b.d.")</code>
+    </div>
+    <div>
+        <div>Vulnbox Status:</div>
+        <code>@teamInformation.VulnboxStatus</code>
+    </div>
+    <div>
+        <div>Vpn Configuration:</div>
+        <code>@(teamInformation.VpnConfig ?? "t.b.d.")</code>
+    </div>
+}
+
+@code {
+    private LandingPageTeamInfo? teamInformation;
+    private LandingPageCtfInfo? ctfInfo;
+
+    protected override async Task OnInitializedAsync()
+    {
+        teamInformation = await DataService.GetTeamInfo();
+        ctfInfo = await DataService.GetCtfInfo();
+    }
+
+    protected async Task CheckIn(MouseEventArgs e)
+    {
+        await DataService.CheckIn();
+        teamInformation = await DataService.GetTeamInfo();
+    }
+}

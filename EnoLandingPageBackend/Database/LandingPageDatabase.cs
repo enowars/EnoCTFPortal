@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Security.Claims;
+    using System.Threading;
     using System.Threading.Tasks;
     using EnoLandingPageBackend.Models;
     using Microsoft.EntityFrameworkCore;
@@ -36,16 +37,23 @@
             }
         }
 
-        public async Task<LandingPageTeam> GetTeam(long teamId)
+        public async Task<LandingPageTeam> GetTeam(long teamId, CancellationToken token)
         {
             return await this.context.Teams
                 .Where(t => t.Id == teamId)
-                .SingleAsync();
+                .SingleAsync(token);
         }
 
-        public async Task<LandingPageTeam> UpdateTeam(long? ctftimeId, string name)
+        public async Task<List<LandingPageTeam>> GetConfirmedTeams(CancellationToken token)
         {
-            var dbTeam = await this.context.Teams.Where(t => t.CtftimeId == ctftimeId).SingleOrDefaultAsync();
+            return await this.context.Teams
+                .Where(t => t.Confirmed == true)
+                .ToListAsync(token);
+        }
+
+        public async Task<LandingPageTeam> UpdateTeam(long? ctftimeId, string name, CancellationToken token)
+        {
+            var dbTeam = await this.context.Teams.Where(t => t.CtftimeId == ctftimeId).SingleOrDefaultAsync(token);
             if (dbTeam == null)
             {
                 dbTeam = new LandingPageTeam(
@@ -62,8 +70,15 @@
                 dbTeam.Name = name;
             }
 
-            await this.context.SaveChangesAsync();
+            await this.context.SaveChangesAsync(token);
             return dbTeam;
+        }
+
+        public async Task CheckIn(long teamId, CancellationToken token)
+        {
+            var dbTeam = await this.context.Teams.Where(t => t.Id == teamId).SingleAsync(token);
+            dbTeam.Confirmed = true;
+            await this.context.SaveChangesAsync(token);
         }
     }
 }

@@ -22,9 +22,24 @@ namespace EnoLandingPageFrontend.Services
             };
         }
 
-        public async Task<TeamInfo> GetTeamInfo()
+        public async Task<LandingPageTeamInfo> GetTeamInfo()
         {
-            return JsonSerializer.Deserialize<TeamInfo>(await this.httpClient.GetStringAsync("/api/team/teaminfo"), jsonOptions)!;
+            return JsonSerializer.Deserialize<LandingPageTeamInfo>(await this.httpClient.GetStringAsync("/api/account/info"), jsonOptions)!;
+        }
+
+        public async Task<List<LandingPageTeam>> GetConfirmed()
+        {
+            return JsonSerializer.Deserialize<List<LandingPageTeam>>(await this.httpClient.GetStringAsync("/api/teams/confirmed"), jsonOptions)!;
+        }
+
+        public async Task<LandingPageCtfInfo> GetCtfInfo()
+        {
+            return JsonSerializer.Deserialize<LandingPageCtfInfo>(await this.httpClient.GetStringAsync("/api/ctf/info"), jsonOptions)!;
+        }
+
+        public async Task CheckIn()
+        {
+            await this.httpClient.PostAsync("/api/account/checkin", null);
         }
     }
 }

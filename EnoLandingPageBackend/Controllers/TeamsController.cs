@@ -15,30 +15,21 @@
     [Authorize]
     [ApiController]
     [Route("/api/[controller]/[action]")]
-    public class TeamController : ControllerBase
+    public class TeamsController : ControllerBase
     {
-        private readonly ILogger<TeamController> logger;
+        private readonly ILogger<TeamsController> logger;
         private readonly LandingPageDatabase db;
 
-        public TeamController(ILogger<TeamController> logger, LandingPageDatabase db)
+        public TeamsController(ILogger<TeamsController> logger, LandingPageDatabase db)
         {
             this.logger = logger;
             this.db = db;
         }
 
-        [HttpGet]
-        public async Task<ActionResult> TeamInfo()
+        public async Task<IActionResult> Confirmed()
         {
-            var team = await this.db.GetTeam(this.GetTeamId());
-            this.logger.LogDebug("TeamInfo");
-            return this.Ok(new TeamInfo(
-                team.Id,
-                team.Name,
-                null,
-                null,
-                null,
-                null,
-                VulnboxStatus.Stopped));
+            var teams = await this.db.GetConfirmedTeams(this.HttpContext.RequestAborted);
+            return this.Ok(teams.Select(t => new LandingPageTeam(t.Name, t.CtftimeId)));
         }
     }
 }

@@ -42,6 +42,7 @@ namespace EnoLandingPageBackend
             var enoLandingPageSettings = this.Configuration
                 .GetSection("EnoLandingPage")
                 .Get<LandingPageSettings>();
+            services.AddSingleton(enoLandingPageSettings);
 
             services.Configure<ForwardedHeadersOptions>(options =>
             {

@@ -10,8 +10,9 @@ namespace EnoLandingPageCore
         Running,
     }
 
-    public record TeamInfo(
+    public record LandingPageTeamInfo(
         long Id,
+        bool Confirmed,
         string TeamName,
         string? VpnConfig,
         string? RootPassword,
