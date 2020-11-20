@@ -3,30 +3,31 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Security.Claims;
     using System.Threading.Tasks;
     using EnoLandingPageBackend.Models;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Logging;
 
-    public class LandingPageDatabase : ILandingPageDatabase
+    public class LandingPageDatabase
     {
         private readonly ILogger<LandingPageDatabase> logger;
-        private readonly LandingPageDatabaseContext databaseContext;
+        private readonly LandingPageDatabaseContext context;
 
         public LandingPageDatabase(ILogger<LandingPageDatabase> logger, LandingPageDatabaseContext databaseContext)
         {
             this.logger = logger;
-            this.databaseContext = databaseContext;
+            this.context = databaseContext;
         }
 
         public void Migrate()
         {
-            var pendingMigrations = this.databaseContext.Database.GetPendingMigrations().Count();
+            var pendingMigrations = this.context.Database.GetPendingMigrations().Count();
             if (pendingMigrations > 0)
             {
                 this.logger.LogInformation($"Applying {pendingMigrations} migration(s)");
-                this.databaseContext.Database.Migrate();
-                this.databaseContext.SaveChanges();
+                this.context.Database.Migrate();
+                this.context.SaveChanges();
                 this.logger.LogDebug($"Database migration complete");
             }
             else
@@ -35,9 +36,16 @@
             }
         }
 
-        public async Task UpdateTeam(long? ctftimeId, string name)
+        public async Task<LandingPageTeam> GetTeam(long teamId)
         {
-            var dbTeam = await this.databaseContext.Teams.Where(t => t.CtftimeId == ctftimeId).SingleOrDefaultAsync();
+            return await this.context.Teams
+                .Where(t => t.Id == teamId)
+                .SingleAsync();
+        }
+
+        public async Task<LandingPageTeam> UpdateTeam(long? ctftimeId, string name)
+        {
+            var dbTeam = await this.context.Teams.Where(t => t.CtftimeId == ctftimeId).SingleOrDefaultAsync();
             if (dbTeam == null)
             {
                 dbTeam = new LandingPageTeam(
@@ -45,14 +53,17 @@
                     ctftimeId,
                     false,
                     name);
+                this.context.Add(dbTeam);
             }
             else
             {
                 dbTeam.Name = name;
+                dbTeam.CtftimeId = ctftimeId;
+                dbTeam.Name = name;
             }
 
-            dbTeam.CtftimeId = ctftimeId;
-            dbTeam.Name = name;
+            await this.context.SaveChangesAsync();
+            return dbTeam;
         }
     }
 }

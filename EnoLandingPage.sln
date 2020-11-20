@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnoLandingPageCore", "EnoLa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnoLandingPageBackend", "EnoLandingPageBackend\EnoLandingPageBackend.csproj", "{10C14526-179D-4627-9891-F2B25F353260}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnoLandingPageFrontend", "EnoLandingPageFrontend\EnoLandingPageFrontend.csproj", "{9CDEFE58-58BA-4608-8DA2-35676FBC586F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnoLandingPageFrontend", "EnoLandingPageFrontend\EnoLandingPageFrontend.csproj", "{B36F02C0-04D2-4F73-A40A-73DC0EFBEB8A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{10C14526-179D-4627-9891-F2B25F353260}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{10C14526-179D-4627-9891-F2B25F353260}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{10C14526-179D-4627-9891-F2B25F353260}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9CDEFE58-58BA-4608-8DA2-35676FBC586F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9CDEFE58-58BA-4608-8DA2-35676FBC586F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9CDEFE58-58BA-4608-8DA2-35676FBC586F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9CDEFE58-58BA-4608-8DA2-35676FBC586F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B36F02C0-04D2-4F73-A40A-73DC0EFBEB8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B36F02C0-04D2-4F73-A40A-73DC0EFBEB8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B36F02C0-04D2-4F73-A40A-73DC0EFBEB8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B36F02C0-04D2-4F73-A40A-73DC0EFBEB8A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

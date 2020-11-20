@@ -11,6 +11,8 @@ namespace EnoLandingPageCore
     }
 
     public record TeamInfo(
+        long Id,
+        string TeamName,
         string? VpnConfig,
         string? RootPassword,
         string? ExternalIpAddress,

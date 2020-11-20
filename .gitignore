@@ -351,3 +351,5 @@ MigrationBackup/
 
 # EnoLandingPage
 /EnoLandingPageBackend/data
+/EnoLandingPageBackend/appsettings.Development.json
+/EnoLandingPageBackend/wwwroot

@@ -27,4 +27,8 @@
     <ProjectReference Include="..\EnoLandingPageCore\EnoLandingPageCore.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
 </Project>

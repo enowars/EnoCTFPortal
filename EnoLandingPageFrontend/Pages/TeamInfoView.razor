@@ -1,36 +1,37 @@
 ﻿@page "/team"
 
-@using EnoLandingPageFrontend.Data
+@using EnoLandingPageFrontend.Services
 @using EnoLandingPageCore
 @inject EnoLandingPageDataService DataService
 
-<h3>TeamInformation</h3>
+
 @if (teamInformation != null)
 {
+    <h3>@(teamInformation.TeamName) (@(teamInformation.Id))</h3>
     <div>
-        <span>External IP Address:</span>
+        <div>External IP Address:</div>
         <code>@(teamInformation.ExternalIpAddress ?? "t.b.d.")</code>
     </div>
     <div>
-        <span>Root Password:</span>
+        <div>Root Password:</div>
         <code>@(teamInformation.RootPassword ?? "t.b.d.")</code>
     </div>
     <div>
-        <span>Internal IP Address:</span>
+        <div>Internal IP Address:</div>
         <code>@(teamInformation.InternalIpAddress ?? "t.b.d.")</code>
     </div>
     <div>
-        <span>Vulnbox Status:</span>
+        <div>Vulnbox Status:</div>
         <code>@teamInformation.VulnboxStatus</code>
     </div>
     <div>
-        <span>Vpn Configuration:</span>
+        <div>Vpn Configuration:</div>
         <code>@(teamInformation.VpnConfig ?? "t.b.d.")</code>
     </div>
 }
 else
 {
-
+<p>Failed to fetch team information. Please try logging in again.</p>
 }
 
 @code {
