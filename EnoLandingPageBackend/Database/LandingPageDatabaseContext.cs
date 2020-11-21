@@ -22,6 +22,8 @@
 
         public DbSet<LandingPageTeam> Teams { get; set; }
 
+        public DbSet<LandingPageTeamVulnbox> Vulnboxes { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<LandingPageTeam>()
@@ -30,6 +32,11 @@
             modelBuilder.Entity<LandingPageTeam>()
                 .HasIndex(t => t.CtftimeId)
                 .IsUnique();
+
+            modelBuilder.Entity<LandingPageTeam>()
+                .HasOne(lpt => lpt.Vulnbox)
+                .WithOne(lptv => lptv.LandingPageTeam)
+                .HasForeignKey<LandingPageTeamVulnbox>(lptv => lptv.LandingPageTeamId);
         }
     }
 }

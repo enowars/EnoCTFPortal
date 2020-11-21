@@ -39,10 +39,11 @@
             }
         }
 
-        public async Task<LandingPageTeam> GetTeam(long teamId, CancellationToken token)
+        public async Task<LandingPageTeam> GetTeamAndVulnbox(long teamId, CancellationToken token)
         {
             return await this.context.Teams
                 .Where(t => t.Id == teamId)
+                .Include(t => t.Vulnbox)
                 .SingleAsync(token);
         }
 
@@ -58,11 +59,13 @@
             var dbTeam = await this.context.Teams.Where(t => t.CtftimeId == ctftimeId).SingleOrDefaultAsync(token);
             if (dbTeam == null)
             {
-                dbTeam = new LandingPageTeam(
-                    0,
-                    ctftimeId,
-                    false,
-                    name);
+                dbTeam = new LandingPageTeam()
+                {
+                    CtftimeId = ctftimeId,
+                    Confirmed = false,
+                    Name = name,
+                    Vulnbox = new LandingPageTeamVulnbox(),
+                };
                 this.context.Add(dbTeam);
             }
             else

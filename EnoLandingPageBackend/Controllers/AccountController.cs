@@ -66,17 +66,17 @@
         [Authorize]
         public async Task<ActionResult> Info()
         {
-            var team = await this.db.GetTeam(this.GetTeamId(), this.HttpContext.RequestAborted);
+            var team = await this.db.GetTeamAndVulnbox(this.GetTeamId(), this.HttpContext.RequestAborted);
             this.logger.LogDebug("TeamInfo");
             return this.Ok(new TeamDetailsMessage(
                 team.Id,
                 team.Confirmed,
                 team.Name,
-                null,
-                null,
-                team.ExternalAddress,
-                null,
-                team.VulnboxStatus));
+                null, // vpnconfig
+                team.Vulnbox.RootPassword,
+                team.Vulnbox.ExternalAddress,
+                null, // internal ip
+                team.Vulnbox.VulnboxStatus));
         }
 
         [HttpPost]

@@ -6,20 +6,22 @@
     using System.Text;
     using System.Threading.Tasks;
 
-    public class LandingPageTeam
+    public class LandingPageTeamVulnbox
     {
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public long Id { get; set; }
 
-        public long? CtftimeId { get; set; }
+        public LandingPageVulnboxStatus VulnboxStatus { get; set; }
 
-        public bool Confirmed { get; set; }
+        public string? ExternalAddress { get; set; }
 
-        public string Name { get; set; }
+        public long? HetznerServerId { get; set; }
 
-        public long VulnboxId { get; set; }
+        public string? RootPassword { get; set; }
 
-        public virtual LandingPageTeamVulnbox Vulnbox { get; set; }
+        public long LandingPageTeamId { get; set; }
+
+        public virtual LandingPageTeam LandingPageTeam { get; set; }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     }
 }

@@ -16,14 +16,34 @@ namespace EnoLandingPageBackend.Migrations
                     CtftimeId = table.Column<long>(type: "INTEGER", nullable: true),
                     Confirmed = table.Column<bool>(type: "INTEGER", nullable: false),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
-                    VulnboxStatus = table.Column<int>(type: "INTEGER", nullable: false),
-                    ExternalAddress = table.Column<string>(type: "TEXT", nullable: true),
-                    HetznerServerId = table.Column<long>(type: "INTEGER", nullable: true),
-                    RootPassword = table.Column<string>(type: "TEXT", nullable: true)
+                    VulnboxId = table.Column<long>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Teams", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Vulnboxes",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    VulnboxStatus = table.Column<int>(type: "INTEGER", nullable: false),
+                    ExternalAddress = table.Column<string>(type: "TEXT", nullable: true),
+                    HetznerServerId = table.Column<long>(type: "INTEGER", nullable: true),
+                    RootPassword = table.Column<string>(type: "TEXT", nullable: true),
+                    LandingPageTeamId = table.Column<long>(type: "INTEGER", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Vulnboxes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Vulnboxes_Teams_LandingPageTeamId",
+                        column: x => x.LandingPageTeamId,
+                        principalTable: "Teams",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -36,10 +56,19 @@ namespace EnoLandingPageBackend.Migrations
                 table: "Teams",
                 column: "CtftimeId",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Vulnboxes_LandingPageTeamId",
+                table: "Vulnboxes",
+                column: "LandingPageTeamId",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Vulnboxes");
+
             migrationBuilder.DropTable(
                 name: "Teams");
         }
