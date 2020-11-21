@@ -21,7 +21,11 @@
 
         public IActionResult Info()
         {
-            return this.Ok(new CtfInfoMessage(this.settings.StartTime, this.settings.RegistrationCloseHours));
+            return this.Ok(new CtfInfoMessage(
+                this.settings.StartTime.ToUniversalTime(),
+                this.settings.RegistrationCloseOffset,
+                this.settings.CheckInBeginOffset,
+                this.settings.CheckInEndOffset));
         }
     }
 }

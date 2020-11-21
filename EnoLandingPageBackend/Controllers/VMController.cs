@@ -6,6 +6,7 @@
     using System.Net.Http;
     using System.Threading.Tasks;
     using EnoLandingPageBackend.Hetzner;
+    using EnoLandingPageCore.Hetzner;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
@@ -26,7 +27,20 @@
         public async Task<ActionResult> StartVulnbox()
         {
             long teamId = this.GetTeamId();
-            await HetznerCloudApi.Call(teamId, HetznerCloudApiCall.Create, this.HttpContext.RequestAborted);
+            this.logger.LogInformation($"StartVulnbox {teamId}");
+            try
+            {
+                await HetznerCloudApi.Call(teamId, HetznerCloudApiCallType.Create, this.HttpContext.RequestAborted);
+            }
+            catch (ServerExistsException)
+            {
+                return this.UnprocessableEntity($"{nameof(ServerExistsException)}");
+            }
+            catch (OtherRequestRunningException)
+            {
+                return this.UnprocessableEntity($"{nameof(OtherRequestRunningException)}");
+            }
+
             return this.NoContent();
         }
 
@@ -34,7 +48,8 @@
         public async Task<ActionResult> ResetVulnbox()
         {
             long teamId = this.GetTeamId();
-            await HetznerCloudApi.Call(teamId, HetznerCloudApiCall.Reset, this.HttpContext.RequestAborted);
+            this.logger.LogInformation($"ResetVulnbox {teamId}");
+            await HetznerCloudApi.Call(teamId, HetznerCloudApiCallType.Reset, this.HttpContext.RequestAborted);
             return this.NoContent();
         }
     }

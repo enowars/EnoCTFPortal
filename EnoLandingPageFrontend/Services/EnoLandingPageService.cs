@@ -1,6 +1,8 @@
 ﻿using EnoLandingPageCore;
 using EnoLandingPageCore.Database;
+using EnoLandingPageCore.Hetzner;
 using EnoLandingPageCore.Messages;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,11 +14,13 @@ namespace EnoLandingPageFrontend.Services
 {
     public class EnoLandingPageService
     {
+        private readonly ILogger<EnoLandingPageService> logger;
         private readonly HttpClient httpClient;
         private readonly JsonSerializerOptions jsonOptions;
 
-        public EnoLandingPageService(HttpClient httpClient)
+        public EnoLandingPageService(ILogger<EnoLandingPageService> logger, HttpClient httpClient)
         {
+            this.logger = logger;
             this.httpClient = httpClient;
             this.jsonOptions = new JsonSerializerOptions()
             {
@@ -47,7 +51,36 @@ namespace EnoLandingPageFrontend.Services
 
         public async Task StartVm()
         {
-            await this.httpClient.PostAsync("/api/vm/startvulnbox", null);
+            HttpResponseMessage response;
+            try
+            {
+                response = await this.httpClient.PostAsync("/api/vm/startvulnbox", null);
+            }
+            catch (Exception e)
+            {
+                throw new EnoLandingPageServiceException("StartVm request failed.", e);
+            }
+            if (!response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                if (content == nameof(ServerExistsException))
+                {
+                    logger.LogError("StartVm throwing ServerNameInUseException");
+                    throw new ServerExistsException();
+                }
+                else if (content == nameof(OtherRequestRunningException))
+                {
+                    throw new OtherRequestRunningException();
+                }
+                else
+                {
+                    throw new Exception("Unexpected backend message");
+                }
+            }
+            else
+            {
+                logger.LogInformation($"StartVm succeeded ({response.StatusCode})");
+            }
         }
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
     }

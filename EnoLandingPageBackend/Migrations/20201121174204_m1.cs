@@ -16,9 +16,10 @@ namespace EnoLandingPageBackend.Migrations
                     CtftimeId = table.Column<long>(type: "INTEGER", nullable: true),
                     Confirmed = table.Column<bool>(type: "INTEGER", nullable: false),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
-                    VulnboxStatus = table.Column<int>(type: "INTEGER", nullable: true),
+                    VulnboxStatus = table.Column<int>(type: "INTEGER", nullable: false),
                     ExternalAddress = table.Column<string>(type: "TEXT", nullable: true),
-                    HetznerServerId = table.Column<long>(type: "INTEGER", nullable: true)
+                    HetznerServerId = table.Column<long>(type: "INTEGER", nullable: true),
+                    RootPassword = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {

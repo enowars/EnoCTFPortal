@@ -1,4 +1,4 @@
-﻿namespace EnoLandingPageCore.Database
+﻿namespace EnoLandingPageCore.Hetzner
 {
     using System;
     using System.Collections.Generic;
@@ -6,10 +6,7 @@
     using System.Text;
     using System.Threading.Tasks;
 
-    public enum LandingPageVulnboxStatus
+    public class HetznerException : Exception
     {
-        None,
-        Creating,
-        Created,
     }
 }

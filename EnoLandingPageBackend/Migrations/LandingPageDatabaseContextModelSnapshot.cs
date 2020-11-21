@@ -38,7 +38,10 @@ namespace EnoLandingPageBackend.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("VulnboxStatus")
+                    b.Property<string>("RootPassword")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("VulnboxStatus")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");

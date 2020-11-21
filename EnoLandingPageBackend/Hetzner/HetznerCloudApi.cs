@@ -14,21 +14,22 @@
     using EnoLandingPageBackend.Database;
     using EnoLandingPageCore;
     using EnoLandingPageCore.Database;
+    using EnoLandingPageCore.Hetzner;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Linq;
 
-    public enum HetznerCloudApiCall
+    public enum HetznerCloudApiCallType
     {
         Create,
         Reset,
+        Get,
     }
 
-    public class HetznerCloudApi : IHostedService
+    public sealed class HetznerCloudApi : IHostedService, IDisposable
     {
-        private const string UserDataPath = "./data/user_data.sh";
         private static readonly ConcurrentDictionary<long, HetznerCloudApiScheduledCall> Tasks = new();
         private readonly CancellationTokenSource cancellationSource = new CancellationTokenSource();
         private readonly ILogger<HetznerCloudApi> logger;
@@ -46,13 +47,19 @@
             this.httpClient = new HttpClient();
             this.landingPageSettings = landingPageSettings;
             this.httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", landingPageSettings.HetznerCloudApiToken);
-            this.httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         }
 
-        public static Task Call(long teamId, HetznerCloudApiCall call, CancellationToken token)
+        /// <summary>
+        /// Enqueue a hetzner api call.
+        /// </summary>
+        /// <param name="teamId">The corresponding landing page team id.</param>
+        /// <param name="call">The method that should be invoked.</param>
+        /// <param name="token">A cancellation token which may abort the call.</param>
+        /// <returns>Task representing the api call.</returns>
+        public static Task Call(long teamId, HetznerCloudApiCallType call, CancellationToken token)
         {
             var tcs = new TaskCompletionSource();
-            if (Tasks.TryAdd(teamId, new HetznerCloudApiScheduledCall(call, token, tcs, false)))
+            if (Tasks.TryAdd(teamId, new HetznerCloudApiScheduledCall(call, tcs, token)))
             {
                 return tcs.Task;
             }
@@ -60,6 +67,12 @@
             {
                 throw new Exception("There is already a task scheduled or running for this team");
             }
+        }
+
+        public void Dispose()
+        {
+            this.httpClient.Dispose();
+            this.cancellationSource.Dispose();
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
@@ -78,38 +91,65 @@
             return Task.CompletedTask;
         }
 
-        private async Task DoStartVm(long teamId, HetznerCloudApiScheduledCall call, CancellationToken token)
+        /// <summary>
+        /// Conduct an hcloud get server api call for a given team. MUST NOT be called concurrently for an individual team, and everything MUST NOT write to the Teams row while it is running.
+        /// TODO prevent login from doing exactly that.
+        /// </summary>
+        /// <param name="teamId">The corresponding landing page team id.</param>
+        /// <param name="call">The method that should be invoked.</param>
+        /// <param name="token">A cancellation token which may abort the call.</param>
+        /// <returns>Task representing the api call.</returns>
+        private async Task DoGetServer(long teamId, HetznerCloudApiScheduledCall call, CancellationToken token)
         {
             try
             {
-                await LandingPageDatabase.UpdateTeamVm(this.serviceProvider, teamId, null, null, LandingPageVulnboxStatus.Starting);
+                var rootPassword = ""; // File.ReadAllText($"{LandingPageBackendUtil.TeamDataDirectory}{Path.DirectorySeparatorChar}{teamId}{Path.DirectorySeparatorChar}root.pw");
+
+                // Call "Get Servers" endpoint.
                 dynamic createVmRequest = new JObject();
                 createVmRequest.name = $"team{teamId}";
-                createVmRequest.server_type = this.landingPageSettings.HetznerVulnboxType;
-                createVmRequest.image = this.landingPageSettings.HetznerVulnboxImage;
-                createVmRequest.ssh_keys = new JArray(this.landingPageSettings.HetznerVulnboxPubkey);
-                createVmRequest.location = this.landingPageSettings.HetznerVulnboxLocation;
-                createVmRequest.user_data = File.ReadAllText(UserDataPath);
-
                 var jsonContent = JsonConvert.SerializeObject(createVmRequest);
-                this.logger.LogInformation($"StartVm {jsonContent}");
-                var response = await this.httpClient.PostAsync("https://api.hetzner.cloud/v1/servers", new StringContent(jsonContent), token);
+                this.logger.LogInformation($"DoGetServer {jsonContent}");
+
+                var content = new StringContent(jsonContent);
+                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                var response = await this.httpClient.GetAsync(new Uri($"https://api.hetzner.cloud/v1/servers?name=team{teamId}"), token);
+                var responseString = await response.Content.ReadAsStringAsync(token);
+                this.logger.LogDebug(responseString);
+
                 if (!response.IsSuccessStatusCode)
                 {
-                    throw new Exception($"Invalid Status Code {response.StatusCode}");
+                    throw new Exception($"Invalid Status Code {response.StatusCode}\n{responseString}");
                 }
 
-                var result = JsonConvert.DeserializeObject<dynamic>(await response.Content.ReadAsStringAsync(token))!;
-                long serverId = result.server.id;
-                string ipv4 = result.server.public_net.ipv4.ip;
+                // Extract the id and ip
+                var result = JsonConvert.DeserializeObject<dynamic>(responseString)!;
+                long serverId = result.servers[0].id;
+                string ipv4 = result.servers[0].public_net.ipv4.ip;
 
-                await LandingPageDatabase.UpdateTeamVm(this.serviceProvider, teamId, serverId, ipv4, LandingPageVulnboxStatus.Started);
+                // Everything went as well!
+                // Update the db record.
+                await LandingPageDatabase.UpdateTeamVm(
+                    this.serviceProvider,
+                    teamId,
+                    serverId,
+                    ipv4,
+                    rootPassword,
+                    LandingPageVulnboxStatus.Created);
+
+                // Remove the task from scheduling.
                 Tasks.TryRemove(teamId, out var _);
+
+                // Complete the tcs.
                 call.Tcs.SetResult();
             }
             catch (Exception e)
             {
-                this.logger.LogError($"{nameof(this.DoStartVm)} failed: {e}");
+                // Something did not go as planned. Set the status to "None".
+                await LandingPageDatabase.SetVmStatus(this.serviceProvider, teamId, LandingPageVulnboxStatus.None, token);
+                this.logger.LogError($"{nameof(this.DoGetServer)} failed: {e}");
+
+                // If the task has not been completed yet, complete it now with the exception
                 if (Tasks.TryRemove(teamId, out var _))
                 {
                     call.Tcs.TrySetException(e);
@@ -117,36 +157,162 @@
             }
         }
 
-        private Task DoResetVm(long teamId, HetznerCloudApiScheduledCall call, CancellationToken token)
+        /// <summary>
+        /// Conduct an hcloud create server api call for a given team. MUST NOT be called concurrently for an individual team, and everything MUST NOT write to the Teams row while it is running.
+        /// TODO prevent login from doing exactly that.
+        /// If the server already exists, a <see cref="DoGetServer"/> will be scheduled.
+        /// </summary>
+        /// <param name="teamId">The corresponding landing page team id.</param>
+        /// <param name="call">The method that should be invoked.</param>
+        /// <param name="token">A cancellation token which may abort the call.</param>
+        /// <returns>Task representing the api call.</returns>
+        private async Task DoCreateServer(long teamId, HetznerCloudApiScheduledCall call, CancellationToken token)
         {
-            return Task.CompletedTask;
+            try
+            {
+                // Set the status to "Creating".
+                await LandingPageDatabase.UpdateTeamVm(this.serviceProvider, teamId, null, null, null, LandingPageVulnboxStatus.Creating);
+
+                // Call "Create Server" endpoint.
+                var user_data = ""; // File.ReadAllText($"{LandingPageBackendUtil.TeamDataDirectory}{Path.DirectorySeparatorChar}{teamId}{Path.DirectorySeparatorChar}user_data.sh");
+                var rootPassword = ""; // File.ReadAllText($"{LandingPageBackendUtil.TeamDataDirectory}{Path.DirectorySeparatorChar}{teamId}{Path.DirectorySeparatorChar}root.pw");
+                dynamic createVmRequest = new JObject();
+                createVmRequest.name = $"team{teamId}";
+                createVmRequest.server_type = this.landingPageSettings.HetznerVulnboxType;
+                createVmRequest.image = this.landingPageSettings.HetznerVulnboxImage;
+                createVmRequest.ssh_keys = new JArray(this.landingPageSettings.HetznerVulnboxPubkey);
+                createVmRequest.location = this.landingPageSettings.HetznerVulnboxLocation;
+                createVmRequest.user_data = user_data;
+                var jsonContent = JsonConvert.SerializeObject(createVmRequest);
+                this.logger.LogDebug($"DoCreateServer {jsonContent}");
+
+                var content = new StringContent(jsonContent);
+                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                var response = await this.httpClient.PostAsync("https://api.hetzner.cloud/v1/servers", content, token);
+                var responseString = await response.Content.ReadAsStringAsync(token);
+                this.logger.LogDebug($"StartVm {responseString}");
+
+                if (responseString.Contains("uniqueness_error"))
+                {
+                    // Hetzner says the name already exists.
+                    throw new ServerExistsException();
+                }
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new Exception($"Invalid Status Code {response.StatusCode}\n{responseString}");
+                }
+
+                this.logger.LogInformation(responseString);
+                var result = JsonConvert.DeserializeObject<dynamic>(responseString)!;
+                long serverId = result.server.id;
+                string ipv4 = result.server.public_net.ipv4.ip;
+
+                // Everything went as well!
+                // Update the db record.
+                await LandingPageDatabase.UpdateTeamVm(
+                    this.serviceProvider,
+                    teamId,
+                    serverId,
+                    ipv4,
+                    rootPassword,
+                    LandingPageVulnboxStatus.Created);
+
+                // Remove the task from scheduling.
+                Tasks.TryRemove(teamId, out var _);
+
+                // Complete the tcs.
+                call.Tcs.SetResult();
+            }
+            catch (ServerExistsException)
+            {
+                // We should know this server but we don't. Schedule a Get for that server.
+                var scheduledGetCall = new HetznerCloudApiScheduledCall(HetznerCloudApiCallType.Get, call.Tcs, token);
+                Tasks.AddOrUpdate(teamId, scheduledGetCall, (_, _) => scheduledGetCall);
+            }
+            catch (Exception e)
+            {
+                // Something did not go as planned. Set the status to "None".
+                await LandingPageDatabase.SetVmStatus(this.serviceProvider, teamId, LandingPageVulnboxStatus.None, token);
+                this.logger.LogError($"{nameof(this.DoCreateServer)} failed: {e}");
+
+                // If the task has not been completed yet, complete it now with the exception
+                if (Tasks.TryRemove(teamId, out var _))
+                {
+                    call.Tcs.TrySetException(e);
+                }
+            }
+        }
+
+        private async Task DoResetServer(long teamId, HetznerCloudApiScheduledCall call, CancellationToken token)
+        {
+            /*
+            try
+            {
+                // Call "Get Servers" endpoint.
+                dynamic createVmRequest = new JObject();
+                createVmRequest.name = $"team{teamId}";
+                var jsonContent = JsonConvert.SerializeObject(createVmRequest);
+                this.logger.LogInformation($"DoGetServer {jsonContent}");
+
+                var content = new StringContent(jsonContent);
+                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+                var response = await this.httpClient.GetAsync(new Uri($"https://api.hetzner.cloud/v1/servers/{}/actions/reset"), token);
+                var responseString = await response.Content.ReadAsStringAsync(token);
+                this.logger.LogDebug(responseString);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new Exception($"Invalid Status Code {response.StatusCode}\n{responseString}");
+                }
+            }
+            catch (Exception e)
+            {
+
+            }
+            */
         }
 
         private async Task HetznerWorker()
         {
+            // TODO: Discuss which tokens we want to use here.
             while (!this.cancellationSource.Token.IsCancellationRequested)
             {
                 bool hadWork = false;
                 foreach (var teamId in Tasks.Keys.ToArray())
                 {
-                    if (Tasks.TryGetValue(teamId, out var task))
+                    if (Tasks.TryGetValue(teamId, out var scheduledApiCall))
                     {
-                        if (!task.IsRunning)
+                        if (!scheduledApiCall.IsRunning)
                         {
-                            hadWork = true;
-                            task.IsRunning = true;
-                            if (task.Call == HetznerCloudApiCall.Create)
+                            // This task is the only task that reads and writes this value, so we should not need explicit synchronization.
+                            scheduledApiCall.IsRunning = true;
+                            if (scheduledApiCall.CallType == HetznerCloudApiCallType.Create)
                             {
-                                var t = Task.Run(async () => await this.DoStartVm(teamId, task, task.Token), task.Token);
+                                if (await LandingPageDatabase.GetVmStatus(this.serviceProvider, teamId, this.cancellationSource.Token) == LandingPageVulnboxStatus.Created)
+                                {
+                                    scheduledApiCall.Tcs.SetException(new ServerExistsException());
+                                    Tasks.TryRemove(teamId, out var _);
+                                }
+                                else
+                                {
+                                    var t = Task.Run(async () => await this.DoCreateServer(teamId, scheduledApiCall, scheduledApiCall.Token), scheduledApiCall.Token);
+                                    await Task.Delay(1100, this.cancellationSource.Token);
+                                }
                             }
-                            else
+                            else if (scheduledApiCall.CallType == HetznerCloudApiCallType.Reset)
                             {
-                                var t = Task.Run(async () => await this.DoResetVm(teamId, task, task.Token), task.Token);
+                                hadWork = true;
+                                var t = Task.Run(async () => await this.DoResetServer(teamId, scheduledApiCall, scheduledApiCall.Token), scheduledApiCall.Token);
+                                await Task.Delay(1100, this.cancellationSource.Token);
+                            }
+                            else if (scheduledApiCall.CallType == HetznerCloudApiCallType.Get)
+                            {
+                                var t = Task.Run(async () => await this.DoGetServer(teamId, scheduledApiCall, scheduledApiCall.Token), scheduledApiCall.Token);
+                                await Task.Delay(1100, this.cancellationSource.Token);
                             }
                         }
                     }
-
-                    await Task.Delay(1100, this.cancellationSource.Token);
                 }
 
                 if (!hadWork)

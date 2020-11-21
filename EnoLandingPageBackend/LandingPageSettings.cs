@@ -6,32 +6,38 @@
     using System.Text;
     using System.Threading.Tasks;
 
+#pragma warning disable CS8601 // Possible null reference assignment.
     public class LandingPageSettings
     {
         public DateTime StartTime { get; set; } = DateTime.UtcNow;
 
-        public long RegistrationCloseHours { get; set; } = 2;
+        public long RegistrationCloseOffset { get; set; }
 
-        public string HetznerCloudApiToken { get; set; } = Environment.GetEnvironmentVariable("HETZNER_CLOUD_API_TOKEN") ?? string.Empty;
+        public long CheckInBeginOffset { get; set; }
 
-        public string HetznerVulnboxType { get; set; } = Environment.GetEnvironmentVariable("HETZNER_VULNBOX_TYPE") ?? "cx11";
+        public long CheckInEndOffset { get; set; }
 
-        public string HetznerVulnboxImage { get; set; } = Environment.GetEnvironmentVariable("HETZNER_VULNBOX_IMAGE") ?? string.Empty;
+        public string HetznerCloudApiToken { get; set; } = Environment.GetEnvironmentVariable("HETZNER_CLOUD_API_TOKEN");
 
-        public string HetznerVulnboxPubkey { get; set; } = Environment.GetEnvironmentVariable("HETZNER_VULNBOX_PUBKEY") ?? string.Empty;
+        public string HetznerVulnboxType { get; set; } = Environment.GetEnvironmentVariable("HETZNER_VULNBOX_TYPE");
 
-        public string HetznerVulnboxLocation { get; set; } = Environment.GetEnvironmentVariable("HETZNER_VULNBOX_LOCATION") ?? string.Empty;
+        public string HetznerVulnboxImage { get; set; } = Environment.GetEnvironmentVariable("HETZNER_VULNBOX_IMAGE");
 
-        public string? OAuthClientId { get; set; } = Environment.GetEnvironmentVariable("OAUTH_CLIENT_ID");
+        public string HetznerVulnboxPubkey { get; set; } = Environment.GetEnvironmentVariable("HETZNER_VULNBOX_PUBKEY");
 
-        public string? OAuthClientSecret { get; set; } = Environment.GetEnvironmentVariable("OAUTH_CLIENT_SECRET");
+        public string HetznerVulnboxLocation { get; set; } = Environment.GetEnvironmentVariable("HETZNER_VULNBOX_LOCATION");
 
-        public string? OAuthAuthorizationEndpoint { get; set; } = Environment.GetEnvironmentVariable("OAUTH_AUTHORIZATION_ENDPOINT");
+        public string OAuthClientId { get; set; } = Environment.GetEnvironmentVariable("OAUTH_CLIENT_ID");
 
-        public string? OAuthTokenEndpoint { get; set; } = Environment.GetEnvironmentVariable("OAUTH_TOKEN_ENDPOINT");
+        public string OAuthClientSecret { get; set; } = Environment.GetEnvironmentVariable("OAUTH_CLIENT_SECRET");
 
-        public string? OAuthUserInformationEndpoint { get; set; } = Environment.GetEnvironmentVariable("OAUTH_USER_INFORMATION_ENDPOINT");
+        public string OAuthAuthorizationEndpoint { get; set; } = Environment.GetEnvironmentVariable("OAUTH_AUTHORIZATION_ENDPOINT");
 
-        public string? OAuthScope { get; set; } = Environment.GetEnvironmentVariable("OAUTH_SCOPE");
+        public string OAuthTokenEndpoint { get; set; } = Environment.GetEnvironmentVariable("OAUTH_TOKEN_ENDPOINT");
+
+        public string OAuthUserInformationEndpoint { get; set; } = Environment.GetEnvironmentVariable("OAUTH_USER_INFORMATION_ENDPOINT");
+
+        public string OAuthScope { get; set; } = Environment.GetEnvironmentVariable("OAUTH_SCOPE");
     }
+#pragma warning restore CS8601 // Possible null reference assignment.
 }

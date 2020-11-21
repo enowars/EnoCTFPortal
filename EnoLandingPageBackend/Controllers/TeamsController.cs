@@ -28,6 +28,7 @@
 
         public async Task<IActionResult> Confirmed()
         {
+            this.logger.LogDebug("Confirmed Teams");
             var teams = await this.db.GetConfirmedTeams(this.HttpContext.RequestAborted);
             return this.Ok(teams.Select(t => new ConfirmedTeamMessage(t.Name, t.CtftimeId)));
         }

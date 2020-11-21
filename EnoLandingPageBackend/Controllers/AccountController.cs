@@ -52,7 +52,7 @@
                 throw new Exception("OAuth2 failed");
             }
 
-            var team = await this.db.UpdateTeam(ctftimeId, teamname, this.HttpContext.RequestAborted);
+            var team = await this.db.UpdateTeamName(ctftimeId, teamname, this.HttpContext.RequestAborted);
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, $"{team.Id}"),

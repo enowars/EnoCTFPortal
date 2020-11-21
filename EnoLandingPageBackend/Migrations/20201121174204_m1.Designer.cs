@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EnoLandingPageBackend.Migrations
 {
     [DbContext(typeof(LandingPageDatabaseContext))]
-    [Migration("20201120232647_m1")]
+    [Migration("20201121174204_m1")]
     partial class m1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,7 +40,10 @@ namespace EnoLandingPageBackend.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("VulnboxStatus")
+                    b.Property<string>("RootPassword")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("VulnboxStatus")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");

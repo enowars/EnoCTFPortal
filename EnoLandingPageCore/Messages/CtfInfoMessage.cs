@@ -7,5 +7,7 @@
 
     public record CtfInfoMessage(
         DateTime StartTime,
-        long RegistrationCloseHours);
+        long RegistrationCloseOffset,
+        long CheckInBeginOffset,
+        long CheckInEndOffset);
 }

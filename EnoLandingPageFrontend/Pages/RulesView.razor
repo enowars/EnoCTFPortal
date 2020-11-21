@@ -14,10 +14,10 @@
             BambiCTF is an educational attack/defense CTF for beginners. Vulnboxes and VPN servers are provided by us, you will find all information you need in your <a href="/profile">profile</a>.
         </li>
         <li>
-            The game will start on @ctfInfo?.StartTime.ToString(CultureInfo.InvariantCulture).
+            The game will start on @ctfInfo?.StartTime.ToString() UTC.
         </li>
         <li>
-            You must register before @ctfInfo?.StartTime.AddHours(-ctfInfo.RegistrationCloseHours).ToString(CultureInfo.InvariantCulture) <b>and</b> check in before @ctfInfo?.StartTime.AddHours(-1).ToString(CultureInfo.InvariantCulture).
+            You must register before @ctfInfo?.StartTime.AddHours(-ctfInfo.RegistrationCloseOffset).ToString() UTC <b>and</b> check in before @ctfInfo?.StartTime.AddHours(-ctfInfo.CheckInEndOffset).ToString() UTC.
         </li>
         <li>
             A round lasts 60 seconds, flags are valid for several rounds.

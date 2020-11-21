@@ -2,20 +2,21 @@
 
 @using EnoLandingPageFrontend.Services
 @using EnoLandingPageCore.Messages
+@using EnoLandingPageCore.Database
 @inject EnoLandingPageService DataService
 
 
 @if (teamInformation != null && ctfInfo != null)
 {
     <h1>@(teamInformation.TeamName)</h1>
-    @if (!teamInformation.Confirmed)
+    if (!teamInformation.Confirmed)
     {
         <div class="alert alert-danger" role="alert">
             Your participation hasn't been confirmed yet!
         </div>
-        @if (ctfInfo.StartTime.AddHours(-ctfInfo.RegistrationCloseHours) > DateTime.UtcNow)
+        if (ctfInfo.StartTime.AddHours(-ctfInfo.RegistrationCloseOffset) > DateTime.UtcNow)
         {
-            <p>Please check in once the registration closes at @(ctfInfo.StartTime.AddHours(-ctfInfo.RegistrationCloseHours).ToString())</p>
+            <p>Please check in once the registration closes at @(ctfInfo.StartTime.AddHours(-ctfInfo.RegistrationCloseOffset).ToString())</p>
         }
         else
         {
@@ -27,7 +28,30 @@
         <div class="alert alert-success" role="alert">
             Your participation has been confirmed!
         </div>
-        <button @onclick="StartVm">Start VM</button>
+
+        if (teamInformation.VulnboxStatus == LandingPageVulnboxStatus.None)
+        {
+            <button @onclick="StartVm">Create VM</button>
+        }
+        else if (teamInformation.VulnboxStatus == LandingPageVulnboxStatus.Creating)
+        {
+            <p>Your VM is starting!</p>
+        }
+        else if (teamInformation.VulnboxStatus == LandingPageVulnboxStatus.Created)
+        {
+            <button @onclick="StartVm">Force Reboot</button>
+        }
+        else
+        {
+            <div class="alert alert-danger" role="alert">
+                We fucked up. Please contact us.
+            </div>
+        }
+
+        if (vmInteractionFeedback != null)
+        {
+            <p>@vmInteractionFeedback</p>
+        }
     }
     <div>
         <div>External IP Address:</div>
@@ -54,6 +78,7 @@
 @code {
     private TeamDetailsMessage? teamInformation;
     private CtfInfoMessage? ctfInfo;
+    private string? vmInteractionFeedback;
 
     protected override async Task OnInitializedAsync()
     {
@@ -69,7 +94,16 @@
 
     protected async Task StartVm(MouseEventArgs e)
     {
-        await DataService.StartVm();
+        vmInteractionFeedback = null;
+        try
+        {
+            await DataService.StartVm();
+        }
+        catch (Exception ex)
+        {
+            vmInteractionFeedback = ex.GetType().ToString();
+        }
+
         teamInformation = await DataService.GetTeamInfo();
     }
 }
