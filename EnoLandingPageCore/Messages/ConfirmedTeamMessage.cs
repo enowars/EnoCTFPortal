@@ -4,9 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace EnoLandingPageCore
+namespace EnoLandingPageCore.Messages
 {
-    public record LandingPageTeam(
-        string Name,
-        long? CtftimeId);
+    public record ConfirmedTeamMessage(string Name, long? CtftimeId);
 }

@@ -12,6 +12,16 @@
 
         public long RegistrationCloseHours { get; set; } = 2;
 
+        public string HetznerCloudApiToken { get; set; } = Environment.GetEnvironmentVariable("HETZNER_CLOUD_API_TOKEN") ?? string.Empty;
+
+        public string HetznerVulnboxType { get; set; } = Environment.GetEnvironmentVariable("HETZNER_VULNBOX_TYPE") ?? "cx11";
+
+        public string HetznerVulnboxImage { get; set; } = Environment.GetEnvironmentVariable("HETZNER_VULNBOX_IMAGE") ?? string.Empty;
+
+        public string HetznerVulnboxPubkey { get; set; } = Environment.GetEnvironmentVariable("HETZNER_VULNBOX_PUBKEY") ?? string.Empty;
+
+        public string HetznerVulnboxLocation { get; set; } = Environment.GetEnvironmentVariable("HETZNER_VULNBOX_LOCATION") ?? string.Empty;
+
         public string? OAuthClientId { get; set; } = Environment.GetEnvironmentVariable("OAUTH_CLIENT_ID");
 
         public string? OAuthClientSecret { get; set; } = Environment.GetEnvironmentVariable("OAUTH_CLIENT_SECRET");

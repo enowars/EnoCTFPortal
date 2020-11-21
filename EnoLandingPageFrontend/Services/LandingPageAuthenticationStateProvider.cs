@@ -11,10 +11,10 @@ namespace EnoLandingPageFrontend.Services
 {
     public class LandingPageAuthenticationStateProvider : AuthenticationStateProvider
     {
-        private readonly ILogger<EnoLandingPageDataService> logger;
-        private readonly EnoLandingPageDataService lpService;
+        private readonly ILogger<EnoLandingPageService> logger;
+        private readonly EnoLandingPageService lpService;
 
-        public LandingPageAuthenticationStateProvider(ILogger<EnoLandingPageDataService> logger, EnoLandingPageDataService lpService)
+        public LandingPageAuthenticationStateProvider(ILogger<EnoLandingPageService> logger, EnoLandingPageService lpService)
         {
             this.logger = logger;
             this.lpService = lpService;

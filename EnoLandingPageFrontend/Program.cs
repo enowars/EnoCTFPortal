@@ -20,7 +20,7 @@ namespace EnoLandingPageFrontend
             builder.RootComponents.Add<App>("#app");
 
             builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-            builder.Services.AddSingleton(typeof(EnoLandingPageDataService));
+            builder.Services.AddSingleton(typeof(EnoLandingPageService));
             builder.Services.AddAuthorizationCore();
             builder.Services.AddScoped<AuthenticationStateProvider, LandingPageAuthenticationStateProvider>();
 

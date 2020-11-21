@@ -1,16 +1,11 @@
-﻿using System;
+﻿using EnoLandingPageCore.Database;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace EnoLandingPageCore
+namespace EnoLandingPageCore.Messages
 {
-    public enum VulnboxStatus
-    {
-        Stopped,
-        Running,
-    }
-
-    public record LandingPageTeamInfo(
+    public record TeamDetailsMessage(
         long Id,
         bool Confirmed,
         string TeamName,
@@ -18,5 +13,5 @@ namespace EnoLandingPageCore
         string? RootPassword,
         string? ExternalIpAddress,
         string? InternalIpAddress,
-        VulnboxStatus? VulnboxStatus);
+        LandingPageVulnboxStatus? VulnboxStatus);
 }

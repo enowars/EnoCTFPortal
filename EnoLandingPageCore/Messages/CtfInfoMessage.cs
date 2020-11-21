@@ -1,11 +1,11 @@
-﻿namespace EnoLandingPageCore
+﻿namespace EnoLandingPageCore.Messages
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
 
-    public record LandingPageCtfInfo(
+    public record CtfInfoMessage(
         DateTime StartTime,
         long RegistrationCloseHours);
 }

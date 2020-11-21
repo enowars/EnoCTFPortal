@@ -7,12 +7,12 @@
     using System.Threading.Tasks;
     using EnoLandingPageBackend.Database;
     using EnoLandingPageCore;
+    using EnoLandingPageCore.Messages;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using Microsoft.Net.Http.Headers;
 
-    [Authorize]
     [ApiController]
     [Route("/api/[controller]/[action]")]
     public class TeamsController : ControllerBase
@@ -29,7 +29,7 @@
         public async Task<IActionResult> Confirmed()
         {
             var teams = await this.db.GetConfirmedTeams(this.HttpContext.RequestAborted);
-            return this.Ok(teams.Select(t => new LandingPageTeam(t.Name, t.CtftimeId)));
+            return this.Ok(teams.Select(t => new ConfirmedTeamMessage(t.Name, t.CtftimeId)));
         }
     }
 }

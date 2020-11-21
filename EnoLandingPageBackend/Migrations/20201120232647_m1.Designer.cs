@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EnoLandingPageBackend.Migrations
 {
     [DbContext(typeof(LandingPageDatabaseContext))]
-    [Migration("20201118185159_m1")]
+    [Migration("20201120232647_m1")]
     partial class m1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -18,7 +18,7 @@ namespace EnoLandingPageBackend.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "5.0.0");
 
-            modelBuilder.Entity("EnoLandingPageBackend.Models.LandingPageTeam", b =>
+            modelBuilder.Entity("EnoLandingPageCore.Database.LandingPageTeam", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -30,9 +30,18 @@ namespace EnoLandingPageBackend.Migrations
                     b.Property<long?>("CtftimeId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("ExternalAddress")
+                        .HasColumnType("TEXT");
+
+                    b.Property<long?>("HetznerServerId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<int?>("VulnboxStatus")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 

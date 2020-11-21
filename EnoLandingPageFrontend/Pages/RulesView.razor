@@ -1,43 +1,51 @@
 ﻿@page "/rules"
 
-<h3>Rules</h3>
+@using EnoLandingPageFrontend.Services
+@using EnoLandingPageCore.Messages
+@using System.Globalization
+@inject EnoLandingPageService DataService
 
-<h4>Rule #1: DO NOT ATTACK THE INFRASTRUCTURE</h4>
+<h1>Rules</h1>
+<hr />
+<div>
+    <h2>Summary</h2>
+    <ul>
+        <li>
+            BambiCTF is an educational attack/defense CTF for beginners. Vulnboxes and VPN servers are provided by us, you will find all information you need in your <a href="/profile">profile</a>.
+        </li>
+        <li>
+            The game will start on @ctfInfo?.StartTime.ToString(CultureInfo.InvariantCulture).
+        </li>
+        <li>
+            You must register before @ctfInfo?.StartTime.AddHours(-ctfInfo.RegistrationCloseHours).ToString(CultureInfo.InvariantCulture) <b>and</b> check in before @ctfInfo?.StartTime.AddHours(-1).ToString(CultureInfo.InvariantCulture).
+        </li>
+        <li>
+            A round lasts 60 seconds, flags are valid for several rounds.
+        </li>
+        <li>
+            Flag format: <code>ENO.{48}</code>
+        </li>
+        <li>
+            Flag submission: <code>nc flags.bambi.ovh</code>
+        </li>
+        <li>
+            You will find an <a href="https://github.com/arkime/arkime" target="_blank">Arkime</a> installation on your vulnbox. Arkime is a traffic analysis tool, not a vulnerable service.
+        </li>
+    </ul>
 
-<p>We are all humans (even students) and we all make mistakes...
-    Do not exploit any bug you discovered in the infrastructure.
-    Rather report it to the <a href="faq.html#faq">organizers</a>.
-    We reserve the right to award exclusive bonus points depending on the bug and its severity.</p>
+    <h2>Scoring</h2>
+    <p>We are currently using the scoring formula by <a href="https://2019.faustctf.net/information/rules/">Faust CTF</a>.</p>
 
-<h4>Rule #2: NO (D)DOS</h4>
-<p>Extensive bandwidth usage and/or attacks leading to the DoS of other teams or the infrastructure will be punished with a permanent ban.
-    You will not win using this kind of attacks.</p>
-
-<h4>Rule #3: Prices</h4>
-<p>A surprise trophy for the first three places ;)</p>
-
-<h4>Rule #4: The scoring formula</h4>
-<p>We are currently using the scoring formula by <a href="https://2019.faustctf.net/information/rules/">Faust CTF</a>.
-    Thanks alot for making that public.</p>
-
-<h4>Rule #5: Escape Clause</h4>
-<p>We preseve the right to change any rule, mode of competition, or simply anything about this event in any way.</p>
-
-<h4>Rule #6: Flag submission</h4>
-<p>The Flagsubmission is done via a tcp connection to host <strong>10.0.13.37</strong> on port <strong>1337</strong>.
-    There you can just send the flag or multiple flags delimited by \n characters.
-    Each flag will be checked by the backend and then a message is returned picked by this code:</p>
-<ul>
-    <li>FlagSubmissionResult.Ok =&gt; "VALID: Flag accepted!",</li>
-    <li>FlagSubmissionResult.Invalid =&gt; "INVALID: You have submitted an invalid string!",</li>
-    <li>FlagSubmissionResult.Duplicate =&gt; "RESUBMIT: You have already sent this flag!",</li>
-    <li>FlagSubmissionResult.Own =&gt; "OWNFLAG: This flag belongs to you!",</li>
-    <li>FlagSubmissionResult.Old =&gt; "OLD: You have submitted an old flag!",</li>
-    <li>FlagSubmissionResult.UnknownError =&gt; "ERROR: An unexpected error occured :(",</li>
-    <li>FlagSubmissionResult.InvalidSenderError =&gt; "ILLEGAL: Your IP address does not belong to any team's subnet!",</li>
-    <li>FlagSubmissionResult.SpamError =&gt; "SPAM: You should send 1 flag per line!",</li>
-</ul>
+    <h2>Social Conduct</h2>
+    <p>The vulnerable services of your opponents are your only valid targets. Do not engage anything else!</p>
+    <p>Do not attempt to exhaust resources on your opponents' vulnboxes, for example by sending excessive amounts of requests or exploiting vulnerabilities leading to a denial of service.</p>
+</div>
 
 @code {
+    private CtfInfoMessage? ctfInfo;
 
+    protected override async Task OnInitializedAsync()
+    {
+        ctfInfo = await DataService.GetCtfInfo();
+    }
 }

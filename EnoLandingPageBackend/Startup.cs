@@ -9,6 +9,7 @@ namespace EnoLandingPageBackend
     using System.Text.Json;
     using System.Threading.Tasks;
     using EnoLandingPageBackend.Database;
+    using EnoLandingPageBackend.Hetzner;
     using EnoLandingPageCore;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
@@ -58,9 +59,10 @@ namespace EnoLandingPageBackend
                 .AddOAuth("ctftime.org", configureOptions =>
                 {
                     configureOptions.Scope.Add("team:read");
+
                     // configureOptions.ClaimActions.MapJsonSubKey(ClaimTypes.NameIdentifier, "team", "id");
                     // configureOptions.ClaimActions.MapJsonSubKey(ClaimTypes.Name, "team", "name");
-                    configureOptions.ClaimActions.MapJsonKey(LandingPageClaimTypes.CtftimeId, "uid");
+                    configureOptions.ClaimActions.MapJsonKey(LandingPageClaimTypes.CtftimeId, "id");
                     configureOptions.ClaimActions.MapJsonKey(ClaimTypes.Name, "uid");
                     configureOptions.ClientId = enoLandingPageSettings.OAuthClientId;
                     configureOptions.ClientSecret = enoLandingPageSettings.OAuthClientSecret;
@@ -95,6 +97,7 @@ namespace EnoLandingPageBackend
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "EnoLandingPage", Version = "v1" });
             });
+            services.AddHostedService<HetznerCloudApi>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

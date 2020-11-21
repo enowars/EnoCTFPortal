@@ -1,16 +1,16 @@
 ﻿@page "/profile"
 
 @using EnoLandingPageFrontend.Services
-@using EnoLandingPageCore
-@inject EnoLandingPageDataService DataService
+@using EnoLandingPageCore.Messages
+@inject EnoLandingPageService DataService
 
 
 @if (teamInformation != null && ctfInfo != null)
 {
-    <h3>@(teamInformation.TeamName)</h3>
+    <h1>@(teamInformation.TeamName)</h1>
     @if (!teamInformation.Confirmed)
     {
-        <div class="alert alert-success" role="alert">
+        <div class="alert alert-danger" role="alert">
             Your participation hasn't been confirmed yet!
         </div>
         @if (ctfInfo.StartTime.AddHours(-ctfInfo.RegistrationCloseHours) > DateTime.UtcNow)
@@ -27,6 +27,7 @@
         <div class="alert alert-success" role="alert">
             Your participation has been confirmed!
         </div>
+        <button @onclick="StartVm">Start VM</button>
     }
     <div>
         <div>External IP Address:</div>
@@ -51,8 +52,8 @@
 }
 
 @code {
-    private LandingPageTeamInfo? teamInformation;
-    private LandingPageCtfInfo? ctfInfo;
+    private TeamDetailsMessage? teamInformation;
+    private CtfInfoMessage? ctfInfo;
 
     protected override async Task OnInitializedAsync()
     {
@@ -63,6 +64,12 @@
     protected async Task CheckIn(MouseEventArgs e)
     {
         await DataService.CheckIn();
+        teamInformation = await DataService.GetTeamInfo();
+    }
+
+    protected async Task StartVm(MouseEventArgs e)
+    {
+        await DataService.StartVm();
         teamInformation = await DataService.GetTeamInfo();
     }
 }

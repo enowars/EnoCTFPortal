@@ -1,10 +1,11 @@
-﻿namespace EnoLandingPageBackend.Models
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
+namespace EnoLandingPageCore.Database
+{
     public class LandingPageTeam
     {
         public LandingPageTeam(long id, long? ctftimeId, bool confirmed, string name)
@@ -22,5 +23,11 @@
         public bool Confirmed { get; set; }
 
         public string Name { get; set; }
+
+        public LandingPageVulnboxStatus? VulnboxStatus { get; set; }
+
+        public string? ExternalAddress { get; set; }
+
+        public long? HetznerServerId { get; set; }
     }
 }

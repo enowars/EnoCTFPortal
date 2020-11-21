@@ -4,7 +4,8 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
-    using EnoLandingPageBackend.Models;
+    using EnoLandingPageCore;
+    using EnoLandingPageCore.Database;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Infrastructure;
 

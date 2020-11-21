@@ -8,6 +8,8 @@
     using System.Web;
     using EnoLandingPageBackend.Database;
     using EnoLandingPageCore;
+    using EnoLandingPageCore.Database;
+    using EnoLandingPageCore.Messages;
     using Microsoft.AspNetCore.Authentication;
     using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Authorization;
@@ -43,7 +45,6 @@
         public async Task<ActionResult> OAuth2Redirect(string redirectUri)
         {
             var ctftimeIdClaim = this.HttpContext.User.FindFirst(LandingPageClaimTypes.CtftimeId)?.Value;
-            ctftimeIdClaim = "1438";
             var teamname = this.HttpContext.User.Identity?.Name;
             if (!long.TryParse(ctftimeIdClaim, out long ctftimeId)
                 || teamname == null)
@@ -67,15 +68,15 @@
         {
             var team = await this.db.GetTeam(this.GetTeamId(), this.HttpContext.RequestAborted);
             this.logger.LogDebug("TeamInfo");
-            return this.Ok(new LandingPageTeamInfo(
+            return this.Ok(new TeamDetailsMessage(
                 team.Id,
                 team.Confirmed,
                 team.Name,
                 null,
                 null,
+                team.ExternalAddress,
                 null,
-                null,
-                VulnboxStatus.Stopped));
+                team.VulnboxStatus));
         }
 
         [HttpPost]

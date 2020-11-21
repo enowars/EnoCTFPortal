@@ -15,7 +15,10 @@ namespace EnoLandingPageBackend.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     CtftimeId = table.Column<long>(type: "INTEGER", nullable: true),
                     Confirmed = table.Column<bool>(type: "INTEGER", nullable: false),
-                    Name = table.Column<string>(type: "TEXT", nullable: false)
+                    Name = table.Column<string>(type: "TEXT", nullable: false),
+                    VulnboxStatus = table.Column<int>(type: "INTEGER", nullable: true),
+                    ExternalAddress = table.Column<string>(type: "TEXT", nullable: true),
+                    HetznerServerId = table.Column<long>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {

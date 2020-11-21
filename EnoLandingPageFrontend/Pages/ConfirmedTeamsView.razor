@@ -1,8 +1,9 @@
 ﻿@page "/confirmed"
-<h3>ConfirmedTeamsView</h3>
 @using EnoLandingPageFrontend.Services
-@using EnoLandingPageCore
-@inject EnoLandingPageDataService DataService
+@using EnoLandingPageCore.Messages
+@inject EnoLandingPageService DataService
+
+<h1>Confirmed Teams</h1>
 
 @if (teams != null)
 {
@@ -11,7 +12,7 @@
     {
         @if (team.CtftimeId is long ctftimeId)
         {
-            <div><a href="https://ctftime.org/team/1438">@team.Name</a></div>
+            <div><a href="https://ctftime.org/team/@(ctftimeId)">@team.Name</a></div>
         }
         else
         {
@@ -22,7 +23,7 @@
 }
 
 @code {
-    private List<LandingPageTeam>? teams;
+    private List<ConfirmedTeamMessage>? teams;
 
     protected override async Task OnInitializedAsync()
     {
