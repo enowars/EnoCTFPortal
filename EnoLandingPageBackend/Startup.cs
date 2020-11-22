@@ -109,6 +109,10 @@ namespace EnoLandingPageBackend
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "EnoLandingPageBackend v1"));
             }
+            else
+            {
+                app.UseHttpsRedirection();
+            }
 
             app.UseRouting();
             app.UseAuthentication();

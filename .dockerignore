@@ -1,0 +1,13 @@
+.dockerignore
+Dockerfile
+docker-compose.yml
+bin/
+obj/
+.vs
+.vs-code
+.git
+.gitignore
+/EnoLandingPageBackend/data
+/EnoLandingPageBackend/appsettings.Development.json
+/EnoLandingPageBackend/wwwroot
+/data

@@ -1,0 +1,9 @@
+version: '3.4'
+
+services:
+  enolandingpage:
+    build: .
+    ports:
+      - "80:80"
+    volumes:
+      - ./data:/app/data

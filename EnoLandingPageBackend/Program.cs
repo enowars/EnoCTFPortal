@@ -20,6 +20,7 @@ namespace EnoLandingPageBackend
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    webBuilder.UseSetting("https_port", "443");
                     webBuilder.UseStartup<Startup>();
                 });
     }
