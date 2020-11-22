@@ -3,8 +3,9 @@
 @using EnoLandingPageFrontend.Services
 @using EnoLandingPageCore.Messages
 @using EnoLandingPageCore.Database
-@inject EnoLandingPageService DataService
 
+@inject EnoLandingPageService DataService
+@inject NavigationManager NavManager
 
 @if (teamInformation != null && ctfInfo != null)
 {
@@ -76,12 +77,24 @@
 }
 
 @code {
+    [CascadingParameter]
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+    private Task<AuthenticationState> AuthenticationStateTask { get; set; }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     private TeamDetailsMessage? teamInformation;
     private CtfInfoMessage? ctfInfo;
     private string? vmInteractionFeedback;
 
     protected override async Task OnInitializedAsync()
     {
+        var authenticationState = await AuthenticationStateTask;
+        if (authenticationState?.User?.Identity is null || !authenticationState.User.Identity.IsAuthenticated)
+        {
+            var returnUrl = NavManager.ToBaseRelativePath(NavManager.Uri);
+            NavManager.NavigateTo($"login?returnUrl=/{NavManager.ToBaseRelativePath(NavManager.Uri)}", false);
+            return; // yep this is necessary.
+        }
+
         teamInformation = await DataService.GetTeamInfo();
         ctfInfo = await DataService.GetCtfInfo();
     }

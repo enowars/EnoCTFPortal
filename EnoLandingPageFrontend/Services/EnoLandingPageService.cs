@@ -22,6 +22,7 @@ namespace EnoLandingPageFrontend.Services
         {
             this.logger = logger;
             this.httpClient = httpClient;
+            this.httpClient.DefaultRequestHeaders.Add("X-Requested-With", "XMLHttpRequest");
             this.jsonOptions = new JsonSerializerOptions()
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,

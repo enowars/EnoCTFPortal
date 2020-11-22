@@ -45,68 +45,13 @@
         </ul>
     </div>
 </nav>
-    <!--
-    <div class="top-row pl-4 navbar navbar-dark">
-        <a class="navbar-brand" href="">EnoLandingPageFrontend</a>
-        <button class="navbar-toggler" @onclick="ToggleNavMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-    </div>
 
-    <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
-        <ul class="nav flex-column">
-            <li class="nav-item px-3">
-                <NavLink class="nav-link" href="adforbeginners">
-                    <span class="oi oi-list-rich" aria-hidden="true"></span>A/D CTF for Beginners
-                </NavLink>
-            </li>
-            <li class="nav-item px-3">
-                <NavLink class="nav-link" href="network">
-                    <span class="oi oi-list-rich" aria-hidden="true"></span>Network
-                </NavLink>
-            </li>
-            <li class="nav-item px-3">
-                <NavLink class="nav-link" href="rules">
-                    <span class="oi oi-list-rich" aria-hidden="true"></span>Rules
-                </NavLink>
-            </li>
-            <li class="nav-item px-3">
-                <NavLink class="nav-link" href="faq">
-                    <span class="oi oi-list-rich" aria-hidden="true"></span>FAQ
-                </NavLink>
-            </li>
-            <li class="nav-item px-3">
-                <NavLink class="nav-link" href="confirmed">
-                    <span class="oi oi-list-rich" aria-hidden="true"></span>Confirmed Teams
-                </NavLink>
-            </li>
-            <AuthorizeView>
-                <Authorized>
-                    <li class="nav-item px-3">
-                        <NavLink class="nav-link" href="profile">
-                            <span class="oi oi-list-rich" aria-hidden="true"></span>Profile
-                        </NavLink>
-                    </li>
-                </Authorized>
-                <NotAuthorized>
-                    <li class="nav-item px-3">
-                        <NavLink class="nav-link" href="login">
-                            <span class="oi oi-list-rich" aria-hidden="true"></span>Login
-                        </NavLink>
-                    </li>
-                </NotAuthorized>
-            </AuthorizeView>
+@code {
+    private bool collapseNavMenu = true;
+    private string NavBarCollapse => collapseNavMenu ? "collapse" : string.Empty;
 
-
-        </ul>
-    </div>
-        -->
-    @code {
-        private bool collapseNavMenu = true;
-        private string NavBarCollapse => collapseNavMenu ? "collapse" : string.Empty;
-
-        private void ToggleNavMenu()
-        {
-            collapseNavMenu = !collapseNavMenu;
-        }
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
     }
+}

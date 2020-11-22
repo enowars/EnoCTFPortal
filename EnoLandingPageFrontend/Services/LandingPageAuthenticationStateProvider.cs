@@ -31,11 +31,12 @@ namespace EnoLandingPageFrontend.Services
                     new Claim(ClaimTypes.Name, teamInfo.TeamName + "asdf"),
                 };
                 var claimsIdentity = new ClaimsIdentity(claims, "Server Auth");
+                this.logger.LogInformation($"{nameof(LandingPageAuthenticationStateProvider)} returning authorized ({teamInfo.Id})");
                 return new AuthenticationState(new ClaimsPrincipal(claimsIdentity));
             }
-            catch (Exception e)
+            catch
             {
-                this.logger.LogInformation(e.ToString());
+                this.logger.LogInformation($"{nameof(LandingPageAuthenticationStateProvider)} returning unauthorized");
                 return new AuthenticationState(new ClaimsPrincipal());
             }
         }
