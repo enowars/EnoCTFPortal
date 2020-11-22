@@ -10,18 +10,14 @@
     {
         public HetznerCloudApiScheduledCall(
             HetznerCloudApiCallType callType,
-            TaskCompletionSource tcs,
-            CancellationToken token)
+            TaskCompletionSource tcs)
         {
             this.CallType = callType;
-            this.Token = token;
             this.Tcs = tcs;
             this.IsRunning = false;
         }
 
         public HetznerCloudApiCallType CallType { get; set; }
-
-        public CancellationToken Token { get; set; }
 
         public TaskCompletionSource Tcs { get; set; }
 

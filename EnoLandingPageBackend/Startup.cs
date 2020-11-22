@@ -97,7 +97,7 @@ namespace EnoLandingPageBackend
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "EnoLandingPage", Version = "v1" });
             });
-            services.AddHostedService<HetznerCloudApi>();
+            services.AddSingleton<IHostedService, HetznerCloudApi>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

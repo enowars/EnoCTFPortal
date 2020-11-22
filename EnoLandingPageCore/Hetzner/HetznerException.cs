@@ -8,5 +8,13 @@
 
     public class HetznerException : Exception
     {
+        public HetznerException()
+        {
+        }
+
+        public HetznerException(string message)
+            : base(message)
+        {
+        }
     }
 }

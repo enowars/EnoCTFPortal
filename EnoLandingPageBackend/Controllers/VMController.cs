@@ -17,10 +17,12 @@
     public class VMController : ControllerBase
     {
         private readonly ILogger<VMController> logger;
+        private readonly HetznerCloudApi hetznerApi;
 
-        public VMController(ILogger<VMController> logger)
+        public VMController(ILogger<VMController> logger, HetznerCloudApi hetznerApi)
         {
             this.logger = logger;
+            this.hetznerApi = hetznerApi;
         }
 
         [HttpPost]
@@ -30,7 +32,7 @@
             this.logger.LogInformation($"StartVulnbox {teamId}");
             try
             {
-                await HetznerCloudApi.Call(teamId, HetznerCloudApiCallType.Create, this.HttpContext.RequestAborted);
+                await this.hetznerApi.Call(teamId, HetznerCloudApiCallType.Create);
             }
             catch (ServerExistsException)
             {
@@ -49,7 +51,7 @@
         {
             long teamId = this.GetTeamId();
             this.logger.LogInformation($"ResetVulnbox {teamId}");
-            await HetznerCloudApi.Call(teamId, HetznerCloudApiCallType.Reset, this.HttpContext.RequestAborted);
+            await this.hetznerApi.Call(teamId, HetznerCloudApiCallType.Reset);
             return this.NoContent();
         }
     }
