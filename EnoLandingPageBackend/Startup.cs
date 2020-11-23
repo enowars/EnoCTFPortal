@@ -8,6 +8,7 @@ namespace EnoLandingPageBackend
     using System.Security.Claims;
     using System.Text.Json;
     using System.Threading.Tasks;
+    using EnoLandingPageBackend.Controllers;
     using EnoLandingPageBackend.Database;
     using EnoLandingPageBackend.Hetzner;
     using EnoLandingPageCore;
@@ -51,13 +52,21 @@ namespace EnoLandingPageBackend
                 options.KnownNetworks.Clear();
                 options.KnownProxies.Clear();
             });
-            services.AddAuthentication(configureOptions =>
+            services.AddAuthentication(options =>
             {
-                configureOptions.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-                .AddCookie()
+                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, configureOptions =>
+                {
+                    configureOptions.SaveToken = true;
+                })
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddOAuth("ctftime.org", configureOptions =>
                 {
+                    // configureOptions.ForwardSignIn = "ctftime.org";
+                    configureOptions.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                     configureOptions.Scope.Add("team:read");
 
                     // configureOptions.ClaimActions.MapJsonSubKey(ClaimTypes.NameIdentifier, "team", "id");
@@ -85,10 +94,12 @@ namespace EnoLandingPageBackend
                             var info = await response.Content.ReadAsStringAsync();
                             var user = JsonDocument.Parse(info);
 
+                            context.HttpContext.Response.Headers.Add("test", "test");
                             context.RunClaimActions(user.RootElement);
                         },
                     };
                 });
+
             services.AddAuthorization();
             services.AddControllers();
             services.AddDbContextPool<LandingPageDatabaseContext>(options => options.UseSqlite(LandingPageDatabaseContext.CONNECTIONSTRING));

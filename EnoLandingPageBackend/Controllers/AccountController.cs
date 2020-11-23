@@ -41,25 +41,27 @@
                 "ctftime.org");
         }
 
+        // All this mess would not be necessary if I could
+        // - access my database to create the user
+        // - deliver my index.html with a header that contains my JWT
+        // in my OnCreatingTicket handler
         [HttpGet]
+        [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme)]
         public async Task<ActionResult> OAuth2Redirect(string redirectUri)
         {
-            var ctftimeIdClaim = this.HttpContext.User.FindFirst(LandingPageClaimTypes.CtftimeId)?.Value;
-            var teamname = this.HttpContext.User.Identity?.Name;
-            if (!long.TryParse(ctftimeIdClaim, out long ctftimeId)
-                || teamname == null)
-            {
-                throw new Exception("OAuth2 failed");
-            }
+            this.logger.LogInformation("OAuth2Redirect");
+            var authResult = await this.HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            long ctftimeId = long.Parse(authResult.Principal!.Claims.Where(c => c.Type == LandingPageClaimTypes.CtftimeId).Single().Value);
+            string teamName = authResult.Principal!.Identity!.Name!;
 
-            var team = await this.db.UpdateTeamName(ctftimeId, teamname, this.HttpContext.RequestAborted);
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, $"{team.Id}"),
-            };
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            await this.HttpContext.SignInAsync(new ClaimsPrincipal(claimsIdentity));
-            return this.Redirect(redirectUri);
+            var team = await this.db.UpdateTeamName(ctftimeId, teamName, this.HttpContext.RequestAborted);
+
+            // TODO create token and put into header
+
+            this.HttpContext.Response.Headers.Add("test2", "test2");
+            this.HttpContext.Response.Headers.Add("Cache-Control", "no-cache");
+            return this.File("index.html", "text/html");
+            // return this.Redirect(redirectUri);
         }
 
         [HttpGet]
