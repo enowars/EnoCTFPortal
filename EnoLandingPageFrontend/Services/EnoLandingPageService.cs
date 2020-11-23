@@ -22,6 +22,7 @@ namespace EnoLandingPageFrontend.Services
         {
             this.logger = logger;
             this.httpClient = httpClient;
+            this.httpClient.DefaultRequestHeaders.Add("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1laWQiOiIxIiwibmJmIjoxNjA2MTcxMjAzLCJleHAiOjE2MDYxODMyMDMsImlhdCI6MTYwNjE3MTIwM30.8-Spl4xAQiUH2aJJ2JW9yWzRSVdxHhhLi0QX6i6TQWU");
             this.httpClient.DefaultRequestHeaders.Add("X-Requested-With", "XMLHttpRequest");
             this.jsonOptions = new JsonSerializerOptions()
             {

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IdentityModel.Tokens.Jwt;
     using System.Linq;
     using System.Security.Claims;
     using System.Threading.Tasks;
@@ -16,6 +17,7 @@
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
+    using Microsoft.IdentityModel.Tokens;
 
     [Route("api/[controller]/[action]")]
     [ApiController]
@@ -55,10 +57,11 @@
             string teamName = authResult.Principal!.Identity!.Name!;
 
             var team = await this.db.UpdateTeamName(ctftimeId, teamName, this.HttpContext.RequestAborted);
-
+            // new JwtSecurityTokenHandler();
             // TODO create token and put into header
 
-            this.HttpContext.Response.Headers.Add("test2", "test2");
+
+            this.HttpContext.Response.Headers.Add("JWT", GenerateToken($"{team.Id}"));
             this.HttpContext.Response.Headers.Add("Cache-Control", "no-cache");
             return this.File("index.html", "text/html");
             // return this.Redirect(redirectUri);
@@ -89,5 +92,35 @@
             await this.db.CheckIn(teamId, this.HttpContext.RequestAborted);
             return this.NoContent();
         }
+
+        private const string Secret = "db3OIsj+BXE9NZDy0t8W3TcNekrF+2d/1sFnWG4HnV8TZY30iTOdtVWJG8abWvB1GlOgJuQZdcF2Luqm/hccMw==";
+
+        public static string GenerateToken(string id, int expireMinutes = 200)
+        {
+            var symmetricKey = Convert.FromBase64String(Secret);
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            var now = DateTime.UtcNow;
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, id),
+                }),
+
+                Expires = now.AddMinutes(Convert.ToInt32(expireMinutes)),
+
+                SigningCredentials = new SigningCredentials(
+                    new SymmetricSecurityKey(symmetricKey),
+                    SecurityAlgorithms.HmacSha256Signature),
+            };
+
+            var stoken = tokenHandler.CreateToken(tokenDescriptor);
+            var token = tokenHandler.WriteToken(stoken);
+
+            return token;
+        }
+
+        // https://stackoverflow.com/questions/49594214/asp-net-jwt-signature-validation-failed-no-security-keys-were-provided-to-vali/49602067
     }
 }

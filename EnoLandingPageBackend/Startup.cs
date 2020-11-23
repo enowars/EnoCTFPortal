@@ -26,6 +26,7 @@ namespace EnoLandingPageBackend
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
+    using Microsoft.IdentityModel.Tokens;
     using Microsoft.OpenApi.Models;
 
     public class Startup
@@ -36,6 +37,8 @@ namespace EnoLandingPageBackend
         }
 
         public IConfiguration Configuration { get; }
+
+        private const string Secret = "db3OIsj+BXE9NZDy0t8W3TcNekrF+2d/1sFnWG4HnV8TZY30iTOdtVWJG8abWvB1GlOgJuQZdcF2Luqm/hccMw==";
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -60,7 +63,19 @@ namespace EnoLandingPageBackend
             })
                 .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, configureOptions =>
                 {
-                    configureOptions.SaveToken = true;
+                    configureOptions.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
+                        IssuerSigningKey = new SymmetricSecurityKey(Convert.FromBase64String(Secret)),
+                    };
+                    configureOptions.Events = new JwtBearerEvents()
+                    {
+                        OnAuthenticationFailed = async context =>
+                        {
+                            Console.WriteLine("####");
+                        },
+                    };
                 })
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddOAuth("ctftime.org", configureOptions =>
