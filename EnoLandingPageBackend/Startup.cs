@@ -17,6 +17,7 @@ namespace EnoLandingPageBackend
     using Microsoft.AspNetCore.Authentication.OAuth;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.HttpOverrides;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Rewrite;
@@ -55,13 +56,18 @@ namespace EnoLandingPageBackend
             {
                 configureOptions.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             })
-                .AddCookie()
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+                {
+                    options.Cookie.IsEssential = true;
+                    options.Cookie.HttpOnly = true;
+                    options.Cookie.SameSite = SameSiteMode.None;
+                    options.Cookie.SecurePolicy = CookieSecurePolicy.None;
+                })
                 .AddOAuth("ctftime.org", configureOptions =>
                 {
                     configureOptions.Scope.Add("team:read");
-
-                    // configureOptions.ClaimActions.MapJsonSubKey(ClaimTypes.NameIdentifier, "team", "id");
-                    // configureOptions.ClaimActions.MapJsonSubKey(ClaimTypes.Name, "team", "name");
+                    configureOptions.ClaimActions.MapJsonSubKey(LandingPageClaimTypes.CtftimeId, "team", "id");
+                    configureOptions.ClaimActions.MapJsonSubKey(ClaimTypes.Name, "team", "name");
                     configureOptions.ClaimActions.MapJsonKey(LandingPageClaimTypes.CtftimeId, "id");
                     configureOptions.ClaimActions.MapJsonKey(ClaimTypes.Name, "uid");
                     configureOptions.ClientId = enoLandingPageSettings.OAuthClientId;

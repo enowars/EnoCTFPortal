@@ -26,6 +26,7 @@
             this.db = db;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Confirmed()
         {
             this.logger.LogDebug("Confirmed Teams");

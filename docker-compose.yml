@@ -4,6 +4,6 @@ services:
   enolandingpage:
     build: .
     ports:
-      - "80:80"
+      - "5001:80"
     volumes:
       - ./data:/app/data

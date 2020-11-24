@@ -19,6 +19,7 @@
             this.settings = settings;
         }
 
+        [HttpGet]
         public IActionResult Info()
         {
             return this.Ok(new CtfInfoMessage(

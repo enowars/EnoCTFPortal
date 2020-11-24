@@ -62,7 +62,7 @@
                 dbTeam = new LandingPageTeam()
                 {
                     CtftimeId = ctftimeId,
-                    Confirmed = false,
+                    Confirmed = false, // TODO don't deconfirm team on name update!
                     Name = name,
                     Vulnbox = new LandingPageTeamVulnbox(),
                 };
