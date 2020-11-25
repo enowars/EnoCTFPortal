@@ -83,6 +83,8 @@ namespace EnoLandingPageBackend
                         {
                             context.HandleResponse();
                             context.Response.ContentType = "text/html";
+                            Console.WriteLine($"### {context.Principal?.Claims.Count()}");
+                            await context.HttpContext.SignInAsync(context.Principal!);
                             await context.Response.WriteAsync($"<html><head><meta http-equiv=\"refresh\" content=\"1; URL={context.ReturnUri}\"/></head><body><p>Moved to <a href=\"{context.ReturnUri}\" >{context.ReturnUri}</a>.</p></body></html>");
                             await context.Response.CompleteAsync();
                         },
