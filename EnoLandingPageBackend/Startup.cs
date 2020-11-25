@@ -2,6 +2,7 @@ namespace EnoLandingPageBackend
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
     using System.Linq;
     using System.Net.Http;
     using System.Net.Http.Headers;
@@ -44,6 +45,7 @@ namespace EnoLandingPageBackend
             var enoLandingPageSettings = this.Configuration
                 .GetSection("EnoLandingPage")
                 .Get<LandingPageSettings>();
+            Validator.ValidateObject(enoLandingPageSettings, new ValidationContext(enoLandingPageSettings));
             services.AddSingleton(enoLandingPageSettings);
 
             services.Configure<ForwardedHeadersOptions>(options =>
@@ -71,10 +73,10 @@ namespace EnoLandingPageBackend
                     configureOptions.ClientId = enoLandingPageSettings.OAuthClientId;
                     configureOptions.ClientSecret = enoLandingPageSettings.OAuthClientSecret;
                     configureOptions.CallbackPath = "/authorized";
-                    configureOptions.AuthorizationEndpoint = enoLandingPageSettings.OAuthAuthorizationEndpoint;
-                    configureOptions.TokenEndpoint = enoLandingPageSettings.OAuthTokenEndpoint;
-                    configureOptions.UserInformationEndpoint = enoLandingPageSettings.OAuthUserInformationEndpoint;
-                    configureOptions.Scope.Add(enoLandingPageSettings.OAuthScope);
+                    configureOptions.AuthorizationEndpoint = "https://oauth.ctftime.org/authorize";
+                    configureOptions.TokenEndpoint = "https://oauth.ctftime.org/token";
+                    configureOptions.UserInformationEndpoint = "https://oauth.ctftime.org/user";
+                    configureOptions.Scope.Add("team:read");
                     configureOptions.Events = new OAuthEvents
                     {
                         OnTicketReceived = async context =>

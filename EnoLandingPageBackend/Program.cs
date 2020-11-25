@@ -18,6 +18,10 @@ namespace EnoLandingPageBackend
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((hostingContext, configureDelegate) =>
+                {
+                    configureDelegate.AddEnvironmentVariables();
+                })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseSetting("https_port", "443");

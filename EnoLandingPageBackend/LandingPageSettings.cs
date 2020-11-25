@@ -2,42 +2,49 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
 
-#pragma warning disable CS8601 // Possible null reference assignment.
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     public class LandingPageSettings
     {
-        public DateTime StartTime { get; set; } = DateTime.UtcNow;
+        [Required]
+        public string Title { get; set; } = "BambiCTF";
 
+        [Required]
+        public DateTime StartTime { get; set; }
+
+        [Required]
         public long RegistrationCloseOffset { get; set; }
 
+        [Required]
         public long CheckInBeginOffset { get; set; }
 
+        [Required]
         public long CheckInEndOffset { get; set; }
 
-        public string HetznerCloudApiToken { get; set; } = Environment.GetEnvironmentVariable("HETZNER_CLOUD_API_TOKEN");
+        [Required]
+        public string HetznerCloudApiToken { get; set; }
 
-        public string HetznerVulnboxType { get; set; } = Environment.GetEnvironmentVariable("HETZNER_VULNBOX_TYPE");
+        [Required]
+        public string HetznerVulnboxType { get; set; }
 
-        public string HetznerVulnboxImage { get; set; } = Environment.GetEnvironmentVariable("HETZNER_VULNBOX_IMAGE");
+        [Required]
+        public string HetznerVulnboxImage { get; set; }
 
-        public string HetznerVulnboxPubkey { get; set; } = Environment.GetEnvironmentVariable("HETZNER_VULNBOX_PUBKEY");
+        [Required]
+        public string HetznerVulnboxPubkey { get; set; }
 
-        public string HetznerVulnboxLocation { get; set; } = Environment.GetEnvironmentVariable("HETZNER_VULNBOX_LOCATION");
+        [Required]
+        public string HetznerVulnboxLocation { get; set; }
 
-        public string OAuthClientId { get; set; } = Environment.GetEnvironmentVariable("OAUTH_CLIENT_ID");
+        [Required]
+        public string OAuthClientId { get; set; }
 
-        public string OAuthClientSecret { get; set; } = Environment.GetEnvironmentVariable("OAUTH_CLIENT_SECRET");
-
-        public string OAuthAuthorizationEndpoint { get; set; } = Environment.GetEnvironmentVariable("OAUTH_AUTHORIZATION_ENDPOINT");
-
-        public string OAuthTokenEndpoint { get; set; } = Environment.GetEnvironmentVariable("OAUTH_TOKEN_ENDPOINT");
-
-        public string OAuthUserInformationEndpoint { get; set; } = Environment.GetEnvironmentVariable("OAUTH_USER_INFORMATION_ENDPOINT");
-
-        public string OAuthScope { get; set; } = Environment.GetEnvironmentVariable("OAUTH_SCOPE");
+        [Required]
+        public string OAuthClientSecret { get; set; }
     }
-#pragma warning restore CS8601 // Possible null reference assignment.
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 }
