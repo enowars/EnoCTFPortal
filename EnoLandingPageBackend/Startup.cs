@@ -60,8 +60,8 @@ namespace EnoLandingPageBackend
                 {
                     options.Cookie.IsEssential = true;
                     options.Cookie.HttpOnly = true;
-                    options.Cookie.SameSite = SameSiteMode.None;
-                    options.Cookie.SecurePolicy = CookieSecurePolicy.None;
+                    options.Cookie.SameSite = SameSiteMode.Strict;
+                    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                 })
                 .AddOAuth("ctftime.org", configureOptions =>
                 {
@@ -79,6 +79,13 @@ namespace EnoLandingPageBackend
                     configureOptions.Scope.Add(enoLandingPageSettings.OAuthScope);
                     configureOptions.Events = new OAuthEvents
                     {
+                        OnTicketReceived = async context =>
+                        {
+                            context.HandleResponse();
+                            context.Response.ContentType = "text/html";
+                            await context.Response.WriteAsync($"<html><head><meta http-equiv=\"refresh\" content\"0; URL = {context.ReturnUri}\"/></head><body><p>Moved to <a href=\"{context.ReturnUri}\" >{context.ReturnUri}</a>.</p></body></html>");
+                            await context.Response.CompleteAsync();
+                        },
                         OnCreatingTicket = async context =>
                         {
                             var request = new HttpRequestMessage(HttpMethod.Get, context.Options.UserInformationEndpoint);
