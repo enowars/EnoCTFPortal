@@ -7,74 +7,78 @@
 @inject EnoLandingPageService DataService
 @inject NavigationManager NavManager
 
-@if (teamInformation != null && ctfInfo != null)
-{
-    <h1>@(teamInformation.TeamName)</h1>
-    if (!teamInformation.Confirmed)
+<div class="container p-3">
+    @if (teamInformation != null && ctfInfo != null)
     {
-        <div class="alert alert-danger" role="alert">
-            Your participation hasn't been confirmed yet!
-        </div>
-        if (ctfInfo.StartTime.AddHours(-ctfInfo.RegistrationCloseOffset) > DateTime.UtcNow)
-        {
-            <p>Please check in once the registration closes at @(ctfInfo.StartTime.AddHours(-ctfInfo.RegistrationCloseOffset).ToString())</p>
-        }
-        else
-        {
-            <button @onclick="CheckIn">Check In!</button>
-        }
-    }
-    else
-    {
-        <div class="alert alert-success" role="alert">
-            Your participation has been confirmed!
-        </div>
-
-        if (teamInformation.VulnboxStatus == LandingPageVulnboxStatus.None)
-        {
-            <button @onclick="StartVm">Create VM</button>
-        }
-        else if (teamInformation.VulnboxStatus == LandingPageVulnboxStatus.Creating)
-        {
-            <p>Your VM is starting!</p>
-        }
-        else if (teamInformation.VulnboxStatus == LandingPageVulnboxStatus.Created)
-        {
-            <button @onclick="StartVm">Force Reboot</button>
-        }
-        else
+        <h1>@(teamInformation.TeamName)</h1>
+        if (!teamInformation.Confirmed)
         {
             <div class="alert alert-danger" role="alert">
-                We fucked up. Please contact us.
+                Your participation hasn't been confirmed yet!
             </div>
+            if (ctfInfo.StartTime.AddHours(-ctfInfo.RegistrationCloseOffset) > DateTime.UtcNow)
+            {
+                <p>Please check in after @(ctfInfo.StartTime.AddHours(-ctfInfo.CheckInBeginOffset).ToString()).</p>
+            }
+            else
+            {
+                <button @onclick="CheckIn">Check In!</button>
+            }
         }
-
-        if (vmInteractionFeedback != null)
+        else
         {
-            <p>@vmInteractionFeedback</p>
+            <div class="alert alert-success" role="alert">
+                Your participation has been confirmed!
+            </div>
+            if (ctfInfo.StartTime < DateTime.UtcNow)
+            {
+                if (teamInformation.VulnboxStatus == LandingPageVulnboxStatus.None)
+                {
+                    <button @onclick="StartVm">Create VM</button>
+                }
+                else if (teamInformation.VulnboxStatus == LandingPageVulnboxStatus.Creating)
+                {
+                    <p>Your VM is starting!</p>
+                }
+                else if (teamInformation.VulnboxStatus == LandingPageVulnboxStatus.Created)
+                {
+                    <button @onclick="StartVm">Force Reboot</button>
+                }
+                else
+                {
+                    <div class="alert alert-danger" role="alert">
+                        We fucked up. Please contact us.
+                    </div>
+                }
+            }
+
+            if (vmInteractionFeedback != null)
+            {
+                <p>@vmInteractionFeedback</p>
+            }
         }
+        <div>
+            <div>External IP Address:</div>
+            <code>@(teamInformation.ExternalIpAddress ?? "coming soon")</code>
+        </div>
+        <div>
+            <div>Root Password:</div>
+            <code>@(teamInformation.RootPassword ?? "coming soon")</code>
+        </div>
+        <div>
+            <div>Internal IP Address:</div>
+            <code>@(teamInformation.InternalIpAddress ?? "coming soon")</code>
+        </div>
+        <div>
+            <div>Vulnbox Status:</div>
+            <code>@teamInformation.VulnboxStatus</code>
+        </div>
+        <div>
+            <div>Vpn Configuration:</div>
+            <code>@(teamInformation.VpnConfig ?? "coming soon")</code>
+        </div>
     }
-    <div>
-        <div>External IP Address:</div>
-        <code>@(teamInformation.ExternalIpAddress ?? "t.b.d.")</code>
-    </div>
-    <div>
-        <div>Root Password:</div>
-        <code>@(teamInformation.RootPassword ?? "t.b.d.")</code>
-    </div>
-    <div>
-        <div>Internal IP Address:</div>
-        <code>@(teamInformation.InternalIpAddress ?? "t.b.d.")</code>
-    </div>
-    <div>
-        <div>Vulnbox Status:</div>
-        <code>@teamInformation.VulnboxStatus</code>
-    </div>
-    <div>
-        <div>Vpn Configuration:</div>
-        <code>@(teamInformation.VpnConfig ?? "t.b.d.")</code>
-    </div>
-}
+</div>
 
 @code {
     [CascadingParameter]

@@ -1,5 +1,3 @@
-@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
-
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
@@ -48,3 +46,28 @@ a, .btn-link {
     right: 0.75rem;
     top: 0.5rem;
 }
+
+.bg {
+    background-image: url('/images/deers-88991.jpg');
+    height: 50%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    padding-top: 200px;
+    padding-bottom: 200px;
+}
+    .bg div {
+        background-color: rgba(211, 211, 211, 0.8);
+    }
+
+    .bg div h1 {
+        font-size: 80px;
+        font-weight: bolder;
+        text-align: center;
+    }
+
+    .bg div h2 {
+        font-size: 50px;
+        font-weight: bold;
+        text-align: center;
+    }
