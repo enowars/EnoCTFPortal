@@ -83,7 +83,7 @@ namespace EnoLandingPageBackend
                         {
                             context.HandleResponse();
                             context.Response.ContentType = "text/html";
-                            await context.Response.WriteAsync($"<html><head><meta http-equiv=\"refresh\" content\"0; URL = {context.ReturnUri}\"/></head><body><p>Moved to <a href=\"{context.ReturnUri}\" >{context.ReturnUri}</a>.</p></body></html>");
+                            await context.Response.WriteAsync($"<html><head><meta http-equiv=\"refresh\" content=\"1; URL={context.ReturnUri}\"/></head><body><p>Moved to <a href=\"{context.ReturnUri}\" >{context.ReturnUri}</a>.</p></body></html>");
                             await context.Response.CompleteAsync();
                         },
                         OnCreatingTicket = async context =>
