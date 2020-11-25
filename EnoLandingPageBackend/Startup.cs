@@ -68,8 +68,6 @@ namespace EnoLandingPageBackend
                     configureOptions.Scope.Add("team:read");
                     configureOptions.ClaimActions.MapJsonSubKey(LandingPageClaimTypes.CtftimeId, "team", "id");
                     configureOptions.ClaimActions.MapJsonSubKey(ClaimTypes.Name, "team", "name");
-                    configureOptions.ClaimActions.MapJsonKey(LandingPageClaimTypes.CtftimeId, "id");
-                    configureOptions.ClaimActions.MapJsonKey(ClaimTypes.Name, "uid");
                     configureOptions.ClientId = enoLandingPageSettings.OAuthClientId;
                     configureOptions.ClientSecret = enoLandingPageSettings.OAuthClientSecret;
                     configureOptions.CallbackPath = "/authorized";
