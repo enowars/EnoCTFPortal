@@ -49,7 +49,7 @@
             if (!long.TryParse(ctftimeIdClaim, out long ctftimeId)
                 || teamname == null)
             {
-                throw new Exception("OAuth2 failed");
+                throw new Exception($"OAuth2 failed: ctftimeid={ctftimeIdClaim} teamname={teamname} claims={this.HttpContext.User.Claims.Count()}");
             }
 
             var team = await this.db.UpdateTeamName(ctftimeId, teamname, this.HttpContext.RequestAborted);

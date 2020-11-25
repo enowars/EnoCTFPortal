@@ -17,5 +17,5 @@ FROM mcr.microsoft.com/dotnet/aspnet:5.0
 WORKDIR /app
 EXPOSE 80
 COPY --from=build /app .
-
+COPY EnoLandingPageBackend/appsettings.json appsettings.json
 ENTRYPOINT ["dotnet", "EnoLandingPageBackend.dll"]

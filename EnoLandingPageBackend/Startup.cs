@@ -17,6 +17,7 @@ namespace EnoLandingPageBackend
     using Microsoft.AspNetCore.Authentication.OAuth;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.HttpOverrides;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Rewrite;
@@ -55,15 +56,18 @@ namespace EnoLandingPageBackend
             {
                 configureOptions.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             })
-                .AddCookie()
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+                {
+                    options.Cookie.IsEssential = true;
+                    options.Cookie.HttpOnly = true;
+                    options.Cookie.SameSite = SameSiteMode.Strict;
+                    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                })
                 .AddOAuth("ctftime.org", configureOptions =>
                 {
                     configureOptions.Scope.Add("team:read");
-
-                    // configureOptions.ClaimActions.MapJsonSubKey(ClaimTypes.NameIdentifier, "team", "id");
-                    // configureOptions.ClaimActions.MapJsonSubKey(ClaimTypes.Name, "team", "name");
-                    configureOptions.ClaimActions.MapJsonKey(LandingPageClaimTypes.CtftimeId, "id");
-                    configureOptions.ClaimActions.MapJsonKey(ClaimTypes.Name, "uid");
+                    configureOptions.ClaimActions.MapJsonSubKey(LandingPageClaimTypes.CtftimeId, "team", "id");
+                    configureOptions.ClaimActions.MapJsonSubKey(ClaimTypes.Name, "team", "name");
                     configureOptions.ClientId = enoLandingPageSettings.OAuthClientId;
                     configureOptions.ClientSecret = enoLandingPageSettings.OAuthClientSecret;
                     configureOptions.CallbackPath = "/authorized";
@@ -73,6 +77,16 @@ namespace EnoLandingPageBackend
                     configureOptions.Scope.Add(enoLandingPageSettings.OAuthScope);
                     configureOptions.Events = new OAuthEvents
                     {
+                        OnTicketReceived = async context =>
+                        {
+                            // This voodoo is necessary, because chrome/firefox do not allow strict cookies to be set during a redirect.
+                            // Instead of a redirect we return a 200 with a http-equiv="refresh", which is totally ok because... well...
+                            context.HandleResponse();
+                            context.Response.ContentType = "text/html";
+                            await context.HttpContext.SignInAsync(context.Principal!);
+                            await context.Response.WriteAsync($"<html><head><meta http-equiv=\"refresh\" content=\"0; URL={context.ReturnUri}\"/></head><body><p>Moved to <a href=\"{context.ReturnUri}\" >{context.ReturnUri}</a>.</p></body></html>");
+                            await context.Response.CompleteAsync();
+                        },
                         OnCreatingTicket = async context =>
                         {
                             var request = new HttpRequestMessage(HttpMethod.Get, context.Options.UserInformationEndpoint);
@@ -103,6 +117,7 @@ namespace EnoLandingPageBackend
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, LandingPageDatabase db)
         {
+            app.UseForwardedHeaders();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
