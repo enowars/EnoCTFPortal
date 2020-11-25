@@ -81,11 +81,12 @@ namespace EnoLandingPageBackend
                     {
                         OnTicketReceived = async context =>
                         {
+                            // This voodoo is necessary, because chrome/firefox do not allow strict cookies to be set during a redirect.
+                            // Instead of a redirect we return a 200 with a http-equiv="refresh", which is totally ok because... well...
                             context.HandleResponse();
                             context.Response.ContentType = "text/html";
-                            Console.WriteLine($"### {context.Principal?.Claims.Count()}");
                             await context.HttpContext.SignInAsync(context.Principal!);
-                            await context.Response.WriteAsync($"<html><head><meta http-equiv=\"refresh\" content=\"1; URL={context.ReturnUri}\"/></head><body><p>Moved to <a href=\"{context.ReturnUri}\" >{context.ReturnUri}</a>.</p></body></html>");
+                            await context.Response.WriteAsync($"<html><head><meta http-equiv=\"refresh\" content=\"0; URL={context.ReturnUri}\"/></head><body><p>Moved to <a href=\"{context.ReturnUri}\" >{context.ReturnUri}</a>.</p></body></html>");
                             await context.Response.CompleteAsync();
                         },
                         OnCreatingTicket = async context =>
