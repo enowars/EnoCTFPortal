@@ -19,8 +19,10 @@ namespace EnoLandingPageBackend
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Http.Features;
     using Microsoft.AspNetCore.HttpOverrides;
     using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.ResponseCompression;
     using Microsoft.AspNetCore.Rewrite;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
@@ -47,6 +49,16 @@ namespace EnoLandingPageBackend
                 .Get<LandingPageSettings>();
             Validator.ValidateObject(enoLandingPageSettings, new ValidationContext(enoLandingPageSettings));
             services.AddSingleton(enoLandingPageSettings);
+
+            services.AddResponseCompression(options =>
+            {
+                options.EnableForHttps = true;
+                options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+                    new[]
+                    {
+                        "application/octet-stream",
+                    });
+            });
 
             services.Configure<ForwardedHeadersOptions>(options =>
             {
@@ -120,6 +132,7 @@ namespace EnoLandingPageBackend
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, LandingPageDatabase db)
         {
             app.UseForwardedHeaders();
+            app.UseResponseCompression();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -146,6 +159,8 @@ namespace EnoLandingPageBackend
             app.UseStaticFiles(new StaticFileOptions()
             {
                 ServeUnknownFileTypes = true,
+                HttpsCompression = HttpsCompressionMode.Compress,
+                DefaultContentType = "application/octet-stream",
             });
         }
     }
