@@ -1,4 +1,5 @@
 ﻿@page "/scoreboard"
+@page "/scoreboard/round/{selectedRoundId:long}"
 
 @using Microsoft.Extensions.Logging
 @using EnoCore.Scoreboard
@@ -8,65 +9,164 @@
 @inject LandingPageScoreboardService ScoreboardService
 @inject ILogger<ScoreboardView> logger
 
-@if (scoreboard != null)
+@if (currentScoreboard != null)
 {
-    <div class="scoreboard-row">
-        <div class="team-block">
-            <div class="rank">#</div>
-            <div class="name">Team</div>
-            <div class="score">Score</div>
-        </div>
-        <div class="service-block">
-
-        </div>
-    </div>
-    for (int i = 0; i < scoreboard.Teams.Length; i++)
-    {
-        var team = scoreboard.Teams[i];
-        <div class="scoreboard-row">
-            <div class="team-block">
-                <div class="rank">@(i+1)</div>
-                <div class="name">logo @team.Name</div>
-                <div class="score">@((int) team.TotalPoints)</div>
-            </div>
-            <div class="service-block">
-                @foreach (var service in scoreboard.Services)
-                {
-                    ScoreboardTeamDetails serviceDetails = team.ServiceDetails.Where(sd => sd.ServiceId == service.ServiceId).Single();
-                    <div class="p-2 service-container service-@(Enum.GetName(serviceDetails.ServiceStatus))">
-                        <div>@((int) serviceDetails.ServiceLevelAgreementPoints)</div>
-                        <div>@((int) serviceDetails.AttackPoints)</div>
-                        <div>@((int) serviceDetails.LostDefensePoints)</div>
+    <table class="scoreboard">
+        <colgroup>
+            <col class="team-rank" style="width:50px;" />
+            <col class="team-name" style="width:15%;" />
+            <col class="team-score" style="width:100px;" />
+            @foreach (var service in currentScoreboard.Services)
+            {
+                <col style="width: 1fr;" />
+            }
+        </colgroup>
+        <thead>
+            <tr>
+                <td colspan="3" class="p-2">
+                    <div>
+                        @if (currentScoreboard.CurrentRound > 1)
+                        {
+                            <a href="/scoreboard/round/@(currentScoreboard.CurrentRound - 1)"><img src="/images/icons-1.1.0/icons/chevron-left.svg" alt="" width="16" height="16" title="Previous" /></a>
+                        }
+                        Round @currentScoreboard.CurrentRound
+                        @if (currentScoreboard.CurrentRound != ScoreboardService.LatestScoreboard?.CurrentRound)
+                        {
+                            <a href="/scoreboard/round/@(currentScoreboard.CurrentRound + 1)"><img src="/images/icons-1.1.0/icons/chevron-right.svg" alt="" width="16" height="16" title="Next" /></a>
+                            <a href="/scoreboard"><img src="/images/icons-1.1.0/icons/chevron-double-right.svg" alt="" width="16" height="16" title="Latest" /></a>
+                        }
                     </div>
+                </td>
+                @foreach (var service in currentScoreboard.Services)
+                {
+                    <td>@service.ServiceName</td>
                 }
-            </div>
-        </div>
-    }
+            </tr>
+        </thead>
+        @for (int t = 0; t < currentScoreboard.Teams.Length; t++)
+        {
+            var team = currentScoreboard.Teams[t];
+            <tr>
+                <td class="team-rank">@(t+1)</td>
+                <td class="team-name">logo @team.Name</td>
+                <td class="team-score">@((int) team.TotalPoints)</td>
+                @for (int s = 0; s < team.ServiceDetails.Length; s++)
+                {
+                    var serviceDetails = team.ServiceDetails[s];
+                    @if (previousScoreboard == null)
+                    {
+                        <td class="p-2 service-container service-@(Enum.GetName(serviceDetails.ServiceStatus))">
+                            <div>@((int) serviceDetails.ServiceLevelAgreementPoints)</div>
+                            <div>@((int) serviceDetails.AttackPoints)</div>
+                            <div>@((int) serviceDetails.LostDefensePoints)</div>
+                        </td>
+                    }
+                    else
+                    {
+                        long slaDiff = (long) (serviceDetails.ServiceLevelAgreementPoints - previousScoreboard.Teams[t].ServiceDetails[s].ServiceLevelAgreementPoints);
+                        long attackDiff = (long) (serviceDetails.AttackPoints - previousScoreboard.Teams[t].ServiceDetails[s].AttackPoints);
+                        long defenseDiff = (long) (serviceDetails.LostDefensePoints - previousScoreboard.Teams[t].ServiceDetails[s].LostDefensePoints);
+                        <td class="p-2 service-container service-@(Enum.GetName(serviceDetails.ServiceStatus))">
+                            <div>@((int) serviceDetails.ServiceLevelAgreementPoints) (@(slaDiff.ToString("+#;-#;±0")))</div>
+                            <div>@((int) serviceDetails.AttackPoints) (@(attackDiff.ToString("+#;-#;±0")))</div>
+                            <div>@((int) serviceDetails.LostDefensePoints) (@(defenseDiff.ToString("+#;-#;±0")))</div>
+                        </td>
+                    }
+                }
+            </tr>
+        }
+    </table>
 }
 
 
 @code {
-    private Scoreboard? scoreboard;
+    [Parameter]
+    public long? selectedRoundId { get; set; }
+    private Scoreboard? previousScoreboard;
+    private Scoreboard? currentScoreboard;
 
     protected override Task OnInitializedAsync()
     {
-        ScoreboardService.ScoreboardEvent += HandleScoreboardEvent;
-        if (ScoreboardService.LatestScoreboard != null)
-        {
-            scoreboard = ScoreboardService.LatestScoreboard;
-        }
+        ScoreboardService.NewScoreboardEvent += HandleNewScoreboardEvent;
+        ScoreboardService.OldScoreboardEvent += HandleOldScoreboardEvent;
         return Task.CompletedTask;
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (selectedRoundId is long roundId)
+        {
+            // We are in "show old round" mode.
+            if (!ScoreboardService.Scoreboards.TryGetValue(roundId, out currentScoreboard))
+            {
+                var _ = ScoreboardService.RequestScoreboard(roundId);
+            }
+            if (!ScoreboardService.Scoreboards.TryGetValue(roundId - 1, out previousScoreboard))
+            {
+                var _ = ScoreboardService.RequestScoreboard(roundId - 1);
+            }
+        }
+        else
+        {
+            // We are in "show current round" mode.
+            currentScoreboard = ScoreboardService.LatestScoreboard;
+            if (currentScoreboard?.CurrentRound > 1)
+            {
+                if (!ScoreboardService.Scoreboards.TryGetValue(currentScoreboard.CurrentRound.Value - 1, out previousScoreboard))
+                {
+                    var _ = ScoreboardService.RequestScoreboard(currentScoreboard.CurrentRound.Value - 1);
+                }
+            }
+        }
     }
 
     public void Dispose()
     {
-        ScoreboardService.ScoreboardEvent -= HandleScoreboardEvent;
+        ScoreboardService.NewScoreboardEvent -= HandleNewScoreboardEvent;
+        ScoreboardService.OldScoreboardEvent -= HandleOldScoreboardEvent;
     }
 
-    private void HandleScoreboardEvent(object sender, Scoreboard newScoreboard)
+    private void HandleOldScoreboardEvent(Scoreboard oldScoreboard)
     {
-        logger.LogInformation("UpdateScoreboard");
-        scoreboard = newScoreboard;
+        if (selectedRoundId is long roundId)
+        {
+            // We are in "show old round" mode.
+            if (oldScoreboard.CurrentRound == roundId)
+            {
+                currentScoreboard = oldScoreboard;
+            }
+            if (oldScoreboard.CurrentRound == roundId - 1)
+            {
+                previousScoreboard = oldScoreboard;
+            }
+        }
+        else
+        {
+            if (oldScoreboard.CurrentRound == currentScoreboard?.CurrentRound - 1)
+            {
+                previousScoreboard = oldScoreboard;
+            }
+        }
         StateHasChanged();
+    }
+
+    private void HandleNewScoreboardEvent(Scoreboard newScoreboard)
+    {
+        if (selectedRoundId == null) // We are in "show current round" mode.
+        {
+            if (newScoreboard.CurrentRound > currentScoreboard?.CurrentRound)
+            {
+                // A new round has finished.
+                ScoreboardService.Scoreboards.TryGetValue(newScoreboard.CurrentRound.Value - 1, out previousScoreboard);
+                currentScoreboard = newScoreboard;
+            }
+            else
+            {
+                // The CTF was restarted.
+                previousScoreboard = null;
+                currentScoreboard = newScoreboard;
+            }
+            StateHasChanged();
+        }
     }
 }

@@ -2,6 +2,7 @@
 using EnoCore.Scoreboard;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
@@ -10,9 +11,10 @@ namespace EnoLandingPageFrontend.Services
 {
     public class LandingPageScoreboardService
     {
-        public Scoreboard? LatestScoreboard { get; set; }
-        public delegate void ScoreboardEventHandler(object sender, Scoreboard sb);
-        public event ScoreboardEventHandler? ScoreboardEvent;
+        public delegate void NewScoreboardEventHandler(Scoreboard sb);
+        public delegate void OldScoreboardEventHandler(Scoreboard oldScoreboard);
+        public event NewScoreboardEventHandler? NewScoreboardEvent;
+        public event OldScoreboardEventHandler? OldScoreboardEvent;
 
         private readonly ILogger<LandingPageScoreboardService> logger;
         private readonly HttpClient httpClient;
@@ -25,7 +27,28 @@ namespace EnoLandingPageFrontend.Services
             var _ = PollTask();
         }
 
-        public async Task PollTask()
+        public Dictionary<long, Scoreboard?> Scoreboards { get; set; } = new();
+
+        public Scoreboard? LatestScoreboard { get; set; }
+
+        public async Task RequestScoreboard(long roundId)
+        {
+            try
+            {
+                var scoreboard = await this.httpClient.GetFromJsonAsync<Scoreboard>($"/scoreboard/scoreboard{roundId}.json", EnoCoreUtil.CamelCaseEnumConverterOptions);
+                if (scoreboard != null)
+                {
+                    Scoreboards[roundId] = scoreboard;
+                    OldScoreboardEvent?.Invoke(scoreboard);
+                }
+            }
+            catch (Exception e)
+            {
+                logger.LogError($"{e.ToFancyString()}");
+            }
+        }
+
+        private async Task PollTask()
         {
             while (true)
             {
@@ -34,9 +57,11 @@ namespace EnoLandingPageFrontend.Services
                     var scoreboard = await this.httpClient.GetFromJsonAsync<Scoreboard>("/scoreboard/scoreboard.json", EnoCoreUtil.CamelCaseEnumConverterOptions);
                     if (scoreboard != null && LatestScoreboard?.CurrentRound != scoreboard.CurrentRound)
                     {
+                        Scoreboards[scoreboard.CurrentRound.Value] = scoreboard;
                         LatestScoreboard = scoreboard;
-                        ScoreboardEvent?.Invoke(this, scoreboard);
+                        NewScoreboardEvent?.Invoke(scoreboard);
                     }
+                    // TODO invalidate scoreboards dict on restart
                 }
                 catch (Exception e)
                 {

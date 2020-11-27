@@ -1,43 +1,32 @@
-﻿.scoreboard-row {
-    display: flex;
+﻿.scoreboard {
+    width: 100%;
+    table-layout: fixed;
 }
-    /* A team-block contains the rank, name, and total points. */
-    .scoreboard-row .team-block {
-        flex: 0 0 20%;
-        display: flex;
-        align-items: center;
+
+    .scoreboard th, td {
+        border: 1px solid rgb(198, 202, 209);
+        border-collapse: collapse;
+    }
+
+    .scoreboard .team-rank {
+        border: none;
+        padding: 2px;
+    }
+
+    .scoreboard .team-name {
         overflow: hidden;
-        padding: 4px;
+        font-weight: bold;
+        border: none;
+        padding: 2px;
     }
 
-        .scoreboard-row .team-block .rank {
-            flex: 0 0 10%;
-            overflow: hidden;
-        }
-
-        .scoreboard-row .team-block .name {
-            flex: 0 0 60%;
-            overflow: hidden;
-        }
-
-        .scoreboard-row .team-block .score {
-            flex: 0 0 auto;
-        }
-
-    /* A service-block contains the individual service containers. */
-    .scoreboard-row .service-block {
-        flex: 0 0 80%;
-        display: flex;
+    .scoreboard .team-score {
+        border: none;
+        padding: 2px;
     }
-
-        .scoreboard-row .service-block .service-container {
-            display: flex;
-            flex-direction: column;
-            flex: 1 1 0; /* flex-basis 0 means everything gets an equal share. */
-        }
 
 .service-OK {
-    background-color: lawngreen;
+    background-color: rgb(125, 252, 116);
 }
 
 .service-INTERNAL_ERROR {
@@ -45,15 +34,15 @@
 }
 
 .service-RECOVERING {
-    background-color: deepskyblue;
+    background-color: rgb(81, 145, 255);
 }
 
 .service-MUMBLE {
-    background-color: orange;
+    background-color: rgb(255, 193, 0);
 }
 
 .service-OFFLINE {
-    background-color: red;
+    background-color: rgb(255, 91, 91);
 }
 
 .service-INACTIVE {
