@@ -354,5 +354,6 @@ MigrationBackup/
 /EnoLandingPageBackend/appsettings.Development.json
 /EnoLandingPageBackend/wwwroot
 /data
+/scoreboard
 docker-compose.yml
 
