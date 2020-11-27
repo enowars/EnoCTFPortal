@@ -1,0 +1,72 @@
+﻿@page "/scoreboard"
+
+@using Microsoft.Extensions.Logging
+@using EnoCore.Scoreboard
+@using EnoCore
+@using EnoLandingPageFrontend.Services
+
+@inject LandingPageScoreboardService ScoreboardService
+@inject ILogger<ScoreboardView> logger
+
+@if (scoreboard != null)
+{
+    <div class="scoreboard-row">
+        <div class="team-block">
+            <div class="rank">#</div>
+            <div class="name">Team</div>
+            <div class="score">Score</div>
+        </div>
+        <div class="service-block">
+
+        </div>
+    </div>
+    for (int i = 0; i < scoreboard.Teams.Length; i++)
+    {
+        var team = scoreboard.Teams[i];
+        <div class="scoreboard-row">
+            <div class="team-block">
+                <div class="rank">@(i+1)</div>
+                <div class="name">logo @team.Name</div>
+                <div class="score">@((int) team.TotalPoints)</div>
+            </div>
+            <div class="service-block">
+                @foreach (var service in scoreboard.Services)
+                {
+                    ScoreboardTeamDetails serviceDetails = team.ServiceDetails.Where(sd => sd.ServiceId == service.ServiceId).Single();
+                    <div class="p-2 service-container service-@(Enum.GetName(serviceDetails.ServiceStatus))">
+                        <div>@((int) serviceDetails.ServiceLevelAgreementPoints)</div>
+                        <div>@((int) serviceDetails.AttackPoints)</div>
+                        <div>@((int) serviceDetails.LostDefensePoints)</div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+}
+
+
+@code {
+    private Scoreboard? scoreboard;
+
+    protected override Task OnInitializedAsync()
+    {
+        ScoreboardService.ScoreboardEvent += HandleScoreboardEvent;
+        if (ScoreboardService.LatestScoreboard != null)
+        {
+            scoreboard = ScoreboardService.LatestScoreboard;
+        }
+        return Task.CompletedTask;
+    }
+
+    public void Dispose()
+    {
+        ScoreboardService.ScoreboardEvent -= HandleScoreboardEvent;
+    }
+
+    private void HandleScoreboardEvent(object sender, Scoreboard newScoreboard)
+    {
+        logger.LogInformation("UpdateScoreboard");
+        scoreboard = newScoreboard;
+        StateHasChanged();
+    }
+}

@@ -1,0 +1,61 @@
+﻿.scoreboard-row {
+    display: flex;
+}
+    /* A team-block contains the rank, name, and total points. */
+    .scoreboard-row .team-block {
+        flex: 0 0 20%;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        padding: 4px;
+    }
+
+        .scoreboard-row .team-block .rank {
+            flex: 0 0 10%;
+            overflow: hidden;
+        }
+
+        .scoreboard-row .team-block .name {
+            flex: 0 0 60%;
+            overflow: hidden;
+        }
+
+        .scoreboard-row .team-block .score {
+            flex: 0 0 auto;
+        }
+
+    /* A service-block contains the individual service containers. */
+    .scoreboard-row .service-block {
+        flex: 0 0 80%;
+        display: flex;
+    }
+
+        .scoreboard-row .service-block .service-container {
+            display: flex;
+            flex-direction: column;
+            flex: 1 1 0; /* flex-basis 0 means everything gets an equal share. */
+        }
+
+.service-OK {
+    background-color: lawngreen;
+}
+
+.service-INTERNAL_ERROR {
+    background-color: white;
+}
+
+.service-RECOVERING {
+    background-color: deepskyblue;
+}
+
+.service-MUMBLE {
+    background-color: orange;
+}
+
+.service-OFFLINE {
+    background-color: red;
+}
+
+.service-INACTIVE {
+    background-color: gray;
+}
