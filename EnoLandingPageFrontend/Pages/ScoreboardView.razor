@@ -41,30 +41,59 @@
         @for (int t = 0; t < currentScoreboard.Teams.Length; t++)
         {
             var team = currentScoreboard.Teams[t];
-            <tr>
+            <tr class="bordered">
                 <td class="team-rank">@(t+1)</td>
                 <td class="team-name">logo @team.Name</td>
                 <td class="team-score">@((int) team.TotalPoints)</td>
                 @for (int s = 0; s < team.ServiceDetails.Length; s++)
                 {
                     var serviceDetails = team.ServiceDetails[s];
+
                     @if (previousScoreboard == null)
                     {
+                        /*
                         <td class="p-2 service-container service-@(Enum.GetName(serviceDetails.ServiceStatus))">
-                            <div>@((int) serviceDetails.ServiceLevelAgreementPoints)</div>
-                            <div>@((int) serviceDetails.AttackPoints)</div>
-                            <div>@((int) serviceDetails.LostDefensePoints)</div>
+                            <table>
+                                <tr>
+                                    <td><i class="scoreboard-icon fas fa-meteor" /></td>
+                                    <td>@((long) serviceDetails.AttackPoints)</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="scoreboard-icon fas fa-shield-alt" /></td>
+                                    <td>@((long) serviceDetails.AttackPoints)</td>
+                                </tr>
+                                <tr>
+                                    <td><i class="scoreboard-icon fas fa-heartbeat" /></td>
+                                    <td>@((long) serviceDetails.AttackPoints)</td>
+                                </tr>
+                            </table>
                         </td>
+
+                */
                     }
                     else
                     {
-                        long slaDiff = (long) (serviceDetails.ServiceLevelAgreementPoints - previousScoreboard.Teams[t].ServiceDetails[s].ServiceLevelAgreementPoints);
-                        long attackDiff = (long) (serviceDetails.AttackPoints - previousScoreboard.Teams[t].ServiceDetails[s].AttackPoints);
-                        long defenseDiff = (long) (serviceDetails.LostDefensePoints - previousScoreboard.Teams[t].ServiceDetails[s].LostDefensePoints);
-                        <td class="p-2 service-container service-@(Enum.GetName(serviceDetails.ServiceStatus))">
-                            <div>@((int) serviceDetails.ServiceLevelAgreementPoints) (@(slaDiff.ToString("+#;-#;±0")))</div>
-                            <div>@((int) serviceDetails.AttackPoints) (@(attackDiff.ToString("+#;-#;±0")))</div>
-                            <div>@((int) serviceDetails.LostDefensePoints) (@(defenseDiff.ToString("+#;-#;±0")))</div>
+                        long slaDiff = (long)(serviceDetails.ServiceLevelAgreementPoints - previousScoreboard.Teams[t].ServiceDetails[s].ServiceLevelAgreementPoints);
+                        long attackDiff = (long)(serviceDetails.AttackPoints - previousScoreboard.Teams[t].ServiceDetails[s].AttackPoints);
+                        long defenseDiff = (long)(serviceDetails.LostDefensePoints - previousScoreboard.Teams[t].ServiceDetails[s].LostDefensePoints);
+                        <td class="p-2 service-@(Enum.GetName(serviceDetails.ServiceStatus))">
+                            <table>
+                                <tr class="rightaligned">
+                                    <td><i class="scoreboard-icon fas fa-meteor" /></td>
+                                    <td class="service-points-absolute">@((long) serviceDetails.AttackPoints)</td>
+                                    <td class="service-points-diff">(@(attackDiff.ToString("+#;-#;±0")))</td>
+                                </tr>
+                                <tr class="rightaligned">
+                                    <td><i class="scoreboard-icon fas fa-shield-alt" /></td>
+                                    <td class="service-points-absolute">@((long) serviceDetails.LostDefensePoints)</td>
+                                    <td class="service-points-diff">(@(defenseDiff.ToString("+#;-#;±0")))</td>
+                                </tr>
+                                <tr class="rightaligned">
+                                    <td><i class="scoreboard-icon fas fa-heartbeat" /></td>
+                                    <td class="service-points-absolute">@((long) serviceDetails.ServiceLevelAgreementPoints) </td>
+                                    <td class="service-points-diff">(@(slaDiff.ToString("+#;-#;±0")))</td>
+                                </tr>
+                            </table>
                         </td>
                     }
                 }

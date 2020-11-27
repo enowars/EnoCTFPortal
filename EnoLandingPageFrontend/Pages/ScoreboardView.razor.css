@@ -3,9 +3,13 @@
     table-layout: fixed;
 }
 
-    .scoreboard th, td {
+    .scoreboard .bordered {
         border: 1px solid rgb(198, 202, 209);
         border-collapse: collapse;
+    }
+
+    .scoreboard .rightaligned {
+        text-align: right;
     }
 
     .scoreboard .team-rank {
@@ -24,6 +28,16 @@
         border: none;
         padding: 2px;
     }
+
+    .scoreboard .service-stats {
+        display: flex;
+        justify-content: space-between;
+    }
+
+.scoreboard-icon {
+    width: 2em;
+    text-align: center;
+}
 
 .service-OK {
     background-color: rgb(125, 252, 116);
@@ -47,4 +61,14 @@
 
 .service-INACTIVE {
     background-color: gray;
+}
+
+.service-points-absolute {
+    width: 10em;
+    text-align: right;
+}
+
+.service-points-diff {
+    width: 6em;
+    text-align: right;
 }
