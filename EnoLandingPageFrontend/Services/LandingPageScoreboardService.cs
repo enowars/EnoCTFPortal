@@ -17,6 +17,7 @@ namespace EnoLandingPageFrontend.Services
         public event OldScoreboardEventHandler? OldScoreboardEvent;
 
         private readonly ILogger<LandingPageScoreboardService> logger;
+        private readonly Dictionary<long, Scoreboard?> Scoreboards = new();
         private readonly HttpClient httpClient;
 
         public LandingPageScoreboardService(ILogger<LandingPageScoreboardService> logger, HttpClient httpClient)
@@ -27,11 +28,19 @@ namespace EnoLandingPageFrontend.Services
             var _ = PollTask();
         }
 
-        public Dictionary<long, Scoreboard?> Scoreboards { get; set; } = new();
-
         public Scoreboard? LatestScoreboard { get; set; }
 
-        public async Task RequestScoreboard(long roundId)
+        public bool TryGetOrRequest(long roundId, out Scoreboard? sb)
+        {
+            if (!this.Scoreboards.TryGetValue(roundId, out sb))
+            {
+                var _ = RequestScoreboard(roundId);
+                return false;
+            }
+            return true;
+        }
+
+        private async Task RequestScoreboard(long roundId)
         {
             try
             {
@@ -57,6 +66,11 @@ namespace EnoLandingPageFrontend.Services
                     var scoreboard = await this.httpClient.GetFromJsonAsync<Scoreboard>("/scoreboard/scoreboard.json", EnoCoreUtil.CamelCaseEnumConverterOptions);
                     if (scoreboard != null && LatestScoreboard?.CurrentRound != scoreboard.CurrentRound)
                     {
+                        if (scoreboard.CurrentRound > 1)
+                        {
+                            TryGetOrRequest(scoreboard.CurrentRound.Value - 1, out var _);
+                        }
+
                         Scoreboards[scoreboard.CurrentRound.Value] = scoreboard;
                         LatestScoreboard = scoreboard;
                         NewScoreboardEvent?.Invoke(scoreboard);

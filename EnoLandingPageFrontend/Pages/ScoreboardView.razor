@@ -25,16 +25,11 @@
             <tr>
                 <td colspan="3" class="p-2">
                     <div>
-                        @if (currentScoreboard.CurrentRound > 1)
-                        {
-                            <a href="/scoreboard/round/@(currentScoreboard.CurrentRound - 1)"><img src="/images/icons-1.1.0/icons/chevron-left.svg" alt="" width="16" height="16" title="Previous" /></a>
-                        }
+                        <a href="/scoreboard/round/0"><i class="fas fa-angle-double-left" /></a>
+                        <a href="/scoreboard/round/@(currentScoreboard.CurrentRound - 1)"><i class="fas fa-angle-left" /></a>
                         Round @currentScoreboard.CurrentRound
-                        @if (currentScoreboard.CurrentRound != ScoreboardService.LatestScoreboard?.CurrentRound)
-                        {
-                            <a href="/scoreboard/round/@(currentScoreboard.CurrentRound + 1)"><img src="/images/icons-1.1.0/icons/chevron-right.svg" alt="" width="16" height="16" title="Next" /></a>
-                            <a href="/scoreboard"><img src="/images/icons-1.1.0/icons/chevron-double-right.svg" alt="" width="16" height="16" title="Latest" /></a>
-                        }
+                        <a href="/scoreboard/round/@(currentScoreboard.CurrentRound + 1)"><i class="fas fa-angle-right" /></a>
+                        <a href="/scoreboard"><i class="fas fa-angle-double-right" /></a>
                     </div>
                 </td>
                 @foreach (var service in currentScoreboard.Services)
@@ -97,14 +92,8 @@
         if (selectedRoundId is long roundId)
         {
             // We are in "show old round" mode.
-            if (!ScoreboardService.Scoreboards.TryGetValue(roundId, out currentScoreboard))
-            {
-                var _ = ScoreboardService.RequestScoreboard(roundId);
-            }
-            if (!ScoreboardService.Scoreboards.TryGetValue(roundId - 1, out previousScoreboard))
-            {
-                var _ = ScoreboardService.RequestScoreboard(roundId - 1);
-            }
+            ScoreboardService.TryGetOrRequest(roundId, out currentScoreboard);
+            ScoreboardService.TryGetOrRequest(roundId - 1, out previousScoreboard);
         }
         else
         {
@@ -112,10 +101,7 @@
             currentScoreboard = ScoreboardService.LatestScoreboard;
             if (currentScoreboard?.CurrentRound > 1)
             {
-                if (!ScoreboardService.Scoreboards.TryGetValue(currentScoreboard.CurrentRound.Value - 1, out previousScoreboard))
-                {
-                    var _ = ScoreboardService.RequestScoreboard(currentScoreboard.CurrentRound.Value - 1);
-                }
+                ScoreboardService.TryGetOrRequest(currentScoreboard.CurrentRound.Value - 1, out previousScoreboard);
             }
         }
     }
@@ -142,6 +128,7 @@
         }
         else
         {
+            // We are in "show current round" mode.
             if (oldScoreboard.CurrentRound == currentScoreboard?.CurrentRound - 1)
             {
                 previousScoreboard = oldScoreboard;
@@ -152,19 +139,21 @@
 
     private void HandleNewScoreboardEvent(Scoreboard newScoreboard)
     {
+        logger.LogInformation("HandleNewScoreboardEvent");
         if (selectedRoundId == null) // We are in "show current round" mode.
         {
             if (newScoreboard.CurrentRound > currentScoreboard?.CurrentRound)
             {
                 // A new round has finished.
-                ScoreboardService.Scoreboards.TryGetValue(newScoreboard.CurrentRound.Value - 1, out previousScoreboard);
+                ScoreboardService.TryGetOrRequest(newScoreboard.CurrentRound.Value - 1, out previousScoreboard);
                 currentScoreboard = newScoreboard;
             }
             else
             {
-                // The CTF was restarted.
+                // The CTF was restarted or we just started
                 previousScoreboard = null;
                 currentScoreboard = newScoreboard;
+                ScoreboardService.TryGetOrRequest(newScoreboard.CurrentRound.Value - 1, out previousScoreboard);
             }
             StateHasChanged();
         }
