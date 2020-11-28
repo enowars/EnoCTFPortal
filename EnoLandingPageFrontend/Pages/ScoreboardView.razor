@@ -43,14 +43,14 @@
         @for (int t = 0; t < currentScoreboard.Teams.Length; t++)
         {
             var team = currentScoreboard.Teams[t];
+            var orderedServices = team.ServiceDetails.OrderBy(s => s.ServiceId).ToArray();
             <tr class="@(team.TeamId == ownId ? "ownrow" : "otherrow")">
                 <td class="team-rank">@(t+1)</td>
                 <td class="team-name">logo @team.Name</td>
                 <td class="team-score">@((int) team.TotalPoints)</td>
                 @for (int s = 0; s < team.ServiceDetails.Length; s++)
                 {
-                    var serviceDetails = team.ServiceDetails[s];
-
+                    var serviceDetails = orderedServices[s];
                     @if (previousScoreboard == null)
                     {
                         <td class="p-2 service-@(Enum.GetName(serviceDetails.ServiceStatus))">
