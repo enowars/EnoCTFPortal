@@ -3,8 +3,14 @@
     table-layout: fixed;
 }
 
+    /* Our fa icons are in <a> tags sometings, but we don't want them blue */
     .scoreboard .fabutton {
         color: inherit;
+    }
+
+    .scoreboard .roundcontrol {
+        display: flex;
+        justify-content: space-between;
     }
 
     .scoreboard .ownrow {
