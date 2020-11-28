@@ -51,25 +51,21 @@
 
                     @if (previousScoreboard == null)
                     {
-                        /*
-                        <td class="p-2 service-container service-@(Enum.GetName(serviceDetails.ServiceStatus))">
-                            <table>
-                                <tr>
-                                    <td><i class="scoreboard-icon fas fa-meteor" /></td>
-                                    <td>@((long) serviceDetails.AttackPoints)</td>
-                                </tr>
-                                <tr>
-                                    <td><i class="scoreboard-icon fas fa-shield-alt" /></td>
-                                    <td>@((long) serviceDetails.AttackPoints)</td>
-                                </tr>
-                                <tr>
-                                    <td><i class="scoreboard-icon fas fa-heartbeat" /></td>
-                                    <td>@((long) serviceDetails.AttackPoints)</td>
-                                </tr>
-                            </table>
-                        </td>
+                        <td class="p-2 service-@(Enum.GetName(serviceDetails.ServiceStatus))">
+                            <div class="service-stats">
+                                <i class="scoreboard-icon fas fa-meteor" />
+                                <div class="scoreboard-text">@((long) serviceDetails.AttackPoints)</div>
+                                <div class="scoreboard-text"></div>
 
-                */
+                                <i class="scoreboard-icon fas fa-shield-alt" />
+                                <div class="scoreboard-text">@((long) serviceDetails.LostDefensePoints)</div>
+                                <div class="scoreboard-text"></div>
+
+                                <i class="scoreboard-icon fas fa-heartbeat" />
+                                <div class="scoreboard-text">@((long) serviceDetails.ServiceLevelAgreementPoints)</div>
+                                <div class="scoreboard-text"></div>
+                            </div>
+                        </td>
                     }
                     else
                     {
@@ -81,17 +77,17 @@
                                 <i class="scoreboard-icon fas fa-meteor" />
                                 <div class="scoreboard-text">@((long) serviceDetails.AttackPoints)</div>
                                 <div class="scoreboard-text">(@(attackDiff.ToString("+#;-#;+0")))</div>
-                                
+
 
                                 <i class="scoreboard-icon fas fa-shield-alt" />
                                 <div class="scoreboard-text">@((long) serviceDetails.LostDefensePoints)</div>
                                 <div class="scoreboard-text">(@(defenseDiff.ToString("+#;-#;-0")))</div>
-                                
+
 
                                 <i class="scoreboard-icon fas fa-heartbeat" />
                                 <div class="scoreboard-text">@((long) serviceDetails.ServiceLevelAgreementPoints)</div>
                                 <div class="scoreboard-text">(@(slaDiff.ToString("+#;-#;+0")))</div>
-                                
+
                             </div>
                         </td>
                     }
