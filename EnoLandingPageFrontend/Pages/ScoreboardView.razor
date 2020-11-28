@@ -15,109 +15,129 @@
 {
     var orderedTeams = currentScoreboard.Teams.OrderByDescending(t => t.TotalPoints).ToArray();
     var orderedServices = currentScoreboard.Services.OrderBy(t => t.ServiceId).ToArray();
-<table class="scoreboard">
-    <colgroup>
-        <col class="team-rank" style="width:40px;" />
-        <col class="team-name" style="width:15%;" />
-        <col class="team-score" style="width:80px;" />
-        @foreach (var service in orderedServices)
-        {
-            <col style="width: 1fr;" />
-        }
-    </colgroup>
-    <thead>
-        <tr>
-            <td colspan="3">
-                <div class="roundcontrol">
-                    <div>
-                        <a class="fabutton" href="/scoreboard/round/0"><i class="p-2 fas fa-angle-double-left" /></a>
-                        @if (currentScoreboard.CurrentRound > 0)
-                        {
-                            <a class="fabutton" href="/scoreboard/round/@(currentScoreboard.CurrentRound - 1)"><i class="p-2 fas fa-angle-left" /></a>
-                        }
-                        else
-                        {
-                            <i class="p-2 fas fa-angle-left" />
-                        }
-                    </div>
-                    <div class="p-1">Round @currentScoreboard.CurrentRound</div>
-                    <div>
-                        @if (currentScoreboard.CurrentRound < ScoreboardService.LatestScoreboard?.CurrentRound)
-                        {
-                            <a class="fabutton" href="/scoreboard/round/@(currentScoreboard.CurrentRound + 1)"><i class="p-2 fas fa-angle-right" /></a>
-                        }
-                        else
-                        {
-                            <i class="p-2 fas fa-angle-right" />
-                        }
-                        <a class="fabutton" href="/scoreboard"><i class="p-2 fas fa-angle-double-right" /></a>
-                    </div>
-                </div>
-            </td>
+    <table class="scoreboard">
+        <colgroup>
+            <col class="team-rank" style="width:40px;" />
+            <col class="team-name" style="width:15%;" />
+            <col class="team-score" style="width:80px;" />
             @foreach (var service in orderedServices)
             {
-                <td>@service.ServiceName</td>
+                <col style="width: 1fr;" />
             }
-        </tr>
-    </thead>
-    @for (int t = 0; t < currentScoreboard.Teams.Length; t++)
-    {
-        var team = orderedTeams[t];
-        var orderedTeamServiceDetails = team.ServiceDetails.OrderBy(sd => sd.ServiceId).ToArray();
-        <tr class="@(team.TeamId == ownId ? "ownrow" : "otherrow")">
-            <td class="team-rank">@(t+1)</td>
-            <td class="team-name">logo @team.Name</td>
-            <td class="team-score">@((int) team.TotalPoints)</td>
-            @for (int s = 0; s < team.ServiceDetails.Length; s++)
+        </colgroup>
+        <thead>
+            <tr>
+                <td colspan="3">
+                    <div class="roundcontrol">
+                        <div>
+                            <a class="fabutton" href="/scoreboard/round/0"><i class="p-2 fas fa-angle-double-left" /></a>
+                            @if (currentScoreboard.CurrentRound > 0)
+                            {
+                                <a class="fabutton" href="/scoreboard/round/@(currentScoreboard.CurrentRound - 1)"><i class="p-2 fas fa-angle-left" /></a>
+                            }
+                            else
+                            {
+                                <i class="p-2 fas fa-angle-left" />
+                            }
+                        </div>
+                        <div class="p-1">Round @currentScoreboard.CurrentRound</div>
+                        <div>
+                            @if (currentScoreboard.CurrentRound < ScoreboardService.LatestScoreboard?.CurrentRound)
+                            {
+                                <a class="fabutton" href="/scoreboard/round/@(currentScoreboard.CurrentRound + 1)"><i class="p-2 fas fa-angle-right" /></a>
+                            }
+                            else
+                            {
+                                <i class="p-2 fas fa-angle-right" />
+                            }
+                            <a class="fabutton" href="/scoreboard"><i class="p-2 fas fa-angle-double-right" /></a>
+                        </div>
+                    </div>
+                </td>
+                @foreach (var service in orderedServices)
+                {
+                    <td>@service.ServiceName</td>
+                }
+            </tr>
+        </thead>
+        <tr>
+            <td colspan="3" />
+            @foreach (var service in orderedServices)
             {
-                var serviceDetails = orderedTeamServiceDetails[s];
-                @if (previousScoreboard == null)
-                {
-                    <td class="p-2 service-@(Enum.GetName(serviceDetails.ServiceStatus))">
-                        <div class="service-stats">
-                            <i class="scoreboard-icon fas fa-meteor" />
-                            <div class="scoreboard-text">@((long) serviceDetails.AttackPoints)</div>
-                            <div class="scoreboard-text"></div>
-
-                            <i class="scoreboard-icon fas fa-shield-alt" />
-                            <div class="scoreboard-text">@((long) serviceDetails.LostDefensePoints)</div>
-                            <div class="scoreboard-text"></div>
-
-                            <i class="scoreboard-icon fas fa-heartbeat" />
-                            <div class="scoreboard-text">@((long) serviceDetails.ServiceLevelAgreementPoints)</div>
-                            <div class="scoreboard-text"></div>
-                        </div>
-                    </td>
-                }
-                else
-                {
-                    var orderedOldServices = previousScoreboard.Teams.Where(t => t.TeamId == team.TeamId).Single().ServiceDetails.OrderBy(s => s.ServiceId).ToArray();
-                    long slaDiff = (long)(serviceDetails.ServiceLevelAgreementPoints - orderedOldServices[s].ServiceLevelAgreementPoints);
-                    long attackDiff = (long)(serviceDetails.AttackPoints - orderedOldServices[s].AttackPoints);
-                    long defenseDiff = (long)(serviceDetails.LostDefensePoints - orderedOldServices[s].LostDefensePoints);
-                    <td class="p-2 service-@(Enum.GetName(serviceDetails.ServiceStatus))">
-                        <div class="service-stats">
-                            <i class="scoreboard-icon fas fa-meteor" />
-                            <div class="scoreboard-text">@((long) serviceDetails.AttackPoints)</div>
-                            <div class="scoreboard-text">(@(attackDiff.ToString("+#;-#;+0")))</div>
-
-
-                            <i class="scoreboard-icon fas fa-shield-alt" />
-                            <div class="scoreboard-text">@((long) serviceDetails.LostDefensePoints)</div>
-                            <div class="scoreboard-text">(@(defenseDiff.ToString("+#;-#;-0")))</div>
-
-
-                            <i class="scoreboard-icon fas fa-heartbeat" />
-                            <div class="scoreboard-text">@((long) serviceDetails.ServiceLevelAgreementPoints)</div>
-                            <div class="scoreboard-text">(@(slaDiff.ToString("+#;-#;+0")))</div>
-
-                        </div>
-                    </td>
-                }
+                <td class="p-2 firstblood-list-cell">
+                    @for (int i = 0; i < service.MaxStores; i++)
+                    {
+                        ScoreboardFirstBlood? fb = service.FirstBloods.Where(fb => fb.StoreIndex == i).SingleOrDefault();
+                        if (fb != null)
+                        {
+                            <div class="firstblood-list"><i class="scoreboard-icon blood fas fa-tint" />@orderedTeams.Where(t => t.TeamId == fb.TeamId).Single().Name</div>
+                        }
+                        else
+                        {
+                            <div class="firstblood-list"><i class="scoreboard-icon fas fa-tint" />Flagstore #@(i+1) unexploited</div>
+                        }
+                    }
+                </td>
             }
         </tr>
-    }
-</table>
+        @for (int t = 0; t < currentScoreboard.Teams.Length; t++)
+        {
+            var team = orderedTeams[t];
+            var orderedTeamServiceDetails = team.ServiceDetails.OrderBy(sd => sd.ServiceId).ToArray();
+            <tr class="@(team.TeamId == ownId ? "ownrow" : "otherrow")">
+                <td class="team-rank">@(t+1)</td>
+                <td class="team-name">logo @team.Name</td>
+                <td class="team-score">@((int) team.TotalPoints)</td>
+                @for (int s = 0; s < team.ServiceDetails.Length; s++)
+                {
+                    var serviceDetails = orderedTeamServiceDetails[s];
+                    @if (previousScoreboard == null)
+                    {
+                        <td class="p-2 service-@(Enum.GetName(serviceDetails.ServiceStatus))">
+                            <div class="service-stats">
+                                <i class="scoreboard-icon fas fa-meteor" />
+                                <div class="scoreboard-text">@((long) serviceDetails.AttackPoints)</div>
+                                <div class="scoreboard-text"></div>
+
+                                <i class="scoreboard-icon fas fa-shield-alt" />
+                                <div class="scoreboard-text">@((long) serviceDetails.LostDefensePoints)</div>
+                                <div class="scoreboard-text"></div>
+
+                                <i class="scoreboard-icon fas fa-heartbeat" />
+                                <div class="scoreboard-text">@((long) serviceDetails.ServiceLevelAgreementPoints)</div>
+                                <div class="scoreboard-text"></div>
+                            </div>
+                        </td>
+                    }
+                    else
+                    {
+                        var orderedOldServices = previousScoreboard.Teams.Where(t => t.TeamId == team.TeamId).Single().ServiceDetails.OrderBy(s => s.ServiceId).ToArray();
+                        long slaDiff = (long)(serviceDetails.ServiceLevelAgreementPoints - orderedOldServices[s].ServiceLevelAgreementPoints);
+                        long attackDiff = (long)(serviceDetails.AttackPoints - orderedOldServices[s].AttackPoints);
+                        long defenseDiff = (long)(serviceDetails.LostDefensePoints - orderedOldServices[s].LostDefensePoints);
+                        <td class="p-2 service-@(Enum.GetName(serviceDetails.ServiceStatus))">
+                            <div class="service-stats">
+                                <i class="scoreboard-icon fas fa-meteor" />
+                                <div class="scoreboard-text">@((long) serviceDetails.AttackPoints)</div>
+                                <div class="scoreboard-text">(@(attackDiff.ToString("+#;-#;+0")))</div>
+
+
+                                <i class="scoreboard-icon fas fa-shield-alt" />
+                                <div class="scoreboard-text">@((long) serviceDetails.LostDefensePoints)</div>
+                                <div class="scoreboard-text">(@(defenseDiff.ToString("+#;-#;-0")))</div>
+
+
+                                <i class="scoreboard-icon fas fa-heartbeat" />
+                                <div class="scoreboard-text">@((long) serviceDetails.ServiceLevelAgreementPoints)</div>
+                                <div class="scoreboard-text">(@(slaDiff.ToString("+#;-#;+0")))</div>
+
+                            </div>
+                        </td>
+                    }
+                }
+            </tr>
+        }
+    </table>
 }
 
 

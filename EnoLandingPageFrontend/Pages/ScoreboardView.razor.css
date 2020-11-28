@@ -3,6 +3,23 @@
     table-layout: fixed;
 }
 
+    /* Gracefully borrowed from bambiscoreboard. */
+    .scoreboard .blood {
+        color: #b40000;
+    }
+
+    .scoreboard .firstblood-list-cell {
+        vertical-align: top;
+    }
+
+    /* The droplet and text is separated by 5px, and the text does not wrap over overflow. */
+    .scoreboard .firstblood-list {
+        display: flex;
+        overflow: hidden;
+        gap: 5px;
+        white-space: nowrap;
+    }
+
     /* Our fa icons are in <a> tags sometings, but we don't want them blue */
     .scoreboard .fabutton {
         color: inherit;
@@ -51,13 +68,13 @@
         grid-template-columns: min-content min-content min-content;
     }
 
-        .scoreboard .service-stats .scoreboard-icon {
-            line-height: inherit;
-        }
+    .scoreboard .scoreboard-icon {
+        line-height: inherit;
+    }
 
-        .scoreboard .service-stats .scoreboard-text {
-            text-align: right
-        }
+    .scoreboard .scoreboard-text {
+        text-align: right
+    }
 
 .service-OK {
     background-color: rgb(125, 252, 116);
