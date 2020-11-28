@@ -27,11 +27,25 @@
             <tr>
                 <td colspan="3" class="p-2">
                     <div>
-                        <a href="/scoreboard/round/0"><i class="fas fa-angle-double-left" /></a>
-                        <a href="/scoreboard/round/@(currentScoreboard.CurrentRound - 1)"><i class="fas fa-angle-left" /></a>
+                        <a class="fabutton" href="/scoreboard/round/0"><i class="fas fa-angle-double-left" /></a>
+                        @if (currentScoreboard.CurrentRound > 0)
+                        {
+                            <a class="fabutton" href="/scoreboard/round/@(currentScoreboard.CurrentRound - 1)"><i class="fas fa-angle-left" /></a>
+                        }
+                        else
+                        {
+                            <i class="fas fa-angle-left" />
+                        }
                         Round @currentScoreboard.CurrentRound
-                        <a href="/scoreboard/round/@(currentScoreboard.CurrentRound + 1)"><i class="fas fa-angle-right" /></a>
-                        <a href="/scoreboard"><i class="fas fa-angle-double-right" /></a>
+                        @if (currentScoreboard.CurrentRound < ScoreboardService.LatestScoreboard?.CurrentRound)
+                        {
+                            <a class="fabutton" href="/scoreboard/round/@(currentScoreboard.CurrentRound + 1)"><i class="fas fa-angle-right" /></a>
+                        }
+                        else
+                        {
+                            <i class="fas fa-angle-right" />
+                        }
+                        <a class="fabutton" href="/scoreboard"><i class="fas fa-angle-double-right" /></a>
                     </div>
                 </td>
                 @foreach (var service in currentScoreboard.Services)

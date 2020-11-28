@@ -3,6 +3,10 @@
     table-layout: fixed;
 }
 
+    .scoreboard .fabutton {
+        color: inherit;
+    }
+
     .scoreboard .ownrow {
         border: 1px solid rgb(198, 202, 209);
         border-collapse: collapse;
