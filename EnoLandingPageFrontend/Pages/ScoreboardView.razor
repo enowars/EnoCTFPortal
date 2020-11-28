@@ -89,9 +89,10 @@
                     }
                     else
                     {
-                        long slaDiff = (long)(serviceDetails.ServiceLevelAgreementPoints - previousScoreboard.Teams[t].ServiceDetails[s].ServiceLevelAgreementPoints);
-                        long attackDiff = (long)(serviceDetails.AttackPoints - previousScoreboard.Teams[t].ServiceDetails[s].AttackPoints);
-                        long defenseDiff = (long)(serviceDetails.LostDefensePoints - previousScoreboard.Teams[t].ServiceDetails[s].LostDefensePoints);
+                        var orderedOldServices = previousScoreboard.Teams[t].ServiceDetails.OrderBy(s => s.ServiceId).ToArray();
+                        long slaDiff = (long)(serviceDetails.ServiceLevelAgreementPoints - orderedOldServices[s].ServiceLevelAgreementPoints);
+                        long attackDiff = (long)(serviceDetails.AttackPoints - orderedOldServices[s].AttackPoints);
+                        long defenseDiff = (long)(serviceDetails.LostDefensePoints - orderedOldServices[s].LostDefensePoints);
                         <td class="p-2 service-@(Enum.GetName(serviceDetails.ServiceStatus))">
                             <div class="service-stats">
                                 <i class="scoreboard-icon fas fa-meteor" />
