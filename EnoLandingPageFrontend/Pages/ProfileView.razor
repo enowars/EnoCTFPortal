@@ -4,8 +4,8 @@
 @using EnoLandingPageCore.Messages
 @using EnoLandingPageCore.Database
 
-@inject EnoLandingPageService DataService
-@inject NavigationManager NavManager
+@inject LandingPageDataApiService dataService
+@inject NavigationManager navManager
 
 <div class="container p-3">
     @if (teamInformation != null && ctfInfo != null)
@@ -94,19 +94,19 @@
         var authenticationState = await AuthenticationStateTask;
         if (authenticationState?.User?.Identity is null || !authenticationState.User.Identity.IsAuthenticated)
         {
-            var returnUrl = NavManager.ToBaseRelativePath(NavManager.Uri);
-            NavManager.NavigateTo($"login?returnUrl=/{NavManager.ToBaseRelativePath(NavManager.Uri)}", false);
+            var returnUrl = navManager.ToBaseRelativePath(navManager.Uri);
+            navManager.NavigateTo($"login?returnUrl=/{navManager.ToBaseRelativePath(navManager.Uri)}", false);
             return; // yep this is necessary.
         }
 
-        teamInformation = await DataService.GetTeamInfo();
-        ctfInfo = await DataService.GetCtfInfo();
+        teamInformation = await dataService.GetTeamInfo();
+        ctfInfo = await dataService.GetCtfInfo();
     }
 
     protected async Task CheckIn(MouseEventArgs e)
     {
-        await DataService.CheckIn();
-        teamInformation = await DataService.GetTeamInfo();
+        await dataService.CheckIn();
+        teamInformation = await dataService.GetTeamInfo();
     }
 
     protected async Task StartVm(MouseEventArgs e)
@@ -114,13 +114,13 @@
         vmInteractionFeedback = null;
         try
         {
-            await DataService.StartVm();
+            await dataService.StartVm();
         }
         catch (Exception ex)
         {
             vmInteractionFeedback = ex.GetType().ToString();
         }
 
-        teamInformation = await DataService.GetTeamInfo();
+        teamInformation = await dataService.GetTeamInfo();
     }
 }

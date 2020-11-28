@@ -5,8 +5,10 @@
 @using EnoCore.Scoreboard
 @using EnoCore
 @using EnoLandingPageFrontend.Services
+@using System.Security.Claims
 
-@inject LandingPageScoreboardService ScoreboardService
+@inject LandingPageScoreboardApiService ScoreboardService
+@inject AuthenticationStateProvider authenticationStateProvider
 @inject ILogger<ScoreboardView> logger
 
 @if (currentScoreboard != null)
@@ -41,7 +43,7 @@
         @for (int t = 0; t < currentScoreboard.Teams.Length; t++)
         {
             var team = currentScoreboard.Teams[t];
-            <tr class="bordered">
+            <tr class="@(team.TeamId == ownId ? "ownrow" : "otherrow")">
                 <td class="team-rank">@(t+1)</td>
                 <td class="team-name">logo @team.Name</td>
                 <td class="team-score">@((int) team.TotalPoints)</td>
@@ -103,11 +105,13 @@
     public long? selectedRoundId { get; set; }
     private Scoreboard? previousScoreboard;
     private Scoreboard? currentScoreboard;
+    private long? ownId;
 
     protected override Task OnInitializedAsync()
     {
         ScoreboardService.NewScoreboardEvent += HandleNewScoreboardEvent;
         ScoreboardService.OldScoreboardEvent += HandleOldScoreboardEvent;
+        var t = HandleAuthProvider();
         return Task.CompletedTask;
     }
 
@@ -143,6 +147,16 @@
     {
         ScoreboardService.NewScoreboardEvent -= HandleNewScoreboardEvent;
         ScoreboardService.OldScoreboardEvent -= HandleOldScoreboardEvent;
+    }
+
+    private async Task HandleAuthProvider()
+    {
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+        var ni = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (long.TryParse(ni, out var teamId))
+        {
+            ownId = teamId;
+        }
     }
 
     private void HandleOldScoreboardEvent(Scoreboard oldScoreboard)

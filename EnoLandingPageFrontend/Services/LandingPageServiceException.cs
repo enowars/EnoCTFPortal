@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace EnoLandingPageFrontend.Services
 {
-    public class EnoLandingPageServiceException : Exception
+    public class LandingPageServiceException : Exception
     {
-        public EnoLandingPageServiceException(string message, Exception innerException)
+        public LandingPageServiceException(string message, Exception innerException)
             : base(message, innerException)
         {
         }

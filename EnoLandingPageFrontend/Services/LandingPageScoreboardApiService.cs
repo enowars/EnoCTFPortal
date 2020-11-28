@@ -9,18 +9,18 @@ using System.Threading.Tasks;
 
 namespace EnoLandingPageFrontend.Services
 {
-    public class LandingPageScoreboardService
+    public class LandingPageScoreboardApiService
     {
         public delegate void NewScoreboardEventHandler(Scoreboard sb);
         public delegate void OldScoreboardEventHandler(Scoreboard oldScoreboard);
         public event NewScoreboardEventHandler? NewScoreboardEvent;
         public event OldScoreboardEventHandler? OldScoreboardEvent;
 
-        private readonly ILogger<LandingPageScoreboardService> logger;
+        private readonly ILogger<LandingPageScoreboardApiService> logger;
         private readonly Dictionary<long, Scoreboard?> Scoreboards = new();
         private readonly HttpClient httpClient;
 
-        public LandingPageScoreboardService(ILogger<LandingPageScoreboardService> logger, HttpClient httpClient)
+        public LandingPageScoreboardApiService(ILogger<LandingPageScoreboardApiService> logger, HttpClient httpClient)
         {
             this.logger = logger;
             this.httpClient = httpClient;

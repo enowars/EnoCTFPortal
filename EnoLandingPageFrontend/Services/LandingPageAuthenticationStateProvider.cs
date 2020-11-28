@@ -11,10 +11,10 @@ namespace EnoLandingPageFrontend.Services
 {
     public class LandingPageAuthenticationStateProvider : AuthenticationStateProvider
     {
-        private readonly ILogger<EnoLandingPageService> logger;
-        private readonly EnoLandingPageService lpService;
+        private readonly ILogger<LandingPageDataApiService> logger;
+        private readonly LandingPageDataApiService lpService;
 
-        public LandingPageAuthenticationStateProvider(ILogger<EnoLandingPageService> logger, EnoLandingPageService lpService)
+        public LandingPageAuthenticationStateProvider(ILogger<LandingPageDataApiService> logger, LandingPageDataApiService lpService)
         {
             this.logger = logger;
             this.lpService = lpService;
@@ -28,7 +28,7 @@ namespace EnoLandingPageFrontend.Services
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.NameIdentifier, $"{teamInfo.Id}"),
-                    new Claim(ClaimTypes.Name, teamInfo.TeamName + "asdf"),
+                    new Claim(ClaimTypes.Name, teamInfo.TeamName),
                 };
                 var claimsIdentity = new ClaimsIdentity(claims, "Server Auth");
                 this.logger.LogInformation($"{nameof(LandingPageAuthenticationStateProvider)} returning authorized ({teamInfo.Id})");

@@ -12,13 +12,13 @@ using System.Threading.Tasks;
 
 namespace EnoLandingPageFrontend.Services
 {
-    public class EnoLandingPageService
+    public class LandingPageDataApiService
     {
-        private readonly ILogger<EnoLandingPageService> logger;
+        private readonly ILogger<LandingPageDataApiService> logger;
         private readonly HttpClient httpClient;
         private readonly JsonSerializerOptions jsonOptions;
 
-        public EnoLandingPageService(ILogger<EnoLandingPageService> logger, HttpClient httpClient)
+        public LandingPageDataApiService(ILogger<LandingPageDataApiService> logger, HttpClient httpClient)
         {
             this.logger = logger;
             this.httpClient = httpClient;
@@ -59,7 +59,7 @@ namespace EnoLandingPageFrontend.Services
             }
             catch (Exception e)
             {
-                throw new EnoLandingPageServiceException("StartVm request failed.", e);
+                throw new LandingPageServiceException("StartVm request failed.", e);
             }
             if (!response.IsSuccessStatusCode)
             {

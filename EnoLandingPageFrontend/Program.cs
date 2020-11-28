@@ -24,8 +24,8 @@ namespace EnoLandingPageFrontend
             {
                 BaseAddress = new Uri(builder.HostEnvironment.BaseAddress),
             });
-            builder.Services.AddSingleton(typeof(EnoLandingPageService));
-            builder.Services.AddSingleton(typeof(LandingPageScoreboardService));
+            builder.Services.AddSingleton(typeof(LandingPageDataApiService));
+            builder.Services.AddSingleton(typeof(LandingPageScoreboardApiService));
             builder.Services.AddAuthorizationCore();
             builder.Services.AddScoped<AuthenticationStateProvider, LandingPageAuthenticationStateProvider>();
 
