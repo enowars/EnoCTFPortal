@@ -30,17 +30,17 @@ namespace EnoLandingPageFrontend.Services
 
         public Scoreboard? LatestScoreboard { get; set; }
 
-        public bool TryGetOrRequest(long roundId, out Scoreboard? sb)
+        public bool TryGetOrRequest(long roundId, out Scoreboard? sb, bool ignoreFails = false)
         {
             if (!this.Scoreboards.TryGetValue(roundId, out sb))
             {
-                var _ = RequestScoreboard(roundId);
+                var _ = RequestScoreboard(roundId, ignoreFails);
                 return false;
             }
             return true;
         }
 
-        private async Task RequestScoreboard(long roundId)
+        private async Task RequestScoreboard(long roundId, bool ignoreFails)
         {
             try
             {
@@ -53,7 +53,10 @@ namespace EnoLandingPageFrontend.Services
             }
             catch (Exception e)
             {
-                logger.LogError($"{e.ToFancyString()}");
+                if (!ignoreFails)
+                {
+                    logger.LogError($"{e.ToFancyString()}");
+                }
             }
         }
 

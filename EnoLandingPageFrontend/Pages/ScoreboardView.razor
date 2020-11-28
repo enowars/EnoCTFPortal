@@ -13,9 +13,9 @@
 {
     <table class="scoreboard">
         <colgroup>
-            <col class="team-rank" style="width:50px;" />
+            <col class="team-rank" style="width:40px;" />
             <col class="team-name" style="width:15%;" />
-            <col class="team-score" style="width:100px;" />
+            <col class="team-score" style="width:80px;" />
             @foreach (var service in currentScoreboard.Services)
             {
                 <col style="width: 1fr;" />
@@ -77,23 +77,22 @@
                         long attackDiff = (long)(serviceDetails.AttackPoints - previousScoreboard.Teams[t].ServiceDetails[s].AttackPoints);
                         long defenseDiff = (long)(serviceDetails.LostDefensePoints - previousScoreboard.Teams[t].ServiceDetails[s].LostDefensePoints);
                         <td class="p-2 service-@(Enum.GetName(serviceDetails.ServiceStatus))">
-                            <table>
-                                <tr class="rightaligned">
-                                    <td><i class="scoreboard-icon fas fa-meteor" /></td>
-                                    <td class="service-points-absolute">@((long) serviceDetails.AttackPoints)</td>
-                                    <td class="service-points-diff">(@(attackDiff.ToString("+#;-#;±0")))</td>
-                                </tr>
-                                <tr class="rightaligned">
-                                    <td><i class="scoreboard-icon fas fa-shield-alt" /></td>
-                                    <td class="service-points-absolute">@((long) serviceDetails.LostDefensePoints)</td>
-                                    <td class="service-points-diff">(@(defenseDiff.ToString("+#;-#;±0")))</td>
-                                </tr>
-                                <tr class="rightaligned">
-                                    <td><i class="scoreboard-icon fas fa-heartbeat" /></td>
-                                    <td class="service-points-absolute">@((long) serviceDetails.ServiceLevelAgreementPoints) </td>
-                                    <td class="service-points-diff">(@(slaDiff.ToString("+#;-#;±0")))</td>
-                                </tr>
-                            </table>
+                            <div class="service-stats">
+                                <i class="scoreboard-icon fas fa-meteor" />
+                                <div class="scoreboard-text">@((long) serviceDetails.AttackPoints)</div>
+                                <div class="scoreboard-text">(@(attackDiff.ToString("+#;-#;+0")))</div>
+                                
+
+                                <i class="scoreboard-icon fas fa-shield-alt" />
+                                <div class="scoreboard-text">@((long) serviceDetails.LostDefensePoints)</div>
+                                <div class="scoreboard-text">(@(defenseDiff.ToString("+#;-#;-0")))</div>
+                                
+
+                                <i class="scoreboard-icon fas fa-heartbeat" />
+                                <div class="scoreboard-text">@((long) serviceDetails.ServiceLevelAgreementPoints)</div>
+                                <div class="scoreboard-text">(@(slaDiff.ToString("+#;-#;+0")))</div>
+                                
+                            </div>
                         </td>
                     }
                 }
@@ -122,7 +121,16 @@
         {
             // We are in "show old round" mode.
             ScoreboardService.TryGetOrRequest(roundId, out currentScoreboard);
-            ScoreboardService.TryGetOrRequest(roundId - 1, out previousScoreboard);
+            if (roundId > 0)
+            {
+                ScoreboardService.TryGetOrRequest(roundId - 1, out previousScoreboard);
+            }
+
+            // Also request the neighbouring rounds
+            ScoreboardService.TryGetOrRequest(roundId - 2, out _, true);
+            ScoreboardService.TryGetOrRequest(roundId + 1, out _, true);
+            ScoreboardService.TryGetOrRequest(roundId - 3, out _, true);
+            ScoreboardService.TryGetOrRequest(roundId + 2, out _, true);
         }
         else
         {

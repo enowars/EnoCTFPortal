@@ -14,7 +14,6 @@
 
     .scoreboard .team-rank {
         border: none;
-        padding: 2px;
     }
 
     .scoreboard .team-name {
@@ -30,14 +29,19 @@
     }
 
     .scoreboard .service-stats {
-        display: flex;
-        justify-content: space-between;
+        display: grid;
+        grid-column-gap: 5px;
+        /* grid-template-columns: 1em 4em 4em auto;*/
+        grid-template-columns: min-content min-content min-content;
     }
 
-.scoreboard-icon {
-    width: 2em;
-    text-align: center;
-}
+        .scoreboard .service-stats .scoreboard-icon {
+            line-height: inherit;
+        }
+
+        .scoreboard .service-stats .scoreboard-text {
+            text-align: right
+        }
 
 .service-OK {
     background-color: rgb(125, 252, 116);
@@ -61,14 +65,4 @@
 
 .service-INACTIVE {
     background-color: gray;
-}
-
-.service-points-absolute {
-    width: 10em;
-    text-align: right;
-}
-
-.service-points-diff {
-    width: 6em;
-    text-align: right;
 }
