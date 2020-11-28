@@ -20,6 +20,7 @@
 
     .scoreboard .team-rank {
         border: none;
+        text-align: center;
     }
 
     .scoreboard .team-name {
