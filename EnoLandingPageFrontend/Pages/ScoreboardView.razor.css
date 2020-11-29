@@ -8,6 +8,7 @@
         color: #b40000;
     }
 
+    /* Flag stores should start at the top of their container */
     .scoreboard .firstblood-list-cell {
         vertical-align: top;
     }
@@ -20,25 +21,45 @@
         white-space: nowrap;
     }
 
-    /* Our fa icons are in <a> tags sometings, but we don't want them blue */
+    /* Our fa icons may be in <a> tags, but we don't want them blue */
     .scoreboard .fabutton {
         color: inherit;
     }
 
+    /* The backward buttons should stick to the left, the round to the middle, and the forward buttons to the right */
     .scoreboard .roundcontrol {
         display: flex;
         justify-content: space-between;
     }
 
+    /* Highlight your own team's row */
     .scoreboard .ownrow {
         border: 1px solid rgb(198, 202, 209);
         border-collapse: collapse;
         background-color: dodgerblue;
     }
 
+    /* Boring borders for the others */
     .scoreboard .otherrow {
         border: 1px solid rgb(198, 202, 209);
         border-collapse: collapse;
+    }
+
+    /* The error message is visible if one hovers over the parent service-block */
+    .scoreboard .service-block:hover .errormessage {
+        visibility: visible;
+    }
+
+    .scoreboard .errormessage {
+        transform: translateX(-50%) translateY(calc(-75% - .25em));
+        border-radius: .5em;
+        position: absolute;
+        width: 20em;
+        background-color: black;
+        text-align: center;
+        visibility: hidden;
+        color: #fff;
+        z-index: 1;
     }
 
     .scoreboard .rightaligned {

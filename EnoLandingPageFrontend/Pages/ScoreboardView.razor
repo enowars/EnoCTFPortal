@@ -94,6 +94,14 @@
                     @if (previousScoreboard == null)
                     {
                         <td class="p-2 service-@(Enum.GetName(serviceDetails.ServiceStatus))">
+                            @if (serviceDetails.Message != null)
+                            {
+                                <div class="errormessage">@serviceDetails.Message</div>
+                            }
+                            else
+                            {
+                                <div class="errormessage">testmessage</div>
+                            }
                             <div class="service-stats">
                                 <i class="scoreboard-icon fas fa-meteor" />
                                 <div class="scoreboard-text">@((long) serviceDetails.AttackPoints)</div>
@@ -115,7 +123,11 @@
                         long slaDiff = (long)(serviceDetails.ServiceLevelAgreementPoints - orderedOldServices[s].ServiceLevelAgreementPoints);
                         long attackDiff = (long)(serviceDetails.AttackPoints - orderedOldServices[s].AttackPoints);
                         long defenseDiff = (long)(serviceDetails.LostDefensePoints - orderedOldServices[s].LostDefensePoints);
-                        <td class="p-2 service-@(Enum.GetName(serviceDetails.ServiceStatus))">
+                        <td class="p-2 service-block service-@(Enum.GetName(serviceDetails.ServiceStatus))">
+                            @if (serviceDetails.Message != null)
+                            {
+                                <div class="errormessage p-1">@serviceDetails.Message</div>
+                            }
                             <div class="service-stats">
                                 <i class="scoreboard-icon fas fa-meteor" />
                                 <div class="scoreboard-text">@((long) serviceDetails.AttackPoints)</div>
@@ -130,7 +142,6 @@
                                 <i class="scoreboard-icon fas fa-heartbeat" />
                                 <div class="scoreboard-text">@((long) serviceDetails.ServiceLevelAgreementPoints)</div>
                                 <div class="scoreboard-text">(@(slaDiff.ToString("+#;-#;+0")))</div>
-
                             </div>
                         </td>
                     }
