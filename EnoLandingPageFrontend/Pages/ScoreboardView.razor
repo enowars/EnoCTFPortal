@@ -84,14 +84,24 @@
         {
             var team = orderedTeams[t];
             var orderedTeamServiceDetails = team.ServiceDetails.OrderBy(sd => sd.ServiceId).ToArray();
+            var previousRoundTeam = previousScoreboard?.Teams.Where(t => t.TeamId == team.TeamId).Single();
             <tr class="@(team.TeamId == ownId ? "ownrow" : "otherrow")">
                 <td class="team-rank">@(t+1)</td>
                 <td class="team-name">logo @team.Name</td>
-                <td class="team-score">@((int) team.TotalPoints)</td>
+                @if (previousRoundTeam != null)
+                {
+                    long totalDiff = (long)(team.TotalPoints - previousRoundTeam.TotalPoints);
+                    <td class="team-score">@((int) team.TotalPoints) (@(totalDiff.ToString("+#;-#;+0")))</td>
+                }
+                else
+                {
+                    <td class="team-score">@((int) team.TotalPoints)</td>
+                }
+
                 @for (int s = 0; s < team.ServiceDetails.Length; s++)
                 {
                     var serviceDetails = orderedTeamServiceDetails[s];
-                    @if (previousScoreboard == null)
+                    @if (previousRoundTeam == null)
                     {
                         <td class="p-2 service-@(Enum.GetName(serviceDetails.ServiceStatus))">
                             @if (serviceDetails.Message != null)
@@ -119,7 +129,7 @@
                     }
                     else
                     {
-                        var orderedOldServices = previousScoreboard.Teams.Where(t => t.TeamId == team.TeamId).Single().ServiceDetails.OrderBy(s => s.ServiceId).ToArray();
+                        var orderedOldServices = previousRoundTeam.ServiceDetails.OrderBy(s => s.ServiceId).ToArray();
                         long slaDiff = (long)(serviceDetails.ServiceLevelAgreementPoints - orderedOldServices[s].ServiceLevelAgreementPoints);
                         long attackDiff = (long)(serviceDetails.AttackPoints - orderedOldServices[s].AttackPoints);
                         long defenseDiff = (long)(serviceDetails.LostDefensePoints - orderedOldServices[s].LostDefensePoints);
