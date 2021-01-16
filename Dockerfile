@@ -9,7 +9,12 @@ COPY EnoLandingPageFrontend/EnoLandingPageFrontend.csproj EnoLandingPageFrontend
 RUN dotnet restore
 
 # Publish
-COPY . .
+COPY EnoLandingPageBackend EnoLandingPageBackend
+COPY EnoLandingPageCore EnoLandingPageCore
+COPY EnoLandingPageFrontend EnoLandingPageFrontend
+COPY Directory.Build.props Directory.Build.props
+COPY ENOWARS.ruleset ENOWARS.ruleset
+COPY stylecop.json stylecop.json
 RUN dotnet publish -c Release -o /app
 
 # Copy to runtime container
