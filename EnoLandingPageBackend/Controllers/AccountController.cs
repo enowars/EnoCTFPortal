@@ -67,7 +67,6 @@
         public async Task<ActionResult> Info()
         {
             var team = await this.db.GetTeamAndVulnbox(this.GetTeamId(), this.HttpContext.RequestAborted);
-            this.logger.LogDebug("TeamInfo");
             return this.Ok(new TeamDetailsMessage(
                 team.Id,
                 team.Confirmed,

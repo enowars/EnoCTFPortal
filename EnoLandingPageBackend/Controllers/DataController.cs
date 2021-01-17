@@ -38,14 +38,11 @@
         [HttpGet]
         public async Task<IActionResult> Teams()
         {
-            this.logger.LogDebug("Confirmed Teams");
             var teams = await this.db.GetTeams(this.HttpContext.RequestAborted);
             return this.Json(
                 new TeamsMessage(
                     teams.Where(t => t.Confirmed).Select(t => new TeamMessage(t.Name, t.CtftimeId)).ToList(),
-                    teams.Where(t => !t.Confirmed).Select(t => new TeamMessage(t.Name, t.CtftimeId)).ToList()
-                    )
-                );
+                    teams.Where(t => !t.Confirmed).Select(t => new TeamMessage(t.Name, t.CtftimeId)).ToList()));
         }
     }
 }
