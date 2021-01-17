@@ -47,10 +47,9 @@
                 .SingleAsync(token);
         }
 
-        public async Task<List<LandingPageTeam>> GetConfirmedTeams(CancellationToken token)
+        public async Task<List<LandingPageTeam>> GetTeams(CancellationToken token)
         {
             return await this.context.Teams
-                .Where(t => t.Confirmed == true)
                 .ToListAsync(token);
         }
 

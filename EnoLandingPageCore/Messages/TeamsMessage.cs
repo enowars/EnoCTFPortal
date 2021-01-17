@@ -6,5 +6,7 @@
     using System.Text;
     using System.Threading.Tasks;
 
-    public record ConfirmedTeamMessage(string Name, long? CtftimeId);
+    public record TeamsMessage(List<TeamMessage> ConfirmedTeams, List<TeamMessage> RegisteredTeams);
+
+    public record TeamMessage(string Name, long? CtftimeId);
 }

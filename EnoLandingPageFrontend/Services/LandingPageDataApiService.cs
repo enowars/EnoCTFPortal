@@ -34,20 +34,20 @@ namespace EnoLandingPageFrontend.Services
             return JsonSerializer.Deserialize<TeamDetailsMessage>(await this.httpClient.GetStringAsync("/api/account/info"), jsonOptions)!;
         }
 
-        public async Task<List<ConfirmedTeamMessage>> GetConfirmed()
+        public async Task<TeamsMessage> GetTeams()
         {
-            return JsonSerializer.Deserialize<List<ConfirmedTeamMessage>>(await this.httpClient.GetStringAsync("/api/teams/confirmed"), jsonOptions)!;
+            return JsonSerializer.Deserialize<TeamsMessage>(await this.httpClient.GetStringAsync("/api/data/teams"), jsonOptions)!;
         }
 
         public async Task<CtfInfoMessage> GetCtfInfo()
         {
-            return JsonSerializer.Deserialize<CtfInfoMessage>(await this.httpClient.GetStringAsync("/api/ctf/info"), jsonOptions)!;
+            return JsonSerializer.Deserialize<CtfInfoMessage>(await this.httpClient.GetStringAsync("/api/data/ctfinfo"), jsonOptions)!;
         }
 
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+
         public async Task CheckIn()
         {
-            await this.httpClient.PostAsync("/api/account/checkin", null);
+            await this.httpClient.PostAsync("/api/account/checkin", null!);
         }
 
         public async Task StartVm()
@@ -55,7 +55,7 @@ namespace EnoLandingPageFrontend.Services
             HttpResponseMessage response;
             try
             {
-                response = await this.httpClient.PostAsync("/api/vm/startvulnbox", null);
+                response = await this.httpClient.PostAsync("/api/vulnbox/startvulnbox", null!);
             }
             catch (Exception e)
             {
@@ -83,6 +83,5 @@ namespace EnoLandingPageFrontend.Services
                 logger.LogInformation($"StartVm succeeded ({response.StatusCode})");
             }
         }
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
     }
 }

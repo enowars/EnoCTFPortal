@@ -14,12 +14,12 @@
     [Authorize]
     [ApiController]
     [Route("/api/[controller]/[action]")]
-    public class VMController : ControllerBase
+    public class VulnboxController : ControllerBase
     {
-        private readonly ILogger<VMController> logger;
+        private readonly ILogger<VulnboxController> logger;
         private readonly HetznerCloudApi hetznerApi;
 
-        public VMController(ILogger<VMController> logger, HetznerCloudApi hetznerApi)
+        public VulnboxController(ILogger<VulnboxController> logger, HetznerCloudApi hetznerApi)
         {
             this.logger = logger;
             this.hetznerApi = hetznerApi;

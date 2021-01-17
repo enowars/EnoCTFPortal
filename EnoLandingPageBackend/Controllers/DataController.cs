@@ -1,0 +1,51 @@
+﻿namespace EnoLandingPageBackend.Controllers
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
+    using EnoLandingPageBackend.Database;
+    using EnoLandingPageCore;
+    using EnoLandingPageCore.Messages;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Logging;
+
+    [Route("api/[controller]/[action]")]
+    [ApiController]
+    public class DataController : Controller
+    {
+        private readonly LandingPageSettings settings;
+        private readonly LandingPageDatabase db;
+        private readonly ILogger logger;
+
+        public DataController(LandingPageSettings settings, LandingPageDatabase db, ILogger<DataController> logger)
+        {
+            this.settings = settings;
+            this.db = db;
+            this.logger = logger;
+        }
+
+        [HttpGet]
+        public IActionResult CtfInfo()
+        {
+            return this.Ok(new CtfInfoMessage(
+                this.settings.StartTime.ToUniversalTime(),
+                this.settings.RegistrationCloseOffset,
+                this.settings.CheckInBeginOffset,
+                this.settings.CheckInEndOffset));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Teams()
+        {
+            this.logger.LogDebug("Confirmed Teams");
+            var teams = await this.db.GetTeams(this.HttpContext.RequestAborted);
+            return this.Json(
+                new TeamsMessage(
+                    teams.Where(t => t.Confirmed).Select(t => new TeamMessage(t.Name, t.CtftimeId)).ToList(),
+                    teams.Where(t => !t.Confirmed).Select(t => new TeamMessage(t.Name, t.CtftimeId)).ToList()
+                    )
+                );
+        }
+    }
+}
