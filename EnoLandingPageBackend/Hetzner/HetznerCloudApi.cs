@@ -28,7 +28,7 @@
         Get,
     }
 
-    public sealed class HetznerCloudApi : IHostedService, IDisposable
+    public sealed class HetznerCloudApi : IDisposable
     {
         private const int HetznerApiCallDelay = 1100;
         private static readonly ConcurrentDictionary<long, HetznerCloudApiScheduledCall> Tasks = new();
@@ -48,6 +48,11 @@
             this.httpClient = new HttpClient();
             this.landingPageSettings = landingPageSettings;
             this.httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", landingPageSettings.HetznerCloudApiToken);
+            Task.Factory.StartNew(
+                async () => await this.HetznerWorker(this.cancellationSource.Token),
+                this.cancellationSource.Token,
+                TaskCreationOptions.RunContinuationsAsynchronously,
+                TaskScheduler.Default);
         }
 
         /// <summary>
@@ -73,22 +78,6 @@
         {
             this.httpClient.Dispose();
             this.cancellationSource.Dispose();
-        }
-
-        public Task StartAsync(CancellationToken cancellationToken)
-        {
-            Task.Factory.StartNew(
-                async () => await this.HetznerWorker(this.cancellationSource.Token),
-                this.cancellationSource.Token,
-                TaskCreationOptions.RunContinuationsAsynchronously,
-                TaskScheduler.Default);
-            return Task.CompletedTask;
-        }
-
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            this.cancellationSource.Cancel();
-            return Task.CompletedTask;
         }
 
         /// <summary>
