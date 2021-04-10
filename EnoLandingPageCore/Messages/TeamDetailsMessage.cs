@@ -9,7 +9,7 @@
         long Id,
         bool Confirmed,
         string TeamName,
-        string? VpnConfig,
+        bool VpnConfigAvailable,
         string? RootPassword,
         string? ExternalIpAddress,
         string? InternalIpAddress,

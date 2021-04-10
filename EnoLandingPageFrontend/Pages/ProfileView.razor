@@ -75,7 +75,14 @@
         </div>
         <div>
             <div>Vpn Configuration:</div>
-            <code>@(teamInformation.VpnConfig ?? "coming soon")</code>
+            @if (teamInformation.VpnConfigAvailable)
+            {
+                <a href="/api/account/vpnconfig">Download</a>
+            }
+            else
+            {
+                <code>coming soon</code>
+            }
         </div>
     }
 </div>
