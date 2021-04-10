@@ -88,7 +88,7 @@
                 return this.NotFound();
             }
 
-            var config = System.IO.File.ReadAllText($"/data/teamdata/team{team.Id}/client.conf");
+            var config = System.IO.File.ReadAllText($"/app/data/teamdata/team{team.Id}/client.conf"); // TODO variable the path
             var contentType = "application/force-download";
             return this.File(config.Replace("REMOTE_IP_PLACEHOLDER", team.Vulnbox.ExternalAddress), contentType, "client.conf");
         }
