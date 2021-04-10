@@ -83,5 +83,39 @@ namespace EnoLandingPageFrontend.Services
                 logger.LogInformation($"StartVm succeeded ({response.StatusCode})");
             }
         }
+
+        public async Task ResetVm()
+        {
+            HttpResponseMessage response;
+            try
+            {
+                response = await this.httpClient.PostAsync("/api/vulnbox/resetvulnbox", null!);
+            }
+            catch (Exception e)
+            {
+                throw new LandingPageServiceException("ResetVm request failed.", e);
+            }
+            if (!response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                if (content == nameof(ServerNotExistsException))
+                {
+                    logger.LogError("ResetVm throwing ServerNotExistsException");
+                    throw new ServerNotExistsException();
+                }
+                else if (content == nameof(OtherRequestRunningException))
+                {
+                    throw new OtherRequestRunningException();
+                }
+                else
+                {
+                    throw new Exception("Unexpected backend message");
+                }
+            }
+            else
+            {
+                logger.LogInformation($"StartVm succeeded ({response.StatusCode})");
+            }
+        }
     }
 }

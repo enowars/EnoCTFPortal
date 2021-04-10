@@ -254,7 +254,7 @@
             {
                 // Call "Reset Server" endpoint.
                 this.logger.LogInformation($"{nameof(this.DoResetServer)} for team {teamId}");
-                var response = await this.httpClient.GetAsync(new Uri($"https://api.hetzner.cloud/v1/servers/{hetznerServerId}/actions/reset"), token);
+                var response = await this.httpClient.PostAsync(new Uri($"https://api.hetzner.cloud/v1/servers/{hetznerServerId}/actions/reset"), null!, token);
                 var responseString = await response.Content.ReadAsStringAsync(token);
                 this.logger.LogDebug(responseString);
 

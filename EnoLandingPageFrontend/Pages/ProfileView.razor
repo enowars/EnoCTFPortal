@@ -42,7 +42,7 @@
                 }
                 else if (teamInformation.VulnboxStatus == LandingPageVulnboxStatus.Created)
                 {
-                    <button @onclick="StartVm">Force Reboot</button>
+                    <button @onclick="ResetVm">Reboot VM</button>
                 }
                 else
                 {
@@ -115,6 +115,21 @@
         try
         {
             await dataService.StartVm();
+        }
+        catch (Exception ex)
+        {
+            vmInteractionFeedback = ex.GetType().ToString();
+        }
+
+        teamInformation = await dataService.GetTeamInfo();
+    }
+
+    protected async Task ResetVm(MouseEventArgs e)
+    {
+        vmInteractionFeedback = null;
+        try
+        {
+            await dataService.ResetVm();
         }
         catch (Exception ex)
         {
