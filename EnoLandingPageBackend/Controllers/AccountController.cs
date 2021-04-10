@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Security.Claims;
+    using System.Text;
     using System.Threading.Tasks;
     using System.Web;
     using EnoLandingPageBackend.Database;
@@ -90,7 +91,7 @@
 
             var config = System.IO.File.ReadAllText($"/app/data/teamdata/team{team.Id}/client.conf"); // TODO variable the path
             var contentType = "application/force-download";
-            return this.File(config.Replace("REMOTE_IP_PLACEHOLDER", team.Vulnbox.ExternalAddress), contentType, "client.conf");
+            return this.File(Encoding.ASCII.GetBytes(config.Replace("REMOTE_IP_PLACEHOLDER", team.Vulnbox.ExternalAddress)), contentType, "client.conf");
         }
 
         [HttpPost]
