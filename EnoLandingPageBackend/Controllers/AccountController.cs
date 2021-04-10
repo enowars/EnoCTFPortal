@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.IO;
     using System.Linq;
     using System.Security.Claims;
     using System.Text;
@@ -89,7 +90,7 @@
                 return this.NotFound();
             }
 
-            var config = System.IO.File.ReadAllText($"/app/data/teamdata/team{team.Id}/client.conf"); // TODO variable the path
+            var config = System.IO.File.ReadAllText($"{LandingPageBackendUtil.TeamDataDirectory}{Path.DirectorySeparatorChar}teamdata{Path.DirectorySeparatorChar}team{team.Id}{Path.DirectorySeparatorChar}client.conf");
             var contentType = "application/force-download";
             return this.File(Encoding.ASCII.GetBytes(config.Replace("REMOTE_IP_PLACEHOLDER", team.Vulnbox.ExternalAddress)), contentType, "client.conf");
         }

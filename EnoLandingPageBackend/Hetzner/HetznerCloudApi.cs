@@ -170,8 +170,8 @@
                     token);
 
                 // Call "Create Server" endpoint.
-                var user_data = string.Empty; // File.ReadAllText($"{LandingPageBackendUtil.TeamDataDirectory}{Path.DirectorySeparatorChar}{teamId}{Path.DirectorySeparatorChar}user_data.sh");
-                var rootPassword = string.Empty; // File.ReadAllText($"{LandingPageBackendUtil.TeamDataDirectory}{Path.DirectorySeparatorChar}{teamId}{Path.DirectorySeparatorChar}root.pw");
+                var user_data = File.ReadAllText($"{LandingPageBackendUtil.TeamDataDirectory}{Path.DirectorySeparatorChar}teamdata{Path.DirectorySeparatorChar}team{teamId}{Path.DirectorySeparatorChar}user_data.sh");
+                var rootPassword = File.ReadAllText($"{LandingPageBackendUtil.TeamDataDirectory}{Path.DirectorySeparatorChar}teamdata{Path.DirectorySeparatorChar}team{teamId}{Path.DirectorySeparatorChar}root.pw");
                 dynamic createVmRequest = new JObject();
                 createVmRequest.name = $"team{teamId}";
                 createVmRequest.server_type = this.landingPageSettings.HetznerVulnboxType;
