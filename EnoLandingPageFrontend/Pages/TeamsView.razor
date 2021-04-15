@@ -34,7 +34,7 @@
     {
         @if (team.CtftimeId is long ctftimeId)
         {
-            string countryUrl = $"https://cdn.ipregistry.co/flags/wikimedia/{team.CountryCode?.ToLower()}.png";
+            string? countryUrl = team.CountryCode != null ? $"https://cdn.ipregistry.co/flags/wikimedia/{team.CountryCode?.ToLower()}.png" : null;
             <div class="teams-list-container">
                 <img src="@team.LogoUrl" class="team-list-item-logo" referrerpolicy="no-referrer" />
                 <a style="margin-left:0.5em" href="https://ctftime.org/team/@(ctftimeId)">@team.Name</a>
