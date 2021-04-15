@@ -55,7 +55,15 @@
                 throw new Exception($"OAuth2 failed: ctftimeid={ctftimeIdClaim} teamname={teamname} claims={this.HttpContext.User.Claims.Count()}");
             }
 
-            var info = await CTFTime.GetTeamInfo(ctftimeId, this.HttpContext.RequestAborted);
+            CTFTimeTeamInfo? info = null;
+            try
+            {
+                info = await CTFTime.GetTeamInfo(ctftimeId, this.HttpContext.RequestAborted);
+            }
+            catch (Exception e)
+            {
+                this.logger.LogError($"CTFtime failed to deliver info for ctftime id {ctftimeId}\n{e.StackTrace}");
+            }
 
             var team = await this.db.GetOrUpdateLandingPageTeam(ctftimeId, teamname, info?.Logo, null, info?.Country, this.HttpContext.RequestAborted);
             var claims = new List<Claim>
