@@ -9,6 +9,7 @@
     using System.Threading.Tasks;
     using System.Web;
     using EnoLandingPageBackend.Database;
+    using EnoLandingPageBackend.CTFTime;
     using EnoLandingPageCore;
     using EnoLandingPageCore.Database;
     using EnoLandingPageCore.Messages;
@@ -54,7 +55,9 @@
                 throw new Exception($"OAuth2 failed: ctftimeid={ctftimeIdClaim} teamname={teamname} claims={this.HttpContext.User.Claims.Count()}");
             }
 
-            var team = await this.db.UpdateTeamName(ctftimeId, teamname, this.HttpContext.RequestAborted);
+            var info = await CTFTime.GetTeamInfo(ctftimeId, this.HttpContext.RequestAborted);
+
+            var team = await this.db.GetOrUpdateLandingPageTeam(ctftimeId, teamname, info?.Logo, null, info?.Country, this.HttpContext.RequestAborted);
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, $"{team.Id}"),

@@ -53,7 +53,7 @@
                 .ToListAsync(token);
         }
 
-        public async Task<LandingPageTeam> UpdateTeamName(long? ctftimeId, string name, CancellationToken token)
+        public async Task<LandingPageTeam> GetOrUpdateLandingPageTeam(long? ctftimeId, string name, string? logoUrl, string? universityAffiliation, string? countryCode, CancellationToken token)
         {
             var dbTeam = await this.context.Teams.Where(t => t.CtftimeId == ctftimeId).SingleOrDefaultAsync(token);
             if (dbTeam == null)
@@ -63,6 +63,9 @@
                     CtftimeId = ctftimeId,
                     Confirmed = false,
                     Name = name,
+                    LogoUrl = logoUrl,
+                    UniversityAffiliation = universityAffiliation,
+                    CountryCode = countryCode,
                     Vulnbox = new LandingPageTeamVulnbox(),
                 };
                 this.context.Add(dbTeam);

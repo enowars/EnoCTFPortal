@@ -1,0 +1,21 @@
+﻿
+.teams-list-container {
+    display: flex;
+    align-items: center;
+    padding: 0.25em;
+    justify-content: space-between;
+}
+
+    .teams-list-container:hover {
+        background-color: #AA998e;
+    }
+
+.team-list-item-logo {
+    max-width: 50px;
+    max-height: 50px;
+}
+
+.team-list-item-countryflag {
+    max-width: 32px;
+    max-height: 32px;
+}

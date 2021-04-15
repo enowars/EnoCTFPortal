@@ -17,6 +17,12 @@
 
         public string Name { get; set; }
 
+        public string? LogoUrl { get; set; }
+
+        public string? UniversityAffiliation { get; set; }
+
+        public string? CountryCode { get; set; }
+
         public long VulnboxId { get; set; }
 
         public virtual LandingPageTeamVulnbox Vulnbox { get; set; }
