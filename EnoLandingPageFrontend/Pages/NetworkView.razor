@@ -18,7 +18,7 @@
 
         <p>During the first hour of the CTF, the game network will be closed. This means you will not be able to reach the vulnboxes of other teams through the competition network. To check that your vulnbox and OpenVPN client is working as intended, you can try pinging <code>10.0.1.1</code>, which is the game router and should also be reachable even while the game network is closed.</p>
 
-        <p>The router performs SNAT on all game traffic, so all incoming traffic appears to be coming from <code>10.0.1.1</code>, regardless of whether it is coming from the game engine o r other teams.</p>
+        <p>The router performs SNAT on all game traffic, so all incoming traffic appears to be coming from <code>10.0.1.1</code>, regardless of whether it is coming from the game engine or other teams.</p>
 
         <p>The <code>10.0.240.0/24</code> subnet for the team VPN is identical for all teams. These networks are completely separated from each other and you will not be able to access the devices in the VPN of other teams.</p>
 
