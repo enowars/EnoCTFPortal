@@ -4,18 +4,28 @@
     <hr />
     <div>
         <h3>Summary</h3>
-        <!--<ul>
-            <li>Game Network: <code>10.0.0.0/8</code></li>
-            <li>Team Network: <code>10.0.{TeamId//256}.{TeamId%256}/32</code></li>
+        <ul>
+            <li>Game Network: <code>10.0.0.0/16</code></li>
+            <li>Team Vulnbox: <code>10.0.0.{TeamId}/32</code></li>
             <li>Game Router: <code>10.0.1.1</code></li>
-            <li>Flag Submission: <code>10.0.13.13:1337</code></li>
+            <li>Flag Submission: <code>10.0.13.37:1337</code></li>
         </ul>
-        <img src="/images/nw-e4.png" />-->
-        <p>Coming soon. (We have some planned changes for our infrastructure that affect the network layout and we are not 100% sure yet how the network will look in the end).</p>
+        <center><img src="/images/bambictf5.png" /></center>
+
+        <p>To access your vulnbox, you must first start it through your <a href="/profile">profile page</a>. This will only be possible once the competition has started. <b>Note that you must check in before the competition starts, otherwise you will not be able to start your vulnbox</b>. Please refer to the <a href="/rules">rules page</a> for the exact check-in and start times.
+        
+        <p></p>After the vulnbox is started, you will be shown your public vulnbox IP address and the root password which you can use to login. You will also be able to download an OpenVPN configuration file only after the vulnbox is started. See the section below for more details.</p>
+
+        <p>During the first hour of the CTF, the game network will be closed. This means you will not be able to reach the vulnboxes of other teams through the competition network. To check that your vulnbox and OpenVPN client is working as intended, you can try pinging <code>10.0.1.1</code>, which is the game router and should also be reachable even while the game network is closed.</p>
+
+        <p>The router performs SNAT on all game traffic, so all incoming traffic appears to be coming from <code>10.0.1.1</code>, regardless of whether it is coming from the game engine o r other teams.</p>
+
+        <p>The <code>10.0.240.0/24</code> subnet for the team VPN is identical for all teams. These networks are completely separated from each other and you will not be able to access the devices in the VPN of other teams.</p>
 
         <h3>OpenVPN Access for Players</h3>
         <p>Since this is a beginner CTF, we will provide an OpenVPN server through which you can access your vulnbox and the vulnboxes of other teams (the latter only once the network has been opened).</p>
-        <p>To get seamless access to the game network, install the OpenVPN client for your operating system, and download the client configuration file that will be provided in your <a href="/profile">profile</a>.</p>
+        <p>To get seamless access to the game network, install the OpenVPN client for your operating system, and download the client configuration file that will be provided in your <a href="/profile">profile</a>. The config file will only be available once your have started your vulnbox. Note that the vulnbox serves as OpenVPN server for your team, so you will only be able to access the game network while your own vulnbox is running. The OpenVPN config file can be shared by all members of your team and allows multiple connections at once.</p>
+        <p>Please consult a search engine of your choice or the OpenVPN documentation for help getting started with OpenVPN.</p>
     </div>
 </div>
 
