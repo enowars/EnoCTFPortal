@@ -75,6 +75,9 @@
                 dbTeam.Name = name;
                 dbTeam.CtftimeId = ctftimeId;
                 dbTeam.Name = name;
+                dbTeam.LogoUrl = logoUrl;
+                dbTeam.UniversityAffiliation = universityAffiliation;
+                dbTeam.CountryCode = countryCode;
             }
 
             await this.context.SaveChangesAsync(token);

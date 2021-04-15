@@ -17,7 +17,7 @@
         {
             string countryUrl = $"https://cdn.ipregistry.co/flags/wikimedia/{team.CountryCode?.ToLower()}.png";
             <div class="teams-list-container">
-                <img src="https://ctftime.org//media/team/8d84bb4b84096a94d06833378fa2a9f2.gif" class="team-list-item-logo" />
+                <img src="@team.LogoUrl" class="team-list-item-logo" />
                 <a style="margin-left:0.5em" href="https://ctftime.org/team/@(ctftimeId)">@team.Name</a>
                 <img src="@countryUrl" class="team-list-item-countryflag" />
             </div>
@@ -36,7 +36,7 @@
         {
             string countryUrl = $"https://cdn.ipregistry.co/flags/wikimedia/{team.CountryCode?.ToLower()}.png";
             <div class="teams-list-container">
-                <img src="https://ctftime.org//media/team/8d84bb4b84096a94d06833378fa2a9f2.gif" class="team-list-item-logo" />
+                <img src="@team.LogoUrl" class="team-list-item-logo" />
                 <a style="margin-left:0.5em" href="https://ctftime.org/team/@(ctftimeId)">@team.Name</a>
                 <img src="@countryUrl" class="team-list-item-countryflag" />
             </div>
