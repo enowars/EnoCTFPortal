@@ -2,17 +2,26 @@
 .teams-list-container {
     display: flex;
     align-items: center;
-    padding: 0.25em;
-    justify-content: space-between;
 }
-
+/*
     .teams-list-container:hover {
         background-color: #AA998e;
     }
+*/
+.team-list-item-logo-container {
+    min-width: 64px;
+    min-height: 64px;
+}
 
 .team-list-item-logo {
-    max-width: 50px;
-    max-height: 50px;
+    max-width: 64px;
+    max-height: 64px;
+}
+
+.team-list-item-name-container {
+    padding: 16px;
+    overflow: hidden;
+    width: 500px;
 }
 
 .team-list-item-countryflag {

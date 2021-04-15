@@ -17,10 +17,15 @@
         {
             string? countryUrl = team.CountryCode != null ? $"https://cdn.ipregistry.co/flags/wikimedia/{team.CountryCode?.ToLower()}.png" : null;
             <div class="teams-list-container">
-                <img src="@team.LogoUrl" class="team-list-item-logo" referrerpolicy="no-referrer" />
-                <a style="margin-left:0.5em" href="https://ctftime.org/team/@(ctftimeId)">@team.Name</a>
+                <div class="team-list-item-logo-container">
+                    <img src="@team.LogoUrl" class="team-list-item-logo" referrerpolicy="no-referrer" />
+                </div>
+                <div class="team-list-item-name-container">
+                    <a href="https://ctftime.org/team/@(ctftimeId)">@team.Name</a>
+                </div>
                 <img src="@countryUrl" class="team-list-item-countryflag" referrerpolicy="no-referrer" />
             </div>
+            <hr />
         }
         else
         {
@@ -36,10 +41,16 @@
         {
             string? countryUrl = team.CountryCode != null ? $"https://cdn.ipregistry.co/flags/wikimedia/{team.CountryCode?.ToLower()}.png" : null;
             <div class="teams-list-container">
-                <img src="@team.LogoUrl" class="team-list-item-logo" referrerpolicy="no-referrer" />
-                <a style="margin-left:0.5em" href="https://ctftime.org/team/@(ctftimeId)">@team.Name</a>
+                <div class="team-list-item-logo-container">
+                    <img src="@team.LogoUrl" class="team-list-item-logo" referrerpolicy="no-referrer" />
+                </div>
+                <div class="team-list-item-name-container">
+                    <a href="https://ctftime.org/team/@(ctftimeId)">@team.Name</a>
+                </div>
                 <img src="@countryUrl" class="team-list-item-countryflag" referrerpolicy="no-referrer" />
+
             </div>
+            <hr />
         }
         else
         {
