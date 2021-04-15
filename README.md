@@ -23,6 +23,7 @@ services:
     ports:
       - "5001:80"
     volumes:
+      - ./sessions:/root/.aspnet/DataProtection-Keys
       - ./data:/app/data
 ```
 
