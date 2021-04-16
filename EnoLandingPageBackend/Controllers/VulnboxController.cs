@@ -6,6 +6,7 @@
     using System.Net.Http;
     using System.Threading.Tasks;
     using EnoLandingPageBackend.Hetzner;
+    using EnoLandingPageCore;
     using EnoLandingPageCore.Hetzner;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
@@ -18,11 +19,13 @@
     {
         private readonly ILogger<VulnboxController> logger;
         private readonly HetznerCloudApi hetznerApi;
+        private readonly LandingPageSettings settings;
 
-        public VulnboxController(ILogger<VulnboxController> logger, HetznerCloudApi hetznerApi)
+        public VulnboxController(ILogger<VulnboxController> logger, HetznerCloudApi hetznerApi, LandingPageSettings settings)
         {
             this.logger = logger;
             this.hetznerApi = hetznerApi;
+            this.settings = settings;
         }
 
         [HttpPost]
@@ -30,6 +33,11 @@
         {
             long teamId = this.GetTeamId();
             this.logger.LogInformation($"StartVulnbox {teamId}");
+            if (this.settings.StartTime.ToUniversalTime() > DateTime.UtcNow)
+            {
+                return this.Forbid();
+            }
+
             try
             {
                 await this.hetznerApi.Call(teamId, HetznerCloudApiCallType.Create);
@@ -51,6 +59,11 @@
         {
             long teamId = this.GetTeamId();
             this.logger.LogInformation($"ResetVulnbox {teamId}");
+            if (this.settings.StartTime.ToUniversalTime() > DateTime.UtcNow)
+            {
+                return this.Forbid();
+            }
+
             await this.hetznerApi.Call(teamId, HetznerCloudApiCallType.Reset);
             return this.NoContent();
         }
