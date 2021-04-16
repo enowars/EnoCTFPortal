@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text;
     using System.Threading.Tasks;
     using EnoLandingPageBackend.Database;
     using EnoLandingPageCore;
@@ -43,6 +44,19 @@
                 new TeamsMessage(
                     teams.Where(t => t.Confirmed).Select(t => new TeamMessage(t.Name, t.CtftimeId, t.LogoUrl, t.CountryCode)).ToList(),
                     teams.Where(t => !t.Confirmed).Select(t => new TeamMessage(t.Name, t.CtftimeId, t.LogoUrl, t.CountryCode)).ToList()));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> IPs()
+        {
+            var teams = (await this.db.GetTeams(this.HttpContext.RequestAborted))
+                    .Where(t => t.Confirmed)
+                    .Select(t => $"10.0.0.{t.Id}");
+
+            return this.File(
+                Encoding.ASCII.GetBytes(string.Join("\n", teams)),
+                "application/force-download",
+                "ips.txt");
         }
     }
 }
