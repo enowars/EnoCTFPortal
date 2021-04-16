@@ -13,13 +13,13 @@
         <h1>@(teamInformation.TeamName)</h1>
         if (!teamInformation.Confirmed)
         {
-            if (DateTime.UtcNow > ctfInfo.StartTime.AddHours(-ctfInfo.CheckInEndOffset).ToUniversalTime()) // CheckIn is over
+            if (DateTime.UtcNow > ctfInfo.StartTime.AddHours(-ctfInfo.CheckInEndOffset).ToUniversalTime() && false) // CheckIn is over
             {
                 <div class="alert alert-danger" role="alert">
                     You did not confirm your participation before @(ctfInfo.StartTime.AddHours(-ctfInfo.CheckInEndOffset).ToUniversalTime().ToString()) UTC.
                 </div>
             }
-            else if (ctfInfo.StartTime.AddHours(-ctfInfo.CheckInBeginOffset).ToUniversalTime() > DateTime.UtcNow) // CheckIn has not started
+            else if (ctfInfo.StartTime.AddHours(-ctfInfo.CheckInBeginOffset).ToUniversalTime() > DateTime.UtcNow && false) // CheckIn has not started
             {
                 <div class="alert alert-danger" role="alert">
                     Your participation hasn't been confirmed yet! Please check in after @(ctfInfo.StartTime.AddHours(-ctfInfo.CheckInBeginOffset).ToUniversalTime().ToString()) UTC.

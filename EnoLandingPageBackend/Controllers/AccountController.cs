@@ -57,7 +57,7 @@
                 throw new Exception($"OAuth2 failed: ctftimeid={ctftimeIdClaim} teamname={teamname} claims={this.HttpContext.User.Claims.Count()}");
             }
 
-            if (this.settings.StartTime.AddHours(-this.settings.RegistrationCloseOffset) > DateTime.UtcNow &&
+            if (DateTime.UtcNow > this.settings.StartTime.AddHours(-this.settings.RegistrationCloseOffset).ToUniversalTime() &&
                 !await this.db.CtftimeTeamExists(ctftimeId, this.HttpContext.RequestAborted))
             {
                 return this.Redirect("/registrationclosed");
@@ -119,6 +119,12 @@
         public async Task<ActionResult> CheckIn()
         {
             long teamId = this.GetTeamId();
+            if (DateTime.UtcNow > this.settings.StartTime.AddHours(-this.settings.CheckInEndOffset).ToUniversalTime() ||
+                this.settings.StartTime.AddHours(-this.settings.CheckInBeginOffset).ToUniversalTime() > DateTime.UtcNow)
+            {
+                return this.Forbid();
+            }
+
             await this.db.CheckIn(teamId, this.HttpContext.RequestAborted);
             return this.NoContent();
         }
