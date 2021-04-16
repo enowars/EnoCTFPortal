@@ -71,11 +71,31 @@
         text-align: center;
     }
 
-    .scoreboard .team-name {
+    .scoreboard .team-container {
         overflow: hidden;
         font-weight: bold;
         border: none;
-        padding: 2px;
+        display: flex;
+        align-items: center;
+    }
+
+    .scoreboard .team-name {
+        padding: 16px;
+    }
+
+    .scoreboard .team-logo-container {
+        min-width: 64px;
+        min-height: 64px;
+    }
+
+    .scoreboard .team-logo {
+        max-width: 64px;
+        max-height: 64px;
+    }
+
+    .scoreboard .team-countryflag {
+        max-width: 32px;
+        max-height: 32px;
     }
 
     .scoreboard .team-score {

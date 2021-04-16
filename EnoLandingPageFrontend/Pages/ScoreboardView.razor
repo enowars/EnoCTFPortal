@@ -83,15 +83,23 @@
         @for (int t = 0; t < currentScoreboard.Teams.Length; t++)
         {
             var team = orderedTeams[t];
+            string? countryUrl = null;
+            if (team.CountryCode != null && team.CountryCode != string.Empty)
+            {
+                countryUrl = $"https://cdn.ipregistry.co/flags/wikimedia/{team.CountryCode?.ToLower()}.png";
+            }
             var orderedTeamServiceDetails = team.ServiceDetails.OrderBy(sd => sd.ServiceId).ToArray();
             var previousRoundTeam = previousScoreboard?.Teams.Where(t => t.TeamId == team.TeamId).Single();
             <tr class="@(team.TeamId == ownId ? "ownrow" : "otherrow")">
                 <td class="team-rank">@(t+1)</td>
-                <td class="team-name">
-                    <div class="team-list-item-logo-container">
-                        <img src="@team.LogoUrl" class="team-list-item-logo" referrerpolicy="no-referrer" />
+                <td>
+                    <div class="team-container">
+                        <div class="team-logo-container">
+                            <img src="@team.LogoUrl" class="team-logo" referrerpolicy="no-referrer" />
+                        </div>
+                        <div class="team-name">@team.Name</div>
+                        <img src="@countryUrl" class="team-countryflag" referrerpolicy="no-referrer" />
                     </div>
-                    @team.Name
                 </td>
                 @if (previousRoundTeam != null)
                 {

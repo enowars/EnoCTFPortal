@@ -15,7 +15,11 @@
     {
         @if (team.CtftimeId is long ctftimeId)
         {
-            string? countryUrl = team.CountryCode != null ? $"https://cdn.ipregistry.co/flags/wikimedia/{team.CountryCode?.ToLower()}.png" : null;
+            string? countryUrl = null;
+            if (team.CountryCode != null && team.CountryCode != string.Empty)
+            {
+                countryUrl = $"https://cdn.ipregistry.co/flags/wikimedia/{team.CountryCode?.ToLower()}.png";
+            }
             <div class="teams-list-container">
                 <div class="team-list-item-logo-container">
                     <img src="@team.LogoUrl" class="team-list-item-logo" referrerpolicy="no-referrer" />
@@ -39,7 +43,11 @@
     {
         @if (team.CtftimeId is long ctftimeId)
         {
-            string? countryUrl = team.CountryCode != null ? $"https://cdn.ipregistry.co/flags/wikimedia/{team.CountryCode?.ToLower()}.png" : null;
+            string? countryUrl = null;
+            if (team.CountryCode != null && team.CountryCode != string.Empty)
+            {
+                countryUrl = $"https://cdn.ipregistry.co/flags/wikimedia/{team.CountryCode?.ToLower()}.png";
+            }
             <div class="teams-list-container">
                 <div class="team-list-item-logo-container">
                     <img src="@team.LogoUrl" class="team-list-item-logo" referrerpolicy="no-referrer" />
