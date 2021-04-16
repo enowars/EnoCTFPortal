@@ -1,10 +1,14 @@
 ﻿@page "/admin"
 <div class="container p-3">
     <h1>AdminView</h1>
-
-    <a href="/api/admin/ctfjson">ctf.json</a>
+    <input @bind="AdminSecret" placeholder="adminsecret" />
+    <br />
+    <input @bind="TeamId" placeholder="teamid" /> <a href="/api/admin/bootvm?adminsecret=@(AdminSecret)&teamid=@(TeamId)">boot vm</a>
+    <br />
+    <a href="/api/admin/ctfjson?adminsecret=@(AdminSecret)">ctf.json</a>
 </div>
 
 @code {
-
+    private string AdminSecret = "";
+    private long TeamId;
 }
