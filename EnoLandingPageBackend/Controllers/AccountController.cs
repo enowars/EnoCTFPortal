@@ -26,11 +26,13 @@
     {
         private readonly ILogger<AccountController> logger;
         private readonly LandingPageDatabase db;
+        private readonly LandingPageSettings settings;
 
-        public AccountController(ILogger<AccountController> logger, LandingPageDatabase db)
+        public AccountController(ILogger<AccountController> logger, LandingPageDatabase db, LandingPageSettings settings)
         {
             this.logger = logger;
             this.db = db;
+            this.settings = settings;
         }
 
         [HttpGet]
@@ -53,6 +55,12 @@
                 || teamname == null)
             {
                 throw new Exception($"OAuth2 failed: ctftimeid={ctftimeIdClaim} teamname={teamname} claims={this.HttpContext.User.Claims.Count()}");
+            }
+
+            if (DateTime.UtcNow > this.settings.StartTime.AddHours(-this.settings.RegistrationCloseOffset).ToUniversalTime() &&
+                !await this.db.CtftimeTeamExists(ctftimeId, this.HttpContext.RequestAborted))
+            {
+                return this.Redirect("/registrationclosed");
             }
 
             CTFTimeTeamInfo? info = null;
@@ -111,6 +119,12 @@
         public async Task<ActionResult> CheckIn()
         {
             long teamId = this.GetTeamId();
+            if (DateTime.UtcNow > this.settings.StartTime.AddHours(-this.settings.CheckInEndOffset).ToUniversalTime() ||
+                this.settings.StartTime.AddHours(-this.settings.CheckInBeginOffset).ToUniversalTime() > DateTime.UtcNow)
+            {
+                return this.Forbid();
+            }
+
             await this.db.CheckIn(teamId, this.HttpContext.RequestAborted);
             return this.NoContent();
         }

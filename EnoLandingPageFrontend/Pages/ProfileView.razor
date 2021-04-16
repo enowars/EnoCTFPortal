@@ -13,15 +13,23 @@
         <h1>@(teamInformation.TeamName)</h1>
         if (!teamInformation.Confirmed)
         {
-            <div class="alert alert-danger" role="alert">
-                Your participation hasn't been confirmed yet!
-            </div>
-            if (ctfInfo.StartTime.AddHours(-ctfInfo.RegistrationCloseOffset) > DateTime.UtcNow)
+            if (DateTime.UtcNow > ctfInfo.StartTime.AddHours(-ctfInfo.CheckInEndOffset).ToUniversalTime() && false) // CheckIn is over
             {
-                <p>Please check in after @(ctfInfo.StartTime.AddHours(-ctfInfo.CheckInBeginOffset).ToString()).</p>
+                <div class="alert alert-danger" role="alert">
+                    You did not confirm your participation before @(ctfInfo.StartTime.AddHours(-ctfInfo.CheckInEndOffset).ToUniversalTime().ToString()) UTC.
+                </div>
+            }
+            else if (ctfInfo.StartTime.AddHours(-ctfInfo.CheckInBeginOffset).ToUniversalTime() > DateTime.UtcNow && false) // CheckIn has not started
+            {
+                <div class="alert alert-danger" role="alert">
+                    Your participation hasn't been confirmed yet! Please check in after @(ctfInfo.StartTime.AddHours(-ctfInfo.CheckInBeginOffset).ToUniversalTime().ToString()) UTC.
+                </div>
             }
             else
             {
+                <div class="alert alert-danger" role="alert">
+                    Your participation hasn't been confirmed yet! Please check in before @(ctfInfo.StartTime.AddHours(-ctfInfo.CheckInBeginOffset).ToUniversalTime().ToString()) UTC.
+                </div>
                 <button @onclick="CheckIn">Check In!</button>
             }
         }

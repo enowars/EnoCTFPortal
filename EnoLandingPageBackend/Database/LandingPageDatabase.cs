@@ -53,6 +53,12 @@
                 .ToListAsync(token);
         }
 
+        public async Task<bool> CtftimeTeamExists(long ctftimeId, CancellationToken token)
+        {
+            return await this.context.Teams
+                .AnyAsync(t => t.CtftimeId == ctftimeId, token);
+        }
+
         public async Task<LandingPageTeam> GetOrUpdateLandingPageTeam(long? ctftimeId, string name, string? logoUrl, string? universityAffiliation, string? countryCode, CancellationToken token)
         {
             var dbTeam = await this.context.Teams.Where(t => t.CtftimeId == ctftimeId).SingleOrDefaultAsync(token);
