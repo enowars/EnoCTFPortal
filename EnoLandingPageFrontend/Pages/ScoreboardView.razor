@@ -87,7 +87,12 @@
             var previousRoundTeam = previousScoreboard?.Teams.Where(t => t.TeamId == team.TeamId).Single();
             <tr class="@(team.TeamId == ownId ? "ownrow" : "otherrow")">
                 <td class="team-rank">@(t+1)</td>
-                <td class="team-name">logo @team.Name</td>
+                <td class="team-name">
+                    <div class="team-list-item-logo-container">
+                        <img src="@team.LogoUrl" class="team-list-item-logo" referrerpolicy="no-referrer" />
+                    </div>
+                    @team.Name
+                </td>
                 @if (previousRoundTeam != null)
                 {
                     long totalDiff = (long)(team.TotalPoints - previousRoundTeam.TotalPoints);
@@ -200,7 +205,7 @@
             currentScoreboard = ScoreboardService.LatestScoreboard;
             if (currentScoreboard?.CurrentRound > 1)
             {
-                ScoreboardService.TryGetOrRequest(currentScoreboard.CurrentRound.Value - 1, out previousScoreboard);
+                ScoreboardService.TryGetOrRequest(currentScoreboard.CurrentRound - 1, out previousScoreboard);
             }
         }
     }
@@ -255,7 +260,7 @@
             if (newScoreboard.CurrentRound > currentScoreboard?.CurrentRound)
             {
                 // A new round has finished.
-                ScoreboardService.TryGetOrRequest(newScoreboard.CurrentRound.Value - 1, out previousScoreboard);
+                ScoreboardService.TryGetOrRequest(newScoreboard.CurrentRound - 1, out previousScoreboard);
                 currentScoreboard = newScoreboard;
             }
             else
@@ -263,7 +268,7 @@
                 // The CTF was restarted or we just started
                 previousScoreboard = null;
                 currentScoreboard = newScoreboard;
-                ScoreboardService.TryGetOrRequest(newScoreboard.CurrentRound.Value - 1, out previousScoreboard);
+                ScoreboardService.TryGetOrRequest(newScoreboard.CurrentRound - 1, out previousScoreboard);
             }
             StateHasChanged();
         }

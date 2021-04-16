@@ -71,10 +71,10 @@ namespace EnoLandingPageFrontend.Services
                     {
                         if (scoreboard.CurrentRound > 1)
                         {
-                            TryGetOrRequest(scoreboard.CurrentRound.Value - 1, out var _);
+                            TryGetOrRequest(scoreboard.CurrentRound - 1, out var _);
                         }
 
-                        Scoreboards[scoreboard.CurrentRound.Value] = scoreboard;
+                        Scoreboards[scoreboard.CurrentRound] = scoreboard;
                         LatestScoreboard = scoreboard;
                         NewScoreboardEvent?.Invoke(scoreboard);
                     }
