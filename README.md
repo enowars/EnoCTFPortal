@@ -20,11 +20,13 @@ services:
       - "EnoLandingPage__HetznerVulnboxLocation=..."
       - "EnoLandingPage__OAuthClientId=..."
       - "EnoLandingPage__OAuthClientSecret=..."
+      - "EnoLandingPage__AdminSecret=..." 
     ports:
       - "5001:80"
     volumes:
       - ./sessions:/root/.aspnet/DataProtection-Keys
       - ./data:/app/data
+      - ./scoreboard:/app/wwwroot/scoreboard
 ```
 
 ## Reverse Proxy Configuration
