@@ -13,7 +13,7 @@
 
 @if (currentScoreboard != null)
 {
-    var orderedTeams = currentScoreboard.Teams.OrderByDescending(t => t.TotalPoints).ToArray();
+    var orderedTeams = currentScoreboard.Teams.OrderByDescending(t => t.TotalScore).ToArray();
     var orderedServices = currentScoreboard.Services.OrderBy(t => t.ServiceId).ToArray();
     <table class="scoreboard">
         <colgroup>
@@ -65,12 +65,12 @@
             @foreach (var service in orderedServices)
             {
                 <td class="p-2 firstblood-list-cell">
-                    @for (int i = 0; i < service.MaxStores; i++)
+                    @for (int i = 0; i < service.FlagVariants; i++)
                     {
-                        ScoreboardFirstBlood? fb = service.FirstBloods.Where(fb => fb.StoreIndex == i).SingleOrDefault();
+                        ScoreboardFirstBlood? fb = service.FirstBloods.Where(fb => fb.FlagVariantId == i).SingleOrDefault();
                         if (fb != null)
                         {
-                            <div class="firstblood-list"><i class="scoreboard-icon blood fas fa-tint" />@orderedTeams.Where(t => t.TeamId == fb.TeamId).Single().Name</div>
+                            <div class="firstblood-list"><i class="scoreboard-icon blood fas fa-tint" />@orderedTeams.Where(t => t.TeamId == fb.TeamId).Single().TeamName</div>
                         }
                         else
                         {
@@ -97,18 +97,18 @@
                         <div class="team-logo-container">
                             <img src="@team.LogoUrl" class="team-logo" referrerpolicy="no-referrer" />
                         </div>
-                        <div class="team-name">@team.Name (10.0.0.@team.TeamId)</div>
+                        <div class="team-name">@team.TeamName (10.0.0.@team.TeamId)</div>
                         <img src="@countryUrl" class="team-countryflag" referrerpolicy="no-referrer" />
                     </div>
                 </td>
                 @if (previousRoundTeam != null)
                 {
-                    long totalDiff = (long)(team.TotalPoints - previousRoundTeam.TotalPoints);
-                    <td class="team-score">@((int) team.TotalPoints) (@(totalDiff.ToString("+#;-#;+0")))</td>
+                    long totalDiff = (long)(team.TotalScore - previousRoundTeam.TotalScore);
+                    <td class="team-score">@((int) team.TotalScore) (@(totalDiff.ToString("+#;-#;+0")))</td>
                 }
                 else
                 {
-                    <td class="team-score">@((int) team.TotalPoints)</td>
+                    <td class="team-score">@((int) team.TotalScore)</td>
                 }
 
                 @for (int s = 0; s < team.ServiceDetails.Length; s++)
@@ -127,15 +127,15 @@
                             }
                             <div class="service-stats">
                                 <i class="scoreboard-icon fas fa-meteor" />
-                                <div class="scoreboard-text">@((long) serviceDetails.AttackPoints)</div>
+                                <div class="scoreboard-text">@((long) serviceDetails.AttackScore)</div>
                                 <div class="scoreboard-text"></div>
 
                                 <i class="scoreboard-icon fas fa-shield-alt" />
-                                <div class="scoreboard-text">@((long) serviceDetails.LostDefensePoints)</div>
+                                <div class="scoreboard-text">@((long) serviceDetails.DefenseScore)</div>
                                 <div class="scoreboard-text"></div>
 
                                 <i class="scoreboard-icon fas fa-heartbeat" />
-                                <div class="scoreboard-text">@((long) serviceDetails.ServiceLevelAgreementPoints)</div>
+                                <div class="scoreboard-text">@((long) serviceDetails.ServiceLevelAgreementScore)</div>
                                 <div class="scoreboard-text"></div>
                             </div>
                         </td>
@@ -143,9 +143,9 @@
                     else
                     {
                         var orderedOldServices = previousRoundTeam.ServiceDetails.OrderBy(s => s.ServiceId).ToArray();
-                        long slaDiff = (long)(serviceDetails.ServiceLevelAgreementPoints - orderedOldServices[s].ServiceLevelAgreementPoints);
-                        long attackDiff = (long)(serviceDetails.AttackPoints - orderedOldServices[s].AttackPoints);
-                        long defenseDiff = (long)(serviceDetails.LostDefensePoints - orderedOldServices[s].LostDefensePoints);
+                        long slaDiff = (long)(serviceDetails.ServiceLevelAgreementScore - orderedOldServices[s].ServiceLevelAgreementScore);
+                        long attackDiff = (long)(serviceDetails.AttackScore - orderedOldServices[s].AttackScore);
+                        long defenseDiff = (long)(serviceDetails.DefenseScore - orderedOldServices[s].DefenseScore);
                         <td class="p-2 service-block service-@(Enum.GetName(serviceDetails.ServiceStatus))">
                             @if (serviceDetails.Message != null)
                             {
@@ -153,17 +153,17 @@
                             }
                             <div class="service-stats">
                                 <i class="scoreboard-icon fas fa-meteor" />
-                                <div class="scoreboard-text">@((long) serviceDetails.AttackPoints)</div>
+                                <div class="scoreboard-text">@((long) serviceDetails.AttackScore)</div>
                                 <div class="scoreboard-text">(@(attackDiff.ToString("+#;-#;+0")))</div>
 
 
                                 <i class="scoreboard-icon fas fa-shield-alt" />
-                                <div class="scoreboard-text">@((long) serviceDetails.LostDefensePoints)</div>
+                                <div class="scoreboard-text">@((long) serviceDetails.DefenseScore)</div>
                                 <div class="scoreboard-text">(@(defenseDiff.ToString("+#;-#;-0")))</div>
 
 
                                 <i class="scoreboard-icon fas fa-heartbeat" />
-                                <div class="scoreboard-text">@((long) serviceDetails.ServiceLevelAgreementPoints)</div>
+                                <div class="scoreboard-text">@((long) serviceDetails.DefenseScore)</div>
                                 <div class="scoreboard-text">(@(slaDiff.ToString("+#;-#;+0")))</div>
                             </div>
                         </td>
