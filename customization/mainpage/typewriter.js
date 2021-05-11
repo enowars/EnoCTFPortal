@@ -655,6 +655,7 @@ var Typewriter = (function () {
       key: 'render',
       value: function render() {
         this.textEl.innerHTML = this.text;
+        this.textEl.setAttribute('data-text', this.text);
       },
     },
   ]);
