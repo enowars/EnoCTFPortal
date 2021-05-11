@@ -665,7 +665,13 @@ var Typewriter = (function () {
 const options = {
   loop: false,
   typeColor: 'white',
+  typeSpeed: 300,
 };
 const target = document.querySelector('#t-writer-title');
 const writer = new Typewriter(target, options);
-writer.type('ENOWARS 5').rest(200).start();
+
+'ENOWARS 5'.split('').forEach((char) => {
+  writer.type(char).rest(Math.random() * 30);
+});
+
+writer.start();
