@@ -34,14 +34,16 @@
 
     /* Highlight your own team's row */
     .scoreboard .ownrow {
-        border: 1px solid rgb(198, 202, 209);
+        border: solid rgb(198, 202, 209);
+        border-width: 1px 0px;
         border-collapse: collapse;
         background-color: dodgerblue;
     }
 
     /* Boring borders for the others */
     .scoreboard .otherrow {
-        border: 1px solid rgb(198, 202, 209);
+        border: solid rgb(198, 202, 209);
+        border-width: 1px 0px;
         border-collapse: collapse;
     }
 
