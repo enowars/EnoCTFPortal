@@ -32,6 +32,7 @@ namespace EnoLandingPageBackend
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
     using Microsoft.OpenApi.Models;
+    using Microsoft.AspNetCore.SpaServices.AngularCli;
 
     public class Startup
     {
@@ -45,10 +46,13 @@ namespace EnoLandingPageBackend
 
         public IWebHostEnvironment Environment { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        /// <summary>
+        ///  This method gets called by the runtime. Use this method to add services to the container.
+        /// </summary>
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<LandingPageSettings>(this.Configuration.GetSection("EnoLandingPage"));
+            // TODO: Validation should be done earlier?
             var enoLandingPageSettings = this.Configuration
                 .GetSection("EnoLandingPage")
                 .Get<LandingPageSettings>();
@@ -144,6 +148,11 @@ namespace EnoLandingPageBackend
                 //c.DescribeAllEnumsAsStrings();
             });
             services.AddSingleton<HetznerCloudApi>();
+
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "ClientApp/dist/ClientApp";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -166,6 +175,13 @@ namespace EnoLandingPageBackend
                 app.UseHttpsRedirection();
             }
 
+            app.UseStaticFiles();
+            if (!env.IsDevelopment())
+            {
+                app.UseSpaStaticFiles();
+            }
+
+            db.Migrate();
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
@@ -173,21 +189,28 @@ namespace EnoLandingPageBackend
             {
                 endpoints.MapControllers();
             });
-            db.Migrate();
 
-            app.UseStaticFiles();
-            //app.UseSpaStaticFiles();
+            //var rewrite = new RewriteOptions()
+            //    .AddRewrite("^$", "/index.html", true)
+            //    .AddRewrite(@"^[\w\/]*$", "/index.html", true);
+            //app.UseRewriter(rewrite);
+            //app.UseStaticFiles(new StaticFileOptions()
+            //{
+            //    ServeUnknownFileTypes = true,
+            //    HttpsCompression = HttpsCompressionMode.Compress,
+            //    DefaultContentType = "application/octet-stream",
+            //});
 
-
-            var rewrite = new RewriteOptions()
-                .AddRewrite("^$", "/index.html", true)
-                .AddRewrite(@"^[\w\/]*$", "/index.html", true);
-            app.UseRewriter(rewrite);
-            app.UseStaticFiles(new StaticFileOptions()
+            app.UseSpa(spa =>
             {
-                ServeUnknownFileTypes = true,
-                HttpsCompression = HttpsCompressionMode.Compress,
-                DefaultContentType = "application/octet-stream",
+                // To learn more about options for serving an Angular SPA from ASP.NET Core,
+                // see https://go.microsoft.com/fwlink/?linkid=864501
+                spa.Options.SourcePath = "ClientApp";
+
+                if (env.IsDevelopment())
+                {
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
+                }
             });
         }
     }
