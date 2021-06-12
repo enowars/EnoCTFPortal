@@ -1,7 +1,35 @@
 // Keep track of the times draw() has been called
 let draw_i = 0;
 
-var width = 800;
+var width = getWidth();
+
+function getWidth() {
+  const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+  if (vw >= 820) {
+    // Big Screen
+    return 800;
+  } else {
+    return Math.ceil(vw / 1.1);
+  }
+}
+
+function debounce(func, wait, immediate) {
+  var timeout;
+  return function () {
+    var context = this,
+      args = arguments;
+    var later = function () {
+      timeout = null;
+      if (!immediate) func.apply(context, args);
+    };
+    var callNow = immediate && !timeout;
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+    if (callNow) func.apply(context, args);
+  };
+}
+
+window.addEventListener('resize', debounce(setup, 250));
 /**
  * A Heart object will beat, and generate voltage values according to the time
  * the beat started
@@ -314,7 +342,7 @@ let ecg = new ECG({ x: 0, y: 110 }, [{ x: 0, y: 0 }], width);
  */
 function setup() {
   // Create a 600x150 canvas and place it inside the div with id "sketch-holder"
-  let myCanvas = createCanvas(800, 150);
+  let myCanvas = createCanvas(getWidth(), 150);
   myCanvas.parent('sketch-holder');
 
   // Set the color mode to allow calling RGBA without converting to string

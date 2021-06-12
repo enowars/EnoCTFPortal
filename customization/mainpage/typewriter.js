@@ -642,10 +642,11 @@ var Typewriter = (function () {
     {
       key: 'createTextEl',
       value: function createTextEl() {
-        this.textEl = document.createElement('span');
+        this.textEl = document.createElement('div');
 
         this.textEl.classList.add(this.options.typeClass);
-
+        this.textEl.classList.add('glitch');
+        // this.textEl.classList.add("glitch");
         this.textEl.style.color = this.options.typeColor;
 
         this.el.appendChild(this.textEl);
@@ -656,6 +657,8 @@ var Typewriter = (function () {
       value: function render() {
         this.textEl.innerHTML = this.text;
         this.textEl.setAttribute('data-text', this.text);
+        this.textEl.classList.add('force-redraw');
+        this.textEl.classList.remove('force-redraw');
       },
     },
   ]);

@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
+<!-- TODO: mobile friendly -->
+<!-- TODO: more informatin links?  -->
 <html>
   <head>
     <link href="https://fonts.googleapis.com/css?family=Cutive+Mono&display=swap" rel="stylesheet" />
@@ -17,8 +19,12 @@
   <body>
     <div id="title-section" class="page">
       <div class="subtitle">Attack / Defense CTF</div>
-      <div id="t-writer-title" class="glitch title glitch-font" data-text="ENOWARS 5"></div>
-      <div class="subtitle">10 July 2021 | 12:00-22:00 UTC</div>
+      <div id="t-writer-title" class="title glitch-font"></div>
+      <div class="subtitle hidden-mobile">10 July 2021 | 12:00-22:00 UTC</div>
+      <div class="subtitle visible-mobile">
+        10 July 2021 <br />
+        12:00-22:00 UTC
+      </div>
     </div>
     <div id="graphs">
       <div class="grid-container">
@@ -40,7 +46,7 @@
           Hemoglobin: <span id="hemoglobin-value" class="glitch-4" data-text="Help!">14.1</span> g/dl
         </div>
 
-        <div class="experiment-title minute-ventilation">
+        <div class="experiment-title minute-ventilation hidden-mobile">
           Minute ventilation: <span id="minute-ventilation-value"> 6.14 </span> L/min
         </div>
         <div class="other"></div>
@@ -51,12 +57,25 @@
       <p>You can register on <a href="https://ctftime.org/event/1340" target="_blank">CTF Time</a>.</p>
     </div>
     <div class="page page-50">
+      <h2 class="glitch-2" data-text="More Information">More Information</h2>
+      <p>
+        Want to know more about what a CTF is? Start by browsing our
+        <!-- TODO: Update Documentation Link -->
+        <a href="https://github.com/enowars/docs" target="_blank">documentation</a>.
+      </p>
+      <p>
+        Before the CTF you will get access to the infrastructure on our platform by logging in here:
+        <!-- TODO: Update Platform Link -->
+        <a href="https://2021-1.enowars.com" target="_blank">Enowars Portal</a>.
+      </p>
+    </div>
+    <div class="page page-50">
       <h2 class="glitch-3" data-text="Host">Host</h2>
       <p>
         The <a href="https://enoflag.de" target="_blank">AG Rechnersicherheit</a> (Workgroup for Computer Security) at
         the TU Berlin
       </p>
-      <img src="logo_white.png" />
+      <img class="rotate" src="logo_white.png" />
     </div>
   </body>
 </html>
