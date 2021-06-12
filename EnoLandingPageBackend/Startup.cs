@@ -3,9 +3,11 @@ namespace EnoLandingPageBackend
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.IO;
     using System.Linq;
     using System.Net.Http;
     using System.Net.Http.Headers;
+    using System.Reflection;
     using System.Security.Claims;
     using System.Text.Json;
     using System.Threading.Tasks;
@@ -127,9 +129,19 @@ namespace EnoLandingPageBackend
             services.AddControllers();
             services.AddDbContextPool<LandingPageDatabaseContext>(options => options.UseSqlite(LandingPageDatabaseContext.CONNECTIONSTRING));
             services.AddScoped<LandingPageDatabase>();
+            // Register Swagger services 
+            // TODO: Add examples
+            //services.AddSwaggerExamplesFromAssembyOf<ExampleClasses>()
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "EnoLandingPage", Version = "v1" });
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+                c.EnableAnnotations();
+                // TODO Maybe add Filters
+                //c.DocumentFilter<DefaultFilter>();
+                //c.DescribeAllEnumsAsStrings();
             });
             services.AddSingleton<HetznerCloudApi>();
         }
@@ -143,7 +155,11 @@ namespace EnoLandingPageBackend
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "EnoLandingPageBackend v1"));
+                app.UseSwaggerUI(c =>
+                {
+                    c.DisplayOperationId();
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "EnoLandingPageBackend v1");
+                });
             }
             else
             {
@@ -158,6 +174,11 @@ namespace EnoLandingPageBackend
                 endpoints.MapControllers();
             });
             db.Migrate();
+
+            app.UseStaticFiles();
+            //app.UseSpaStaticFiles();
+
+
             var rewrite = new RewriteOptions()
                 .AddRewrite("^$", "/index.html", true)
                 .AddRewrite(@"^[\w\/]*$", "/index.html", true);

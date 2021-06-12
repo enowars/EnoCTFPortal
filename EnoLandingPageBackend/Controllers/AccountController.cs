@@ -35,6 +35,11 @@
             this.settings = settings;
         }
 
+        /// <summary>
+        /// Login to the Portal.
+        /// </summary>
+        /// <param name="redirectUri">The URL the User will be redirected after succesfull login.</param>
+        /// <returns></returns>
         [HttpGet]
         public ActionResult Login(string redirectUri) // TODO 404 foo makes ReturnUrl out of this
         {
