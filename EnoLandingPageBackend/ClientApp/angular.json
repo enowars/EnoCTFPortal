@@ -102,6 +102,37 @@
           }
         }
       }
+    },
+    "backend-api": {
+      "projectType": "library",
+      "root": "projects/backend-api",
+      "sourceRoot": "projects/backend-api/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/backend-api/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/backend-api/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/backend-api/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "main": "projects/backend-api/src/test.ts",
+            "tsConfig": "projects/backend-api/tsconfig.spec.json",
+            "karmaConfig": "projects/backend-api/karma.conf.js"
+          }
+        }
+      }
     }
   },
   "defaultProject": "ClientApp"

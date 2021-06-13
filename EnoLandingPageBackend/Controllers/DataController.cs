@@ -27,7 +27,7 @@
         }
 
         [HttpGet]
-        public IActionResult CtfInfo()
+        public ActionResult<CtfInfoMessage> CtfInfo()
         {
             return this.Ok(new CtfInfoMessage(
                 this.settings.StartTime.ToUniversalTime(),
@@ -37,7 +37,7 @@
         }
 
         [HttpGet]
-        public async Task<IActionResult> Teams()
+        public async Task<ActionResult<TeamsMessage>> Teams()
         {
             var teams = await this.db.GetTeams(this.HttpContext.RequestAborted);
             return this.Json(

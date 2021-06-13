@@ -5,6 +5,8 @@
 export const environment = {
   production: false,
   hmr: true,
+  // no string is the base from where the app is currently served
+  backendBaseUrl: '',
 };
 
 /*

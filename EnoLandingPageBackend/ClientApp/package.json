@@ -6,7 +6,8 @@
     "start": "ng serve --configuration hmr",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "client-generator": "openapi-generator-cli generate -i swagger.json -g typescript-angular -o projects/backend-api/src/lib --additional-properties=ngVersion=11.0.0,npmName=backendAPI,supportsES6=true,withInterfaces=true"
   },
   "private": true,
   "dependencies": {
@@ -24,6 +25,7 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~12.0.4",
+    "@openapitools/openapi-generator-cli": "2.3.3",
     "@angular/cli": "~12.0.4",
     "@angular/compiler-cli": "~12.0.4",
     "@angularclass/hmr": "^3.0.0",
@@ -35,6 +37,7 @@
     "karma-coverage": "~2.0.3",
     "karma-jasmine": "~4.0.0",
     "karma-jasmine-html-reporter": "^1.5.0",
+    "ng-packagr": "^12.0.0",
     "typescript": "~4.2.3"
   }
 }

@@ -1,0 +1,288 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "EnoLandingPage",
+    "version": "v1"
+  },
+  "paths": {
+    "/api/Account/Login": {
+      "get": {
+        "tags": ["Account"],
+        "summary": "Login to the Portal.",
+        "parameters": [
+          {
+            "name": "redirectUri",
+            "in": "query",
+            "description": "The URL the User will be redirected after succesfull login.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Account/OAuth2Redirect": {
+      "get": {
+        "tags": ["Account"],
+        "parameters": [
+          {
+            "name": "redirectUri",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Account/Info": {
+      "get": {
+        "tags": ["Account"],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Account/VpnConfig": {
+      "get": {
+        "tags": ["Account"],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Account/CheckIn": {
+      "post": {
+        "tags": ["Account"],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Admin/BootVm": {
+      "get": {
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "name": "adminSecret",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "teamId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Admin/CtfJson": {
+      "get": {
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "name": "adminSecret",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Data/CtfInfo": {
+      "get": {
+        "tags": ["Data"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/CtfInfoMessage"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CtfInfoMessage"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CtfInfoMessage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Data/Teams": {
+      "get": {
+        "tags": ["Data"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamsMessage"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamsMessage"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamsMessage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Data/IPs": {
+      "get": {
+        "tags": ["Data"],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/EnoEngine": {
+      "get": {
+        "tags": ["EnoEngine"],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Vulnbox/StartVulnbox": {
+      "post": {
+        "tags": ["Vulnbox"],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Vulnbox/ResetVulnbox": {
+      "post": {
+        "tags": ["Vulnbox"],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CtfInfoMessage": {
+        "type": "object",
+        "properties": {
+          "startTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "registrationCloseOffset": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "checkInBeginOffset": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "checkInEndOffset": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TeamMessage": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "ctftimeId": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "logoUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "countryCode": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TeamsMessage": {
+        "type": "object",
+        "properties": {
+          "confirmedTeams": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TeamMessage"
+            },
+            "nullable": true
+          },
+          "registeredTeams": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TeamMessage"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}
