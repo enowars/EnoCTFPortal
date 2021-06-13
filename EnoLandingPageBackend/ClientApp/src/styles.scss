@@ -1,1 +1,236 @@
-/* You can add global styles to this file, and also import other style files */
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@use '~@angular/material' as mat;
+
+// Plus imports for other components in your app.
+
+// $custom-typography: mat-typography-config(
+//   $font-family: 'Roboto, "Helvetica Neue", sans-serif',
+//   $display-4: mat-typography-level(112px, 112px, 300),
+//   $display-3: mat-typography-level(56px, 56px, 400),
+//   $display-2: mat-typography-level(45px, 48px, 400),
+//   $display-1: mat-typography-level(34px, 40px, 400),
+//   $headline: mat-typography-level(24px, 32px, 400),
+//   $title: mat-typography-level(20px, 32px, 500),
+//   $subheading-2: mat-typography-level(16px, 28px, 400),
+//   $subheading-1: mat-typography-level(15px, 24px, 400),
+//   $body-2: mat-typography-level(14px, 24px, 500),
+//   $body-1: mat-typography-level(14px, 20px, 400),
+//   $caption: mat-typography-level(12px, 20px, 400),
+//   $button: mat-typography-level(14px, 14px, 500),
+//   $input: mat-typography-level(inherit, 1.125, 400),
+// );
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat.core();
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+// Make your own: http://mcg.mbitson.com/#!?mcgpalette0=%233f51b5
+
+$our-own-palette-primary: (
+  50: #e8eaf6,
+  100: #c5cbe9,
+  200: #9fa8da,
+  300: #7985cb,
+  400: #5c6bc0,
+  500: #3f51b5,
+  600: #394aae,
+  700: #3140a5,
+  800: #29379d,
+  900: #1b278d,
+  A100: #c6cbff,
+  A200: #939dff,
+  A400: #606eff,
+  A700: #4757ff,
+  contrast: (
+    50: #000000,
+    100: #000000,
+    200: #000000,
+    300: #000000,
+    400: #ffffff,
+    500: #ffffff,
+    600: #ffffff,
+    700: #ffffff,
+    800: #ffffff,
+    900: #ffffff,
+    A100: #000000,
+    A200: #000000,
+    A400: #ffffff,
+    A700: #ffffff,
+  ),
+);
+
+$our-own-palette-secondary: (
+  50: #e8eaf6,
+  100: #c5cbe9,
+  200: #9fa8da,
+  300: #7985cb,
+  400: #5c6bc0,
+  500: #3f51b5,
+  600: #394aae,
+  700: #3140a5,
+  800: #29379d,
+  900: #1b278d,
+  A100: #c6cbff,
+  A200: #939dff,
+  A400: #606eff,
+  A700: #4757ff,
+  contrast: (
+    50: #000000,
+    100: #000000,
+    200: #000000,
+    300: #000000,
+    400: #ffffff,
+    500: #ffffff,
+    600: #ffffff,
+    700: #ffffff,
+    800: #ffffff,
+    900: #ffffff,
+    A100: #000000,
+    A200: #000000,
+    A400: #ffffff,
+    A700: #ffffff,
+  ),
+);
+
+$ClientApp-primary: mat.define-palette($our-own-palette-primary);
+$ClientApp-accent: mat.define-palette($our-own-palette-secondary);
+
+// The warn palette is optional (defaults to red).
+$ClientApp-warn: mat.define-palette(mat.$red-palette);
+
+// Create the theme object. A theme consists of configurations for individual
+// theming systems such as "color" or "typography".
+$default-light: mat.define-light-theme(
+  (
+    color: (
+      primary: $ClientApp-primary,
+      accent: $ClientApp-accent,
+      warn: $ClientApp-warn,
+    ),
+  )
+);
+
+$default-dark: mat.define-dark-theme(
+  (
+    color: (
+      primary: $ClientApp-primary,
+      accent: $ClientApp-accent,
+      warn: $ClientApp-warn,
+    ),
+  )
+);
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+
+.default_light_theme {
+  @include mat.all-component-themes($default-light);
+}
+
+.default_dark_theme {
+  @include mat.all-component-themes($default-dark);
+}
+
+html,
+body,
+app-root {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.pb-expand {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+.pb-spacer {
+  flex: 1;
+  flex-grow: 1;
+}
+
+$small-breakpoint: 468px;
+$med-breakpoint: 768px;
+$big-breakpoint: 1024px;
+
+@mixin smaller {
+  @media (max-width: #{$small-breakpoint - 1px}) {
+    @content;
+  }
+}
+
+@mixin small-med {
+  @media (min-width: #{$small-breakpoint}) and (max-width: #{$med-breakpoint - 1px}) {
+    @content;
+  }
+}
+
+@mixin med-big {
+  @media (min-width: #{$med-breakpoint}) and (max-width: #{$big-breakpoint}) {
+    @content;
+  }
+}
+
+@mixin bigger {
+  @media (min-width: #{$big-breakpoint}) {
+    @content;
+  }
+}
+
+@mixin below-small {
+  @media (max-width: #{$small-breakpoint - 1px}) {
+    @content;
+  }
+}
+
+@mixin below-med {
+  @media (max-width: #{$med-breakpoint - 1px}) {
+    @content;
+  }
+}
+
+@mixin below-big {
+  @media (max-width: #{$big-breakpoint - 1px}) {
+    @content;
+  }
+}
+
+@mixin on-med-and-up {
+  @media (min-width: #{$med-breakpoint}) {
+    @content;
+  }
+}
+
+//Media query classes
+@include on-med-and-up {
+  .pb-hide-on-med-and-up {
+    display: none;
+  }
+}
+
+@include below-small {
+  .pb-hide-below-small {
+    display: none;
+  }
+}
+
+@include below-med {
+  .pb-hide-below-med {
+    display: none;
+  }
+}
+
+@include below-big {
+  .pb-hide-below-big {
+    display: none;
+  }
+}

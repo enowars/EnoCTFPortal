@@ -9,7 +9,12 @@ import { environment } from 'src/environments/environment';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
-
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { AppNavigationModule } from 'src/app/modules/app-navigation/app-navigation.module';
+import { MaterialModule } from './material.module';
+import { NgxsModule } from '@ngxs/store';
+import { AppState } from './shared/states/App.state';
+import { ThemeService } from './services/theme.service';
 export function apiConfigFactory(): Configuration {
   const params: ConfigurationParameters = {
     basePath: environment.backendBaseUrl,
@@ -23,10 +28,16 @@ export function apiConfigFactory(): Configuration {
   imports: [
     BrowserModule,
     AppRoutingModule,
+    AppNavigationModule,
+    MaterialModule,
     HttpClientModule,
     ApiModule.forRoot(apiConfigFactory),
+    NgxsModule.forRoot([AppState], {
+      developmentMode: !environment.production,
+    }),
+    BrowserAnimationsModule,
   ],
-  providers: [],
+  providers: [ThemeService],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

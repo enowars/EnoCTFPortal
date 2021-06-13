@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
+import { Store } from '@ngxs/store';
 import { DataService } from 'projects/backend-api/src/lib';
+import { InitTheme } from './shared/states/App.state';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -7,10 +9,12 @@ import { DataService } from 'projects/backend-api/src/lib';
 })
 export class AppComponent {
   public data: any;
-  constructor(private dataService: DataService) {
+  constructor(private store: Store, private dataService: DataService) {
     this.dataService.apiDataCtfInfoGet().subscribe((data) => {
       this.data = data;
     });
   }
-  ngOnInit() {}
+  ngOnInit() {
+    this.store.dispatch(new InitTheme());
+  }
 }

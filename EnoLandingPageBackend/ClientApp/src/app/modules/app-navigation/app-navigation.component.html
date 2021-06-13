@@ -1,0 +1,151 @@
+<!-- Navigation -->
+<mat-sidenav-container>
+  <mat-sidenav #sidenav [mode]="'push'" [position]="'end'">
+    <nav id="pb-nav-mobile">
+      <mat-list>
+        <mat-list-item>
+          <button mat-menu-item [routerLink]="['/']" (click)="sidenav.close()">
+            <mat-icon>dashboard</mat-icon>
+            <ng-container> Dashboard </ng-container>
+          </button>
+        </mat-list-item>
+        <mat-list-item>
+          <button
+            mat-menu-item
+            [routerLink]="['/organigram']"
+            (click)="sidenav.close()"
+          >
+            <mat-icon>business</mat-icon>
+            <ng-container> Organigram </ng-container>
+          </button>
+        </mat-list-item>
+        <mat-list-item>
+          <button
+            mat-menu-item
+            [routerLink]="['/rooms']"
+            (click)="sidenav.close()"
+          >
+            <mat-icon>meeting_room</mat-icon>
+            <ng-container> Rooms </ng-container>
+          </button>
+        </mat-list-item>
+        <!-- <mat-list-item>
+          <button
+            mat-menu-item
+            (click)="navigateToOwnProfile(); sidenav.close()"
+          >
+            <mat-icon *ngIf="currentUser == null">perm_identity</mat-icon>
+            <app-profile-picture
+              *ngIf="currentUser != null"
+              [imageSize]="50"
+              class="pb-self-centered circle"
+              [user]="currentUser"
+            >
+            </app-profile-picture>
+            <span
+              i18n="
+                NavigationComponent|Link to the users
+                profile@@NavigationComponentMyProfile"
+              >My profile</span
+            >
+          </button>
+        </mat-list-item> -->
+        <mat-divider></mat-divider>
+        <mat-list-item>
+          <button
+            mat-menu-item
+            focus
+            [routerLink]="['/settings']"
+            (click)="sidenav.close()"
+          >
+            <mat-icon>settings</mat-icon>
+            <span>Settings</span>
+          </button>
+        </mat-list-item>
+        <mat-list-item>
+          <button
+            mat-menu-item
+            [routerLink]="['/further-information']"
+            matTooltip="Got Feedback? Than that`s the right place to click."
+            (click)="sidenav.close()"
+          >
+            <mat-icon>info_outline</mat-icon>
+            <span>Information</span>
+          </button>
+        </mat-list-item>
+        <mat-list-item>
+          <button
+            mat-menu-item
+            feedbackDrawer
+            matTooltip="Found a Bug? Than that`s the right place to click."
+            (click)="sidenav.close()"
+          >
+            <mat-icon>bug_report</mat-icon>
+            <span>Submit Feedback</span>
+          </button>
+        </mat-list-item>
+      </mat-list>
+    </nav>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <div class="navigation mat-elevation-z5">
+      <nav>
+        <mat-toolbar>
+          <mat-toolbar-row class="mat-elevation-z6">
+            <div class="left app-title">
+              <button mat-button [routerLink]="['/']">
+                <span class="mat-display-1" id="title">ENOWARS</span>
+              </button>
+            </div>
+
+            <div class="pb-spacer"></div>
+            <div class="pb-center-element-orthogonal pb-hide-below-med">
+              <button mat-button [routerLink]="['/scoreboard']">
+                Scoreboard
+              </button>
+              <button mat-button [routerLink]="['/rules']">Rules</button>
+              <button mat-button>Documentation</button>
+              <button mat-button>Teams</button>
+              <button mat-button>Contact</button>
+              <button mat-icon-button [matMenuTriggerFor]="personalmenu">
+                <mat-icon>person</mat-icon>
+              </button>
+
+              <mat-menu #personalmenu>
+                <button mat-menu-item>
+                  <mat-icon>perm_identity</mat-icon>
+                  <span>My profile</span>
+                </button>
+                <button mat-menu-item focus [routerLink]="['/settings']">
+                  <mat-icon>settings</mat-icon>
+                  <span>Settings</span>
+                </button>
+                <button
+                  mat-menu-item
+                  [routerLink]="['/further-information']"
+                  matTooltip="Got Feedback? Found a Bug? Than that`s the right place to click."
+                >
+                  <mat-icon>info_outline</mat-icon>
+                  <span>Information</span>
+                </button>
+                <button mat-menu-item feedbackDrawer>
+                  <mat-icon>bug_report</mat-icon>
+                  <span>Submit Feedback</span>
+                </button>
+              </mat-menu>
+            </div>
+            <div class="pb-hide-on-med-and-up">
+              <button mat-icon-button (click)="sidenav.toggle()">
+                <mat-icon>menu</mat-icon>
+              </button>
+            </div>
+          </mat-toolbar-row>
+        </mat-toolbar>
+      </nav>
+    </div>
+
+    <ng-content>
+      <!-- Here goes the content -->
+    </ng-content>
+  </mat-sidenav-content>
+</mat-sidenav-container>
