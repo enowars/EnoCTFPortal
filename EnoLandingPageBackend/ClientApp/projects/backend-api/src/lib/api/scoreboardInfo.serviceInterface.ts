@@ -13,15 +13,14 @@ import { HttpHeaders }                                       from '@angular/comm
 
 import { Observable }                                        from 'rxjs';
 
-import { CtfInfoMessage } from '../model/models';
-import { TeamsMessage } from '../model/models';
+import { Scoreboard } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
 
 
 
-export interface DataServiceInterface {
+export interface ScoreboardInfoServiceInterface {
     defaultHeaders: HttpHeaders;
     configuration: Configuration;
 
@@ -29,18 +28,6 @@ export interface DataServiceInterface {
      * 
      * 
      */
-    apiDataCtfInfoGet(extraHttpRequestParams?: any): Observable<CtfInfoMessage>;
-
-    /**
-     * 
-     * 
-     */
-    apiDataIPsGet(extraHttpRequestParams?: any): Observable<{}>;
-
-    /**
-     * Get all Teams.
-     * 
-     */
-    apiDataTeamsGet(extraHttpRequestParams?: any): Observable<TeamsMessage>;
+    apiScoreboardInfoGet(extraHttpRequestParams?: any): Observable<Scoreboard>;
 
 }

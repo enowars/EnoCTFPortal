@@ -50,7 +50,24 @@
         "tags": ["Account"],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamDetailsMessage"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamDetailsMessage"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamDetailsMessage"
+                }
+              }
+            }
           }
         }
       }
@@ -151,6 +168,7 @@
     "/api/Data/Teams": {
       "get": {
         "tags": ["Data"],
+        "summary": "Get all Teams.",
         "responses": {
           "200": {
             "description": "Success",
@@ -191,6 +209,33 @@
         "responses": {
           "200": {
             "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/ScoreboardInfo": {
+      "get": {
+        "tags": ["ScoreboardInfo"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Scoreboard"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Scoreboard"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Scoreboard"
+                }
+              }
+            }
           }
         }
       }
@@ -236,6 +281,212 @@
           "checkInEndOffset": {
             "type": "integer",
             "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "LandingPageVulnboxStatus": {
+        "enum": [0, 1, 2],
+        "type": "integer",
+        "format": "int32"
+      },
+      "Scoreboard": {
+        "type": "object",
+        "properties": {
+          "currentRound": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "startTimestamp": {
+            "type": "string",
+            "nullable": true
+          },
+          "endTimestamp": {
+            "type": "string",
+            "nullable": true
+          },
+          "dnsSuffix": {
+            "type": "string",
+            "nullable": true
+          },
+          "services": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScoreboardService"
+            },
+            "nullable": true
+          },
+          "teams": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScoreboardTeam"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ScoreboardFirstBlood": {
+        "type": "object",
+        "properties": {
+          "teamId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "teamName": {
+            "type": "string",
+            "nullable": true
+          },
+          "timestamp": {
+            "type": "string",
+            "nullable": true
+          },
+          "roundId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "flagVariantId": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ScoreboardService": {
+        "type": "object",
+        "properties": {
+          "serviceId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "serviceName": {
+            "type": "string",
+            "nullable": true
+          },
+          "flagVariants": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "firstBloods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScoreboardFirstBlood"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ScoreboardTeam": {
+        "type": "object",
+        "properties": {
+          "teamName": {
+            "type": "string",
+            "nullable": true
+          },
+          "teamId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "logoUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "countryCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "totalScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "attackScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "defenseScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "serviceLevelAgreementScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "serviceDetails": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScoreboardTeamServiceDetails"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ScoreboardTeamServiceDetails": {
+        "type": "object",
+        "properties": {
+          "serviceId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "attackScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "defenseScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "serviceLevelAgreementScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "serviceStatus": {
+            "$ref": "#/components/schemas/ServiceStatus"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ServiceStatus": {
+        "enum": [0, 1, 2, 3, 4, 5],
+        "type": "integer",
+        "format": "int32"
+      },
+      "TeamDetailsMessage": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "confirmed": {
+            "type": "boolean"
+          },
+          "teamName": {
+            "type": "string",
+            "nullable": true
+          },
+          "vpnConfigAvailable": {
+            "type": "boolean"
+          },
+          "rootPassword": {
+            "type": "string",
+            "nullable": true
+          },
+          "externalIpAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "internalIpAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "vulnboxStatus": {
+            "$ref": "#/components/schemas/LandingPageVulnboxStatus"
           }
         },
         "additionalProperties": false

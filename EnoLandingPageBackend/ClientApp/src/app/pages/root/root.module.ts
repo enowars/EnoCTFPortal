@@ -1,15 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RootComponent } from './root.component';
-
-
+import { PageRootComponent } from './root.component';
 
 @NgModule({
-  declarations: [
-    RootComponent
-  ],
-  imports: [
-    CommonModule
-  ]
+  declarations: [PageRootComponent],
+  imports: [CommonModule],
 })
-export class RootModule { }
+export class PageRootModule {}

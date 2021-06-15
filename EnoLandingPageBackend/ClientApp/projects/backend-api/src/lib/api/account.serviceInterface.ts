@@ -13,6 +13,7 @@ import { HttpHeaders }                                       from '@angular/comm
 
 import { Observable }                                        from 'rxjs';
 
+import { TeamDetailsMessage } from '../model/models';
 
 
 import { Configuration }                                     from '../configuration';
@@ -33,7 +34,7 @@ export interface AccountServiceInterface {
      * 
      * 
      */
-    apiAccountInfoGet(extraHttpRequestParams?: any): Observable<{}>;
+    apiAccountInfoGet(extraHttpRequestParams?: any): Observable<TeamDetailsMessage>;
 
     /**
      * Login to the Portal.

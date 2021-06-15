@@ -38,7 +38,7 @@ export interface AppStateModel {
   defaults: {
     serviceWorkerNotificationDisplayed: false,
     version: '0.0.0',
-    activeTheme: Theme.default_dark,
+    activeTheme: Theme.default_light,
   },
 })
 @Injectable()

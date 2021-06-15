@@ -10,6 +10,7 @@ import { AppState } from 'src/app/shared/states/App.state';
 import { environment } from 'src/environments/environment';
 import { EnvironmentInterface } from 'src/environments/environmentInterfaces';
 import { Theme } from 'src/app/shared/models/enumberables/Theme';
+import { APP_ROUTES } from 'src/app/app-routing.module';
 
 @Component({
   selector: 'app-navigation',
@@ -19,6 +20,7 @@ import { Theme } from 'src/app/shared/models/enumberables/Theme';
 })
 export class AppNavigationComponent implements OnInit, OnDestroy {
   public environment: EnvironmentInterface = environment;
+  public routes: typeof APP_ROUTES = APP_ROUTES;
 
   @Select(AppState.activeTheme)
   public themeValue$!: Observable<Theme>;

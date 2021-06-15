@@ -51,7 +51,7 @@
                 return this.UnprocessableEntity($"{nameof(OtherRequestRunningException)}");
             }
 
-            return this.NoContent();
+            return this.Ok();
         }
 
         [HttpPost]
@@ -65,7 +65,7 @@
             }
 
             await this.hetznerApi.Call(teamId, HetznerCloudApiCallType.Reset);
-            return this.NoContent();
+            return this.Ok();
         }
     }
 }

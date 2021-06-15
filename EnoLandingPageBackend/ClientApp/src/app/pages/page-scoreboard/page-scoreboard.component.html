@@ -1,0 +1,51 @@
+<div class="scoreboard-table">
+  <ng-container *ngIf="teams != null">
+    <table mat-table [dataSource]="teams" [trackBy]="trackById">
+      <!-- matSort
+      matSortDirection="asc"
+      matSortActive="teamName" -->
+      <ng-container matColumnDef="teamName" sticky>
+        <th mat-header-cell *matHeaderCellDef>Team</th>
+        <td mat-cell *matCellDef="let row">{{ row.teamName }}</td>
+      </ng-container>
+
+      <ng-container
+        *ngFor="let service of services; let colIndex = index"
+        matColumnDef="service-{{ service.serviceId }}"
+      >
+        <th mat-header-cell *matHeaderCellDef>{{ service.serviceName }}</th>
+        <td
+          mat-cell
+          *matCellDef="let element"
+          class="service-cell {{
+            element.serviceDetails[colIndex].serviceStatus
+          }}"
+          [matTooltip]="element.serviceDetails[colIndex].serviceStatus"
+        >
+          <div class="sla">
+            <mat-icon>change_circle</mat-icon>
+            {{
+              element.serviceDetails[
+                colIndex
+              ].serviceLevelAgreementScore.toFixed(0)
+            }}
+          </div>
+          <div class="attack">
+            <mat-icon>bolt</mat-icon>
+            {{ element.serviceDetails[colIndex].attackScore.toFixed(0) }}
+          </div>
+          <div class="defense">
+            <mat-icon>health_and_safety</mat-icon>
+            {{ element.serviceDetails[colIndex].defenseScore.toFixed(0) }}
+          </div>
+
+          <!-- <div class="status">
+            {{ element.serviceDetails[colIndex].serviceStatus }}
+          </div> -->
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  </ng-container>
+</div>

@@ -1,12 +1,27 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { environment } from 'src/environments/environment';
-import { RootComponent } from './pages/root/root.component';
+import { PageScoreboardComponent } from './pages/page-scoreboard/page-scoreboard.component';
+import { PageTeamsComponent } from './pages/page-teams/page-teams.component';
+import { PageRootComponent } from './pages/root/root.component';
+
+export const APP_ROUTES = {
+  scoreboard: 'scoreboard',
+  teams: 'teams',
+};
 
 const routes: Routes = [
   {
+    path: APP_ROUTES.scoreboard,
+    component: PageScoreboardComponent,
+  },
+  {
+    path: APP_ROUTES.teams,
+    component: PageTeamsComponent,
+  },
+  {
     path: '**',
-    component: RootComponent,
+    component: PageRootComponent,
   },
 ];
 

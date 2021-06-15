@@ -1,0 +1,12 @@
+<div>
+  <div *ngIf="teams != null">
+    Confirmed Teams:
+    <div *ngFor="let team of teams.confirmedTeams"></div>
+    Registred Teams:
+    <div *ngFor="let team of teams.registeredTeams">
+      <div>
+        {{ team.name }}
+      </div>
+    </div>
+  </div>
+</div>

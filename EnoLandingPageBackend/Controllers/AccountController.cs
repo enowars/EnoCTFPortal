@@ -90,7 +90,7 @@
 
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult> Info()
+        public async Task<ActionResult<TeamDetailsMessage>> Info()
         {
             var team = await this.db.GetTeamAndVulnbox(this.GetTeamId(), this.HttpContext.RequestAborted);
             return this.Ok(new TeamDetailsMessage(
@@ -131,7 +131,7 @@
             }
 
             await this.db.CheckIn(teamId, this.HttpContext.RequestAborted);
-            return this.NoContent();
+            return this.Ok();
         }
     }
 }

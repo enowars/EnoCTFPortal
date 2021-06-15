@@ -15,6 +15,10 @@ import { MaterialModule } from './material.module';
 import { NgxsModule } from '@ngxs/store';
 import { AppState } from './shared/states/App.state';
 import { ThemeService } from './services/theme.service';
+import { PageRootModule } from './pages/root/root.module';
+import { PageTeamsModule } from './pages/page-teams/page-teams.module';
+import { PageScoreboardModule } from './pages/page-scoreboard/page-scoreboard.module';
+import { OAuthModule } from 'angular-oauth2-oidc';
 export function apiConfigFactory(): Configuration {
   const params: ConfigurationParameters = {
     basePath: environment.backendBaseUrl,
@@ -35,6 +39,10 @@ export function apiConfigFactory(): Configuration {
     NgxsModule.forRoot([AppState], {
       developmentMode: !environment.production,
     }),
+    OAuthModule.forRoot(),
+    PageRootModule,
+    PageTeamsModule,
+    PageScoreboardModule,
     BrowserAnimationsModule,
   ],
   providers: [ThemeService],

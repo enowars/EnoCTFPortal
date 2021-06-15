@@ -10,6 +10,8 @@ api/data.service.ts
 api/data.serviceInterface.ts
 api/enoEngine.service.ts
 api/enoEngine.serviceInterface.ts
+api/scoreboardInfo.service.ts
+api/scoreboardInfo.serviceInterface.ts
 api/vulnbox.service.ts
 api/vulnbox.serviceInterface.ts
 configuration.ts
@@ -17,7 +19,15 @@ encoder.ts
 git_push.sh
 index.ts
 model/ctfInfoMessage.ts
+model/landingPageVulnboxStatus.ts
 model/models.ts
+model/scoreboard.ts
+model/scoreboardFirstBlood.ts
+model/scoreboardService.ts
+model/scoreboardTeam.ts
+model/scoreboardTeamServiceDetails.ts
+model/serviceStatus.ts
+model/teamDetailsMessage.ts
 model/teamMessage.ts
 model/teamsMessage.ts
 ng-package.json

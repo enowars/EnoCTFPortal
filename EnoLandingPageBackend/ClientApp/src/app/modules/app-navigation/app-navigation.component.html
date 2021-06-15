@@ -100,12 +100,15 @@
 
             <div class="pb-spacer"></div>
             <div class="pb-center-element-orthogonal pb-hide-below-med">
-              <button mat-button [routerLink]="['/scoreboard']">
+              <button mat-button [routerLink]="[routes.scoreboard]">
                 Scoreboard
               </button>
               <button mat-button [routerLink]="['/rules']">Rules</button>
-              <button mat-button>Documentation</button>
-              <button mat-button>Teams</button>
+              <!-- TODO: Update Link -->
+              <a mat-button href="https://github.com/enowars/docs"
+                >Documentation</a
+              >
+              <button mat-button [routerLink]="[routes.teams]">Teams</button>
               <button mat-button>Contact</button>
               <button mat-icon-button [matMenuTriggerFor]="personalmenu">
                 <mat-icon>person</mat-icon>
