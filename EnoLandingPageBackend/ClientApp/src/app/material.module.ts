@@ -24,7 +24,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
-
+import { MatStepperModule } from '@angular/material/stepper';
 @NgModule({
   imports: [
     MatButtonModule,
@@ -51,6 +51,7 @@ import { MatTreeModule } from '@angular/material/tree';
     MatBottomSheetModule,
     ScrollingModule,
     DragDropModule,
+    MatStepperModule,
   ],
   providers: [],
   exports: [
@@ -78,6 +79,7 @@ import { MatTreeModule } from '@angular/material/tree';
     MatBottomSheetModule,
     ScrollingModule,
     DragDropModule,
+    MatStepperModule,
   ],
 })
 export class MaterialModule {}

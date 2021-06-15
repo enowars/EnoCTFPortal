@@ -234,3 +234,15 @@ $big-breakpoint: 1024px;
     display: none;
   }
 }
+
+/**
+* Overwrites
+*/
+button.mat-button .mat-icon,
+a.mat-button .mat-icon,
+a.mat-raised-button .mat-icon,
+a.mat-flat-button .mat-icon,
+a.mat-stroked-button .mat-icon {
+  vertical-align: top;
+  font-size: 1.25em;
+}

@@ -1,12 +1,14 @@
 <div>
   <div *ngIf="teams != null">
-    Confirmed Teams:
-    <div *ngFor="let team of teams.confirmedTeams"></div>
-    Registred Teams:
-    <div *ngFor="let team of teams.registeredTeams">
-      <div>
-        {{ team.name }}
-      </div>
-    </div>
+    <h2>Confirmed Teams</h2>
+    <mat-list>
+      <app-team *ngFor="let team of teams.confirmedTeams" [team]="team">
+      </app-team>
+    </mat-list>
+    <h2>Registered Teams</h2>
+    <mat-list>
+      <app-team *ngFor="let team of teams.registeredTeams" [team]="team">
+      </app-team>
+    </mat-list>
   </div>
 </div>

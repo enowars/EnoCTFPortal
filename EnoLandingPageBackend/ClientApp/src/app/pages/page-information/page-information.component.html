@@ -1,0 +1,56 @@
+<div class="container p-3">
+  <h1>Rules</h1>
+  <hr />
+  <div>
+    <h3>Summary</h3>
+    <ul>
+      <li>
+        Vulnboxes and VPN servers are provided by us, you don't have to provide
+        or take care of anything.
+      </li>
+      <li>The game will start on @ctfInfo?.StartTime.ToString() UTC.</li>
+      <li>
+        You must register before
+        ctfInfo?.StartTime.AddHours(-ctfInfo.RegistrationCloseOffset).ToString()
+        UTC.
+      </li>
+      <li>
+        You must <a href="/profile">check in</a> between
+        ctfInfo?.StartTime.AddHours(-ctfInfo.CheckInBeginOffset).ToString() UTC
+        and @ctfInfo?.StartTime.AddHours(-ctfInfo.CheckInEndOffset).ToString()
+        UTC.
+      </li>
+      <li>
+        You must <a href="/profile">start your vulnbox</a> once the game starts.
+      </li>
+      <li>A round lasts 60 seconds, flags are valid for several rounds.</li>
+      <li>
+        Flag format: <code>{{ "ENO[A-Za-z0-9+\/=]{48}" }}</code>
+      </li>
+      <li>Flag submission: <code>nc flags.bambi.ovh 1337</code></li>
+      <li>
+        You will find an
+        <a href="https://github.com/arkime/arkime" target="_blank">Arkime</a>
+        installation on your vulnbox. Arkime is a traffic analysis tool, not a
+        vulnerable service.
+      </li>
+    </ul>
+
+    <h3>Scoring</h3>
+    <p>
+      We are currently using the scoring formula by
+      <a href="https://2019.faustctf.net/information/rules/">Faust CTF</a>.
+    </p>
+
+    <h3>Social Conduct</h3>
+    <p>
+      The vulnerable services of your opponents are your only valid targets. Do
+      not engage anything else!
+    </p>
+    <p>
+      Do not attempt to exhaust resources on your opponents' vulnboxes, for
+      example by sending excessive amounts of requests or exploiting
+      vulnerabilities leading to a denial of service.
+    </p>
+  </div>
+</div>

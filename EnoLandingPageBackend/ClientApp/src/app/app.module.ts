@@ -18,7 +18,11 @@ import { ThemeService } from './services/theme.service';
 import { PageRootModule } from './pages/root/root.module';
 import { PageTeamsModule } from './pages/page-teams/page-teams.module';
 import { PageScoreboardModule } from './pages/page-scoreboard/page-scoreboard.module';
-import { OAuthModule } from 'angular-oauth2-oidc';
+import { PageProfileComponent } from './pages/page-profile/page-profile.component';
+import { PageProfileModule } from './pages/page-profile/page-profile.module';
+import { PageInformationModule } from './pages/page-information/page-information.module';
+import { PageContactModule } from './pages/page-contact/page-contact.module';
+import { PageAdminModule } from './pages/page-admin/page-admin.module';
 export function apiConfigFactory(): Configuration {
   const params: ConfigurationParameters = {
     basePath: environment.backendBaseUrl,
@@ -39,10 +43,13 @@ export function apiConfigFactory(): Configuration {
     NgxsModule.forRoot([AppState], {
       developmentMode: !environment.production,
     }),
-    OAuthModule.forRoot(),
     PageRootModule,
     PageTeamsModule,
     PageScoreboardModule,
+    PageProfileModule,
+    PageInformationModule,
+    PageContactModule,
+    PageAdminModule,
     BrowserAnimationsModule,
   ],
   providers: [ThemeService],

@@ -1,0 +1,11 @@
+<div class="container p-3">
+  <h1>AdminView</h1>
+  <input bind="AdminSecret" placeholder="adminsecret" />
+  <br />
+  <input bind="TeamId" placeholder="teamid" />
+  <a href="/api/admin/bootvm?adminsecret=@(AdminSecret)&teamid=@(TeamId)"
+    >boot vm</a
+  >
+  <br />
+  <a href="/api/admin/ctfjson?adminsecret=@(AdminSecret)">ctf.json</a>
+</div>

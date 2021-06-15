@@ -3,10 +3,7 @@
   "compileOnSave": false,
   "compilerOptions": {
     "paths": {
-      "backend-api": [
-        "dist/backend-api/backend-api",
-        "dist/backend-api"
-      ]
+      "backend-api": ["dist/backend-api/backend-api", "dist/backend-api"]
     },
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
@@ -22,15 +19,13 @@
     "importHelpers": true,
     "target": "es2017",
     "module": "es2020",
-    "lib": [
-      "es2018",
-      "dom"
-    ]
+    "lib": ["es2018", "dom"]
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
-    "strictTemplates": true
+    "strictTemplates": true,
+    "fullTemplateTypeCheck": true
   }
 }

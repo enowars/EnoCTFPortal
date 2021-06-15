@@ -19,6 +19,7 @@ import { EnvironmentInterface } from 'src/environments/environmentInterfaces';
 import { Theme } from 'src/app/shared/models/enumberables/Theme';
 import { APP_ROUTES } from 'src/app/app-routing.module';
 import { coerceStringArray } from '@angular/cdk/coercion';
+import { TeamDetailsMessage } from 'projects/backend-api/src/lib/model/teamDetailsMessage';
 
 @Component({
   selector: 'app-navigation',
@@ -32,8 +33,11 @@ export class AppNavigationComponent
 {
   public environment: EnvironmentInterface = environment;
   public routes: typeof APP_ROUTES = APP_ROUTES;
-
   public themeValue: Theme | null = null;
+  @Select(AppState.authenticated)
+  public authenticated$!: Observable<boolean>;
+  @Select(AppState.teamInfo)
+  public info$!: Observable<TeamDetailsMessage>;
 
   constructor(private store: Store) {
     super();
@@ -59,7 +63,6 @@ export class AppNavigationComponent
       .select(AppState)
       .pipe(untilComponentDestroyed(this))
       .subscribe((state: AppStateModel) => {
-        console.log(state);
         this.themeValue = state.activeTheme;
       });
   }

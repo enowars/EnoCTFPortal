@@ -1,0 +1,132 @@
+<div class="container p-3">
+  <ng-container *ngIf="(teamInfo$ | async) == null">
+    You should have been logged in.
+  </ng-container>
+  <ng-container *ngIf="(teamInfo$ | async) != null">
+    <h1>{{ (teamInfo$ | async)!.teamName }}</h1>
+
+    <ng-container *ngIf="(teamInfo$ | async)!.confirmed">
+      <div class="alert alert-success" role="alert">
+        Your participation has been confirmed!
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="!(teamInfo$ | async)!.confirmed">
+      <div class="alert alert-success" role="alert">
+        Your participation hasn't been confirmed yet! Please check in
+        <ng-container *ngIf="(ctfInfo$ | async)!.checkInBeginOffset">
+        </ng-container>
+        after
+        @(ctfInfo.StartTime.AddHours(-ctfInfo.CheckInBeginOffset).ToUniversalTime().ToString())
+        UTC.
+        (ctfInfo.StartTime.AddHours(-ctfInfo.CheckInBeginOffset).ToUniversalTime()
+        > DateTime.UtcNow && false) // CheckIn has not started
+        <ng-container *ngIf="(ctfInfo$ | async)!.checkInEndOffset">
+        </ng-container>
+        Your participation hasn't been confirmed yet! Please check in before
+        @(ctfInfo.StartTime.AddHours(-ctfInfo.CheckInBeginOffset).ToUniversalTime().ToString())
+        UTC.
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="!(teamInfo$ | async)!.confirmed">
+      <div class="alert alert-success" role="alert">
+        <div class="alert alert-danger" role="alert">
+          You did not confirm your participation before
+          @(ctfInfo.StartTime.AddHours(-ctfInfo.CheckInEndOffset).ToUniversalTime().ToString())
+          UTC. if (DateTime.UtcNow >
+          ctfInfo.StartTime.AddHours(-ctfInfo.CheckInEndOffset).ToUniversalTime()
+          && false) // CheckIn is over
+        </div>
+      </div>
+    </ng-container>
+
+    <button mat-raised-button>Check In!</button>
+    <!-- (ctfInfo.StartTime < DateTime.UtcNow) { if
+    (teamInformation.VulnboxStatus == LandingPageVulnboxStatus.None)  -->
+    <button mat-raised-button>Create VM</button>
+
+    <!--  else if (teamInformation.VulnboxStatus ==
+    LandingPageVulnboxStatus.Creating)  -->
+    <!-- <p>Your VM is starting!</p> -->
+
+    <!-- else if (teamInformation.VulnboxStatus ==
+    LandingPageVulnboxStatus.Created)  -->
+    <button mat-raised-button>Reboot VM</button>
+
+    <!-- if (vmInteractionFeedback != null)
+    <p>@vmInteractionFeedback</p> -->
+
+    <div>
+      <div>External IP Address:</div>
+      <code>{{ (teamInfo$ | async)!.externalIpAddress || "coming soon" }}</code>
+    </div>
+    <div>
+      <div>Root Password:</div>
+      <code>{{ (teamInfo$ | async)!.rootPassword || "coming soon" }}</code>
+    </div>
+    <div>
+      <div>Internal IP Address:</div>
+      <code>{{ (teamInfo$ | async)!.internalIpAddress || "coming soon" }}</code>
+      <code>@(teamInformation.InternalIpAddress ?? "coming soon")</code>
+    </div>
+    <div>
+      <div>Vulnbox Status:</div>
+      <code>{{ (teamInfo$ | async)!.vulnboxStatus || "coming soon" }}</code>
+    </div>
+    <div>
+      <div>Vpn Configuration:</div>
+      <!-- @if (teamInformation.VpnConfigAvailable)
+      <a href="/api/account/vpnconfig">Download</a>
+       else
+      <code>coming soon</code>
+       -->
+    </div>
+  </ng-container>
+</div>
+
+<!-- <mat-vertical-stepper [linear]="true" #stepper>
+  <mat-step>
+    <form>
+      <ng-template matStepLabel>Fill out your name</ng-template>
+      <mat-form-field>
+        <mat-label>Name</mat-label>
+        <input
+          matInput
+          placeholder="Last name, First name"
+          formControlName="firstCtrl"
+          required
+        />
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step>
+    <form>
+      <ng-template matStepLabel>Fill out your address</ng-template>
+      <mat-form-field>
+        <mat-label>Address</mat-label>
+        <input
+          matInput
+          formControlName="secondCtrl"
+          placeholder="Ex. 1 Main St, New York, NY"
+          required
+        />
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel>Done</ng-template>
+    <p>You are now done.</p>
+    <div>
+      <button mat-button matStepperPrevious>Back</button>
+      <button mat-button (click)="stepper.reset()">Reset</button>
+    </div>
+  </mat-step>
+</mat-vertical-stepper> -->

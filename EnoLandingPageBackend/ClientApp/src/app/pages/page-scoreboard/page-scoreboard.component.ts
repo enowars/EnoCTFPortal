@@ -1,5 +1,12 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { MatSort, SortDirection } from '@angular/material/sort';
 import { ScoreboardInfo } from 'projects/backend-api/src/lib/model/scoreboardInfo';
 import { ScoreboardInfoTeam } from 'projects/backend-api/src/lib/model/scoreboardInfoTeam';
@@ -13,9 +20,11 @@ import { catchError, map, startWith, switchMap } from 'rxjs/operators';
   selector: 'app-page-scoreboard',
   templateUrl: './page-scoreboard.component.html',
   styleUrls: ['./page-scoreboard.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PageScoreboardComponent implements OnInit {
-  public displayedColumns: string[] = ['teamName'];
+  public round: number = 0;
+  public displayedColumns: string[] = ['teamId', 'teamName'];
 
   // public scoreboard: ScoreboardInfo;
   public teams: ScoreboardTeam[] | undefined;
@@ -24,7 +33,10 @@ export class PageScoreboardComponent implements OnInit {
 
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private _httpClient: HttpClient) {}
+  constructor(
+    private _httpClient: HttpClient,
+    private ref: ChangeDetectorRef
+  ) {}
   ngAfterViewInit() {}
 
   ngOnInit(): void {
@@ -51,9 +63,7 @@ export class PageScoreboardComponent implements OnInit {
             this.displayedColumns.push('service-' + service.serviceId);
           }
         });
-        // why does vs code show an error here
-        //                      v
-        console.log(this.teams);
+        this.ref.markForCheck();
       });
   }
 
