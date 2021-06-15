@@ -1,16 +1,24 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { NavigationEnd, Router } from '@angular/router';
-import { Select } from '@ngxs/store';
-import { untilComponentDestroyed } from '@w11k/ngx-componentdestroyed';
+import { Select, Store } from '@ngxs/store';
+import {
+  OnDestroyMixin,
+  untilComponentDestroyed,
+} from '@w11k/ngx-componentdestroyed';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { MatBadgeModule } from '@angular/material/badge';
-import { AppState } from 'src/app/shared/states/App.state';
+import {
+  AppState,
+  AppStateModel,
+  SetTheme,
+} from 'src/app/shared/states/App.state';
 import { environment } from 'src/environments/environment';
 import { EnvironmentInterface } from 'src/environments/environmentInterfaces';
 import { Theme } from 'src/app/shared/models/enumberables/Theme';
 import { APP_ROUTES } from 'src/app/app-routing.module';
+import { coerceStringArray } from '@angular/cdk/coercion';
 
 @Component({
   selector: 'app-navigation',
@@ -18,19 +26,42 @@ import { APP_ROUTES } from 'src/app/app-routing.module';
   styleUrls: ['./app-navigation.component.scss'],
   host: { class: 'pb-expand' },
 })
-export class AppNavigationComponent implements OnInit, OnDestroy {
+export class AppNavigationComponent
+  extends OnDestroyMixin
+  implements OnInit, OnDestroy
+{
   public environment: EnvironmentInterface = environment;
   public routes: typeof APP_ROUTES = APP_ROUTES;
 
-  @Select(AppState.activeTheme)
-  public themeValue$!: Observable<Theme>;
+  public themeValue: Theme | null = null;
 
-  constructor(
-    private router: Router,
-    public dialog: MatDialog,
-    public badge: MatBadgeModule
-  ) {}
+  constructor(private store: Store) {
+    super();
+  }
 
-  public ngOnInit() {}
+  public toggleTheme() {
+    if (this.themeValue == Theme.default_dark) {
+      this.store.dispatch(new SetTheme(Theme.default_light));
+    } else {
+      this.store.dispatch(new SetTheme(Theme.default_dark));
+    }
+  }
+
+  public getThemeIcon() {
+    if (this.themeValue == Theme.default_dark) {
+      return 'light_mode';
+    } else {
+      return 'dark_mode';
+    }
+  }
+  public ngOnInit() {
+    this.store
+      .select(AppState)
+      .pipe(untilComponentDestroyed(this))
+      .subscribe((state: AppStateModel) => {
+        console.log(state);
+        this.themeValue = state.activeTheme;
+      });
+  }
   public ngOnDestroy() {}
 }

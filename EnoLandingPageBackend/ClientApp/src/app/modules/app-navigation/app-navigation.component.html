@@ -93,6 +93,10 @@
         <mat-toolbar>
           <mat-toolbar-row class="mat-elevation-z6">
             <div class="left app-title">
+              <button mat-icon-button (click)="toggleTheme()">
+                <mat-icon>{{ getThemeIcon() }}</mat-icon>
+                <!-- <mat-icon>dark_mode</mat-icon> -->
+              </button>
               <button mat-button [routerLink]="['/']">
                 <span class="mat-display-1" id="title">ENOWARS</span>
               </button>
