@@ -1,12 +1,23 @@
+image:
+  file: .gitpod.Dockerfile
+
 # List the start up tasks. Learn more https://www.gitpod.io/docs/config-start-tasks/
 tasks:
+  - name: Init
+    init: |
+      cd EnoLandingPageBackend/ClientApp
+      npm install
   - name: Frontend
-    command: cd EnoLandingPageBackend/ClientApp && npm run start
+    command: |
+      cd EnoLandingPageBackend/ClientApp
+      npm run start
   - name: Backend
-    command: cd EnoLandingPageBackend && dotnet watch run
+    command: |
+      cd EnoLandingPageBackend
+      dotnet watch run
     openMode: split-right
 
 # List the ports to expose. Learn more https://www.gitpod.io/docs/config-ports/
 ports:
-  - port: 3000
+  - port: 5001
     onOpen: open-preview
