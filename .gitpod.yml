@@ -1,3 +1,4 @@
+
 image:
   file: .gitpod.Dockerfile
 
@@ -22,3 +23,10 @@ tasks:
 ports:
   - port: 5001
     onOpen: open-preview
+  - port: 4200
+
+vscode:
+  extensions:
+    - ms-azuretools.vscode-docker
+    - angular.ng-template
+    - esbenp.prettier-vscode
