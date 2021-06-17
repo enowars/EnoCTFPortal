@@ -5,3 +5,4 @@ USER gitpod
 RUN mkdir -p /home/gitpod/dotnet && curl -fsSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --install-dir /home/gitpod/dotnet
 ENV DOTNET_ROOT=/home/gitpod/dotnet
 ENV PATH=$PATH:/home/gitpod/dotnet
+RUN npm install -g @angular/cli

@@ -8,7 +8,6 @@ tasks:
     before: |
       cd EnoLandingPageBackend/ClientApp
       npm install
-      npm install -g @angular/cli
   - name: Frontend
     command: |
       cd EnoLandingPageBackend/ClientApp
