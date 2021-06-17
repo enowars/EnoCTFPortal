@@ -4,85 +4,86 @@
     <nav id="pb-nav-mobile">
       <mat-list>
         <mat-list-item>
-          <button mat-menu-item [routerLink]="['/']" (click)="sidenav.close()">
-            <mat-icon>dashboard</mat-icon>
-            <ng-container> Dashboard </ng-container>
+          <button
+            mat-menu-item
+            [routerLink]="[routes.scoreboard]"
+            routerLinkActive="mat-elevation-z4"
+            (click)="sidenav.close()"
+          >
+            <mat-icon>score</mat-icon>
+            Scoreboard
           </button>
         </mat-list-item>
         <mat-list-item>
           <button
             mat-menu-item
-            [routerLink]="['/organigram']"
+            [routerLink]="[routes.information]"
+            routerLinkActive="mat-elevation-z4"
             (click)="sidenav.close()"
           >
-            <mat-icon>business</mat-icon>
-            <ng-container> Organigram </ng-container>
+            <mat-icon>gavel</mat-icon>
+            Rules
           </button>
         </mat-list-item>
         <mat-list-item>
           <button
             mat-menu-item
-            [routerLink]="['/rooms']"
+            [routerLink]="[routes.teams]"
+            routerLinkActive="mat-elevation-z4"
             (click)="sidenav.close()"
           >
-            <mat-icon>meeting_room</mat-icon>
-            <ng-container> Rooms </ng-container>
+            <mat-icon>groups</mat-icon>
+            Teams
           </button>
         </mat-list-item>
-        <!-- <mat-list-item>
+        <mat-list-item>
           <button
             mat-menu-item
-            (click)="navigateToOwnProfile(); sidenav.close()"
+            [routerLink]="[routes.contact]"
+            routerLinkActive="mat-elevation-z4"
+            (click)="sidenav.close()"
           >
-            <mat-icon *ngIf="currentUser == null">perm_identity</mat-icon>
-            <app-profile-picture
-              *ngIf="currentUser != null"
-              [imageSize]="50"
-              class="pb-self-centered circle"
-              [user]="currentUser"
-            >
-            </app-profile-picture>
-            <span
-              i18n="
-                NavigationComponent|Link to the users
-                profile@@NavigationComponentMyProfile"
-              >My profile</span
-            >
+            <mat-icon>contact_support</mat-icon>
+            Contact
           </button>
-        </mat-list-item> -->
+        </mat-list-item>
+        <mat-list-item>
+          <a
+            mat-menu-item
+            href="https://github.com/enowars/docs"
+            target="_blank"
+            (click)="sidenav.close()"
+          >
+            <mat-icon>open_in_new</mat-icon>
+            Documentation
+          </a>
+        </mat-list-item>
         <mat-divider></mat-divider>
         <mat-list-item>
-          <button
-            mat-menu-item
-            focus
-            [routerLink]="['/settings']"
-            (click)="sidenav.close()"
-          >
-            <mat-icon>settings</mat-icon>
-            <span>Settings</span>
-          </button>
-        </mat-list-item>
-        <mat-list-item>
-          <button
-            mat-menu-item
-            [routerLink]="['/further-information']"
-            matTooltip="Got Feedback? Than that`s the right place to click."
-            (click)="sidenav.close()"
-          >
-            <mat-icon>info_outline</mat-icon>
-            <span>Information</span>
-          </button>
-        </mat-list-item>
-        <mat-list-item>
-          <button
-            mat-menu-item
-            feedbackDrawer
-            matTooltip="Found a Bug? Than that`s the right place to click."
-            (click)="sidenav.close()"
-          >
-            <mat-icon>bug_report</mat-icon>
-            <span>Submit Feedback</span>
-          </button>
+          <ng-container *ngIf="!(authenticated$ | async)">
+            <a
+              mat-menu-item
+              href="/api/account/login?redirectUri=http://localhost:5000/settings"
+              (click)="sidenav.close()"
+            >
+              <mat-icon>login</mat-icon>
+              Login
+            </a>
+          </ng-container>
+          <ng-container *ngIf="authenticated$ | async">
+            <button
+              mat-menu-item
+              [routerLink]="[routes.profile]"
+              routerLinkActive="mat-elevation-z4"
+              (click)="sidenav.close()"
+            >
+              <!-- [matMenuTriggerFor]="personalmenu" -->
+              <mat-icon>group</mat-icon>
+              <ng-container *ngIf="info$ | async as info">
+                {{ info.teamName || "My Team" }}
+              </ng-container>
+            </button>
+          </ng-container>
         </mat-list-item>
       </mat-list>
     </nav>
@@ -140,7 +141,7 @@
               >
                 Contact
               </button>
-              <ng-container *ngIf="!(authenticated$ | async)">
+              <ng-container *ngIf="!(authenticated$ | async) && !staticHosting">
                 <a
                   mat-icon-button
                   href="/api/account/login?redirectUri=http://localhost:5000/settings"
@@ -148,7 +149,7 @@
                   <mat-icon>login</mat-icon>
                 </a>
               </ng-container>
-              <ng-container *ngIf="authenticated$ | async">
+              <ng-container *ngIf="(authenticated$ | async) && !staticHosting">
                 <button
                   mat-button
                   [routerLink]="[routes.profile]"
@@ -161,38 +162,19 @@
                   </ng-container>
                 </button>
               </ng-container>
-
-              <mat-menu #personalmenu>
-                <button mat-menu-item>
-                  <mat-icon>perm_identity</mat-icon>
-                  <span>My profile</span>
-                </button>
-                <button mat-menu-item focus [routerLink]="['/settings']">
-                  <mat-icon>settings</mat-icon>
-                  <span>Settings</span>
-                </button>
-                <button
-                  mat-menu-item
-                  [routerLink]="['/further-information']"
-                  matTooltip="Got Feedback? Found a Bug? Than that`s the right place to click."
-                >
-                  <mat-icon>info_outline</mat-icon>
-                  <span>Information</span>
-                </button>
-                <button mat-menu-item feedbackDrawer>
-                  <mat-icon>bug_report</mat-icon>
-                  <span>Submit Feedback</span>
-                </button>
-                <button mat-menu-item feedbackDrawer>
-                  <mat-icon>logout</mat-icon>
-                  <span>Logout</span>
-                </button>
-              </mat-menu>
             </div>
             <div class="pb-hide-on-med-and-up">
               <button mat-icon-button (click)="sidenav.toggle()">
                 <mat-icon>menu</mat-icon>
               </button>
+            </div>
+          </mat-toolbar-row>
+          <mat-toolbar-row class="banner" *ngIf="ctfInfo$ | async as ctfInfo">
+            <div>
+              CTF Starting at
+              <ng-container>
+                {{ ctfInfo.startTime | date: "medium" }}
+              </ng-container>
             </div>
           </mat-toolbar-row>
         </mat-toolbar>

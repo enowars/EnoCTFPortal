@@ -25,6 +25,8 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTreeModule } from '@angular/material/tree';
 import { MatStepperModule } from '@angular/material/stepper';
+import { MatInputModule } from '@angular/material/input';
+import { ClipboardModule } from '@angular/cdk/clipboard';
 @NgModule({
   imports: [
     MatButtonModule,
@@ -52,6 +54,8 @@ import { MatStepperModule } from '@angular/material/stepper';
     ScrollingModule,
     DragDropModule,
     MatStepperModule,
+    ClipboardModule,
+    MatInputModule,
   ],
   providers: [],
   exports: [
@@ -80,6 +84,8 @@ import { MatStepperModule } from '@angular/material/stepper';
     ScrollingModule,
     DragDropModule,
     MatStepperModule,
+    ClipboardModule,
+    MatInputModule,
   ],
 })
 export class MaterialModule {}

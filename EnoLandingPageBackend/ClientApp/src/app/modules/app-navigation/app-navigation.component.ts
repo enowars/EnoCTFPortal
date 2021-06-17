@@ -20,6 +20,11 @@ import { Theme } from 'src/app/shared/models/enumberables/theme';
 import { APP_ROUTES } from 'src/app/app-routing.module';
 import { coerceStringArray } from '@angular/cdk/coercion';
 import { TeamDetailsMessage } from 'projects/backend-api/src/lib/model/teamDetailsMessage';
+import { CtfInfoMessage } from 'projects/backend-api/src/lib';
+import {
+  runtimeEnvironment,
+  RuntimeEnvironmentInterface,
+} from 'src/environments/runtime-environment';
 
 @Component({
   selector: 'app-navigation',
@@ -32,12 +37,15 @@ export class AppNavigationComponent
   implements OnInit, OnDestroy
 {
   public environment: EnvironmentInterface = environment;
+  public staticHosting: boolean = runtimeEnvironment.staticHosting == 'true';
   public routes: typeof APP_ROUTES = APP_ROUTES;
   public themeValue: Theme | null = null;
   @Select(AppState.authenticated)
   public authenticated$!: Observable<boolean>;
   @Select(AppState.teamInfo)
   public info$!: Observable<TeamDetailsMessage>;
+  @Select(AppState.ctfInfo)
+  public ctfInfo$!: Observable<CtfInfoMessage>;
 
   constructor(private store: Store) {
     super();

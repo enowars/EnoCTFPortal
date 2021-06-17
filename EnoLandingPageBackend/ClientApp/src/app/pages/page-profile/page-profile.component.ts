@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Select } from '@ngxs/store';
 import { CtfInfoMessage } from 'projects/backend-api/src/lib';
 import { TeamDetailsMessage } from 'projects/backend-api/src/lib/model/teamDetailsMessage';
@@ -15,7 +16,11 @@ export class PageProfileComponent implements OnInit {
   public teamInfo$!: Observable<TeamDetailsMessage>;
   @Select(AppState.ctfInfo)
   public ctfInfo$!: Observable<CtfInfoMessage>;
-  constructor() {}
+  constructor(private _snackBar: MatSnackBar) {}
 
   ngOnInit(): void {}
+
+  copiedToast() {
+    this._snackBar.open('Copied!');
+  }
 }

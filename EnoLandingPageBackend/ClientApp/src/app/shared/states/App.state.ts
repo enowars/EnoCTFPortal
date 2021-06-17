@@ -84,7 +84,7 @@ export class AppState implements NgxsOnInit {
     this.dataService.apiDataCtfInfoGet().subscribe(
       (ctfInfo) => {
         let state = ctx.getState();
-        ctx.setState({ ...state, authenticated: true, ctfInfo: ctfInfo });
+        ctx.setState({ ...state, ctfInfo: ctfInfo });
       },
       (error) => {
         // Do nothing for now

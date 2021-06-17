@@ -18,4 +18,12 @@ mat-sidenav-container {
       z-index: 1;
     }
   }
+
+  .banner {
+    height: 48px;
+    padding: 0 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }

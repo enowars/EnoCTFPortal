@@ -57,30 +57,75 @@
     <!-- if (vmInteractionFeedback != null)
     <p>@vmInteractionFeedback</p> -->
 
-    <div>
-      <div>External IP Address:</div>
-      <code>{{ (teamInfo$ | async)!.externalIpAddress || "coming soon" }}</code>
-    </div>
-    <div>
-      <div>Root Password:</div>
-      <code>{{ (teamInfo$ | async)!.rootPassword || "coming soon" }}</code>
-    </div>
-    <div>
-      <div>Internal IP Address:</div>
-      <code>{{ (teamInfo$ | async)!.internalIpAddress || "coming soon" }}</code>
-      <code>@(teamInformation.InternalIpAddress ?? "coming soon")</code>
-    </div>
+    <mat-form-field appearance="outline">
+      <mat-label>External IP Address</mat-label>
+      <input
+        matInput
+        type="text"
+        [value]="(teamInfo$ | async)!.externalIpAddress || 'coming soon'"
+        disabled
+      />
+      <button
+        mat-icon-button
+        matSuffix
+        [cdkCopyToClipboard]="
+          (teamInfo$ | async)!.externalIpAddress || 'coming soon'
+        "
+        (click)="copiedToast()"
+        attr.aria-label="Copy"
+      >
+        <mat-icon>content_copy</mat-icon>
+      </button>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Root Password</mat-label>
+      <input
+        matInput
+        type="text"
+        [value]="(teamInfo$ | async)!.rootPassword || 'coming soon'"
+        disabled
+      />
+      <button
+        mat-icon-button
+        matSuffix
+        [cdkCopyToClipboard]="
+          (teamInfo$ | async)!.rootPassword || 'coming soon'
+        "
+        (click)="copiedToast()"
+        attr.aria-label="Copy"
+      >
+        <mat-icon>content_copy</mat-icon>
+      </button>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Internal IP Address</mat-label>
+      <input
+        matInput
+        type="text"
+        [value]="(teamInfo$ | async)!.internalIpAddress || 'coming soon'"
+        disabled
+      />
+      <button
+        mat-icon-button
+        matSuffix
+        [cdkCopyToClipboard]="
+          (teamInfo$ | async)!.internalIpAddress || 'coming soon'
+        "
+        (click)="copiedToast()"
+        attr.aria-label="Copy"
+      >
+        <mat-icon>content_copy</mat-icon>
+      </button>
+    </mat-form-field>
     <div>
       <div>Vulnbox Status:</div>
       <code>{{ (teamInfo$ | async)!.vulnboxStatus || "coming soon" }}</code>
     </div>
     <div>
       <div>Vpn Configuration:</div>
-      <!-- @if (teamInformation.VpnConfigAvailable)
-      <a href="/api/account/vpnconfig">Download</a>
-       else
-      <code>coming soon</code>
-       -->
+      <a mat-raised-button href="/api/account/vpnconfig" target="_blank">
+        Download
+      </a>
     </div>
   </ng-container>
 </div>
