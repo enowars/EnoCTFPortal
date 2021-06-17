@@ -44,10 +44,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\EnoLandingPageCore\EnoLandingPageCore.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
         <Folder Include="data\" />
         <Folder Include="Swashbuckle\Examples\" />
     </ItemGroup>
