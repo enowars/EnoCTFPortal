@@ -1,0 +1,16 @@
+version: '3.7'
+services:
+  enoportal:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - 80:80
+    volumes:
+      - ./sessions:/root/.aspnet/DataProtection-Keys
+      - ./data:/app/data
+      - ./scoreboard:/app/wwwroot/scoreboard
+    # volumes:
+    #   - ./EnoLandingPageBackend/appsettings.Development.json:/app/appsettings.json

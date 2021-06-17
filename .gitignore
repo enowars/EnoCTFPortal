@@ -356,4 +356,4 @@ MigrationBackup/
 /data
 /scoreboard
 /sessions
-docker-compose.yml
+.env
