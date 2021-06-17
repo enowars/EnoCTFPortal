@@ -16,7 +16,7 @@ import {
 } from 'src/app/shared/states/App.state';
 import { environment } from 'src/environments/environment';
 import { EnvironmentInterface } from 'src/environments/environmentInterfaces';
-import { Theme } from 'src/app/shared/models/enumberables/Theme';
+import { Theme } from 'src/app/shared/models/enumberables/theme';
 import { APP_ROUTES } from 'src/app/app-routing.module';
 import { coerceStringArray } from '@angular/cdk/coercion';
 import { TeamDetailsMessage } from 'projects/backend-api/src/lib/model/teamDetailsMessage';

@@ -1,6 +1,6 @@
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { Injectable } from '@angular/core';
-import { Theme } from 'src/app/shared/models/enumberables/Theme';
+import { Theme } from 'src/app/shared/models/enumberables/theme';
 
 @Injectable()
 export class ThemeService {

@@ -14,7 +14,7 @@ import {
 } from 'projects/backend-api/src/lib';
 import { TeamDetailsMessage } from 'projects/backend-api/src/lib/model/teamDetailsMessage';
 import { ThemeService } from 'src/app/services/theme.service';
-import { Theme } from 'src/app/shared/models/enumberables/Theme';
+import { Theme } from 'src/app/shared/models/enumberables/theme';
 
 export class ServiceWorkerNotificationDisplayed {
   public static readonly type: string =
