@@ -36,6 +36,10 @@
                 this.settings.CheckInEndOffset));
         }
 
+        /// <summary>
+        /// Get all Teams.
+        /// </summary>
+        /// <returns>A Message of Teams participating and not participating.</returns>
         [HttpGet]
         public async Task<ActionResult<TeamsMessage>> Teams()
         {
@@ -53,6 +57,8 @@
                     .Where(t => t.Confirmed)
                     .Select(t => $"10.0.0.{t.Id}");
 
+            // Not good? 
+            // https://stackoverflow.com/questions/10615797/utility-of-http-header-content-type-application-force-download-for-mobile
             return this.File(
                 Encoding.ASCII.GetBytes(string.Join("\n", teams)),
                 "application/force-download",
