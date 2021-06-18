@@ -96,16 +96,17 @@
             <div class="left app-title">
               <button mat-icon-button (click)="toggleTheme()">
                 <mat-icon>{{ getThemeIcon() }}</mat-icon>
-                <!-- <mat-icon>dark_mode</mat-icon> -->
               </button>
               <button mat-button [routerLink]="['/']">
-                <span class="mat-display-1" id="title">ENOWARS</span>
+                <span class="mat-display-1" id="title">
+                  <ng-container *ngIf="(ctfInfo$ | async) as ctfInfo">{{ctfInfo.title}}</ng-container>
+                  <ng-container *ngIf="!(ctfInfo$ | async)">ENOWARS</ng-container>
+                   </span>
               </button>
             </div>
 
             <div class="pb-spacer"></div>
             <div class="pb-center-element-orthogonal pb-hide-below-med">
-              <!-- TODO: Update Link -->
               <a
                 mat-button
                 href="https://github.com/enowars/docs"

@@ -11,10 +11,29 @@
  */
 
 
+/**
+ * A DTO representing General Information about the CTF.
+ */
 export interface CtfInfoMessage { 
+    /**
+     * The Title of the CTF.
+     */
+    title?: string | null;
+    /**
+     * The StartTime of the CTF.
+     */
     startTime?: string;
-    registrationCloseOffset?: number;
-    checkInBeginOffset?: number;
-    checkInEndOffset?: number;
+    /**
+     * The Time until Teams have to be registred.
+     */
+    registrationCloseOffset?: string;
+    /**
+     * The Time when the checkin will be available.
+     */
+    checkInBeginOffset?: string;
+    /**
+     * The Time until Teams have to be checked in.
+     */
+    checkInEndOffset?: string;
 }
 

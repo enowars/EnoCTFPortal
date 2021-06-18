@@ -30,10 +30,11 @@
         public ActionResult<CtfInfoMessage> CtfInfo()
         {
             return this.Ok(new CtfInfoMessage(
+                this.settings.Title,
                 this.settings.StartTime.ToUniversalTime(),
-                this.settings.RegistrationCloseOffset,
-                this.settings.CheckInBeginOffset,
-                this.settings.CheckInEndOffset));
+                this.settings.GetRegistrationCloseTime(),
+                this.settings.GetCheckInBeginTime(),
+                this.settings.GetCheckInCloseTime()));
         }
 
         /// <summary>

@@ -25,9 +25,23 @@ export interface ScoreboardInfoServiceInterface {
     configuration: Configuration;
 
     /**
-     * 
+     * Gets the current scoreboard.
      * 
      */
-    apiScoreboardInfoGet(extraHttpRequestParams?: any): Observable<Scoreboard>;
+    apiScoreboardInfoScoreboardJsonGet(extraHttpRequestParams?: any): Observable<Scoreboard>;
+
+    /**
+     * Gets the scoreboard of a given roundId.
+     * 
+     * @param roundId Number of the round.
+     */
+    apiScoreboardInfoScoreboardroundIdJsonGet(roundId: number, extraHttpRequestParams?: any): Observable<Scoreboard>;
+
+    /**
+     * Gets the scoreboard of a given roundId.
+     * 
+     * @param roundId Number of the round.
+     */
+    apiScoreboardInfoScoreboardroundIdJsonPost(roundId: number, extraHttpRequestParams?: any): Observable<Scoreboard>;
 
 }

@@ -7,7 +7,9 @@
   "paths": {
     "/api/Account/Login": {
       "get": {
-        "tags": ["Account"],
+        "tags": [
+          "Account"
+        ],
         "summary": "Login to the Portal.",
         "parameters": [
           {
@@ -28,7 +30,9 @@
     },
     "/api/Account/OAuth2Redirect": {
       "get": {
-        "tags": ["Account"],
+        "tags": [
+          "Account"
+        ],
         "parameters": [
           {
             "name": "redirectUri",
@@ -47,7 +51,9 @@
     },
     "/api/Account/Info": {
       "get": {
-        "tags": ["Account"],
+        "tags": [
+          "Account"
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -74,7 +80,9 @@
     },
     "/api/Account/VpnConfig": {
       "get": {
-        "tags": ["Account"],
+        "tags": [
+          "Account"
+        ],
         "responses": {
           "200": {
             "description": "Success"
@@ -84,7 +92,9 @@
     },
     "/api/Account/CheckIn": {
       "post": {
-        "tags": ["Account"],
+        "tags": [
+          "Account"
+        ],
         "responses": {
           "200": {
             "description": "Success"
@@ -94,7 +104,9 @@
     },
     "/api/Admin/BootVm": {
       "get": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "parameters": [
           {
             "name": "adminSecret",
@@ -121,7 +133,9 @@
     },
     "/api/Admin/CtfJson": {
       "get": {
-        "tags": ["Admin"],
+        "tags": [
+          "Admin"
+        ],
         "parameters": [
           {
             "name": "adminSecret",
@@ -140,7 +154,9 @@
     },
     "/api/Data/CtfInfo": {
       "get": {
-        "tags": ["Data"],
+        "tags": [
+          "Data"
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -167,7 +183,9 @@
     },
     "/api/Data/Teams": {
       "get": {
-        "tags": ["Data"],
+        "tags": [
+          "Data"
+        ],
         "summary": "Get all Teams.",
         "responses": {
           "200": {
@@ -195,7 +213,9 @@
     },
     "/api/Data/IPs": {
       "get": {
-        "tags": ["Data"],
+        "tags": [
+          "Data"
+        ],
         "responses": {
           "200": {
             "description": "Success"
@@ -205,7 +225,9 @@
     },
     "/api/EnoEngine": {
       "get": {
-        "tags": ["EnoEngine"],
+        "tags": [
+          "EnoEngine"
+        ],
         "responses": {
           "200": {
             "description": "Success"
@@ -213,9 +235,96 @@
         }
       }
     },
-    "/api/ScoreboardInfo": {
+    "/api/ScoreboardInfo/scoreboard.json": {
       "get": {
-        "tags": ["ScoreboardInfo"],
+        "tags": [
+          "ScoreboardInfo"
+        ],
+        "summary": "Gets the current scoreboard.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Scoreboard"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Scoreboard"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Scoreboard"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ScoreboardInfo/scoreboard{roundId}.json": {
+      "get": {
+        "tags": [
+          "ScoreboardInfo"
+        ],
+        "summary": "Gets the scoreboard of a given roundId.",
+        "parameters": [
+          {
+            "name": "roundId",
+            "in": "path",
+            "description": "Number of the round.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": -1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Scoreboard"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Scoreboard"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Scoreboard"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "ScoreboardInfo"
+        ],
+        "summary": "Gets the scoreboard of a given roundId.",
+        "parameters": [
+          {
+            "name": "roundId",
+            "in": "path",
+            "description": "Number of the round.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": -1
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success",
@@ -242,7 +351,9 @@
     },
     "/api/Vulnbox/StartVulnbox": {
       "post": {
-        "tags": ["Vulnbox"],
+        "tags": [
+          "Vulnbox"
+        ],
         "responses": {
           "200": {
             "description": "Success"
@@ -252,7 +363,9 @@
     },
     "/api/Vulnbox/ResetVulnbox": {
       "post": {
-        "tags": ["Vulnbox"],
+        "tags": [
+          "Vulnbox"
+        ],
         "responses": {
           "200": {
             "description": "Success"
@@ -266,27 +379,41 @@
       "CtfInfoMessage": {
         "type": "object",
         "properties": {
+          "title": {
+            "type": "string",
+            "description": "The Title of the CTF.",
+            "nullable": true
+          },
           "startTime": {
             "type": "string",
+            "description": "The StartTime of the CTF.",
             "format": "date-time"
           },
           "registrationCloseOffset": {
-            "type": "integer",
-            "format": "int64"
+            "type": "string",
+            "description": "The Time until Teams have to be registred.",
+            "format": "date-time"
           },
           "checkInBeginOffset": {
-            "type": "integer",
-            "format": "int64"
+            "type": "string",
+            "description": "The Time when the checkin will be available.",
+            "format": "date-time"
           },
           "checkInEndOffset": {
-            "type": "integer",
-            "format": "int64"
+            "type": "string",
+            "description": "The Time until Teams have to be checked in.",
+            "format": "date-time"
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "A DTO representing General Information about the CTF."
       },
       "LandingPageVulnboxStatus": {
-        "enum": [0, 1, 2],
+        "enum": [
+          0,
+          1,
+          2
+        ],
         "type": "integer",
         "format": "int32"
       },
@@ -452,7 +579,14 @@
         "additionalProperties": false
       },
       "ServiceStatus": {
-        "enum": [0, 1, 2, 3, 4, 5],
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
         "type": "integer",
         "format": "int32"
       },
