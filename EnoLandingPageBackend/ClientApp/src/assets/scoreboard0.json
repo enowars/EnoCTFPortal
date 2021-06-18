@@ -1,7 +1,7 @@
 {
-  "currentRound": 3,
+  "currentRound": 0,
   "startTimestamp": "2021-06-15T12:45:16.443Z",
-  "endTimestamp": "2021-06-18T13:46:16.443Z",
+  "endTimestamp": "2021-06-15T12:46:16.443Z",
   "dnsSuffix": "",
   "services": [
     {

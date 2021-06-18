@@ -1,54 +1,60 @@
 <div id="scoreboard-title">
-  <div>
-    <button mat-icon-button>
-      <mat-icon>first_page</mat-icon>
+  <div class="chevrons">
+    <button mat-icon-button [disabled]="round === 0">
+      <mat-icon (click)="gotoFirstRound()">first_page</mat-icon>
     </button>
-    <button mat-icon-button>
-      <mat-icon>chevron_left</mat-icon>
+    <button mat-icon-button [disabled]="round === 0">
+      <mat-icon (click)="gotoPreviousRound()">chevron_left</mat-icon>
     </button>
   </div>
-  <h2>Round {{ round }}</h2>
-  <div>
-    <button mat-icon-button>
-      <mat-icon>chevron_right</mat-icon>
+  <div class="middle">
+    <h2>Round {{ round }}</h2>
+    <div *ngIf="isCurrentRound">
+      (Next round in <countdown #cd [config]="countDownConfig"></countdown>)
+    </div>
+  </div>
+  <div class="chevrons">
+    <button mat-icon-button [disabled]="isCurrentRound">
+      <mat-icon (click)="gotoNextRound()">chevron_right</mat-icon>
     </button>
-    <button mat-icon-button>
-      <mat-icon>last_page</mat-icon>
+    <button mat-icon-button [disabled]="isCurrentRound">
+      <mat-icon (click)="gotoCurrentRound()">last_page</mat-icon>
     </button>
   </div>
 </div>
 
 <div class="scoreboard-table">
-  <ng-container *ngIf="teams != null">
-    <table mat-table [dataSource]="teams" [trackBy]="trackById">
+  <ng-container *ngIf="dataSource != null">
+    <table mat-table [dataSource]="dataSource" [trackBy]="trackById">
       <!-- matSort
       matSortDirection="asc"
       matSortActive="teamName" -->
 
       <ng-container matColumnDef="teamId" sticky>
-        <th mat-header-cell *matHeaderCellDef>Id</th>
-        <td mat-cell *matCellDef="let row">
-          {{ row.teamId }}
-        </td>
-      </ng-container>
-      <ng-container matColumnDef="teamName" sticky>
-        <th mat-header-cell *matHeaderCellDef>Team</th>
-        <td mat-cell *matCellDef="let row">
+        <th mat-header-cell *matHeaderCellDef class="team-cell-th">Team</th>
+        <td mat-cell *matCellDef="let row" class="team-cell-td">
           <div class="team-cell">
-            <app-team-logo [logoUrl]="row.logoUrl"></app-team-logo>
-            <div class="team-name">
-              {{ row.teamName }} (10.0.0.{{ row.teamId }})
+            <div class="teamId">
+              {{ row.teamId }}
             </div>
-            <app-country-flag
-              *ngIf="row.countryCode"
-              [isoCountryCode]="row.countryCode"
-            ></app-country-flag>
+            <div>
+              <app-team-logo [logoUrl]="row.logoUrl"></app-team-logo>
+            </div>
+            <div class="texts">
+              <div class="team-name">
+                {{ row.teamName }} (10.0.0.{{ row.teamId }})
+              </div>
+              <app-country-flag
+                *ngIf="row.countryCode"
+                [isoCountryCode]="row.countryCode"
+              ></app-country-flag>
+            </div>
           </div>
         </td>
       </ng-container>
 
       <ng-container
-        *ngFor="let service of services; let colIndex = index"
+        *ngFor="let service of services; let colIndex = index" 
         matColumnDef="service-{{ service.serviceId }}"
       >
         <th mat-header-cell *matHeaderCellDef>
@@ -67,11 +73,13 @@
             element.serviceDetails[colIndex].serviceStatus
           }}"
           [matTooltip]="element.serviceDetails[colIndex].serviceStatus"
+          (click)="openInfo(element.serviceDetails[colIndex])"
         >
+
           <!-- TODO: Make more performant by using a custom whitespace padded string instead of html elements -->
           <div class="sla">
             <div class="div1">⚔</div>
-            <div class="div2">
+            <!-- <div class="div2">
               {{
                 element.serviceDetails[
                   colIndex
@@ -100,7 +108,7 @@
               (
               {{ +0 }}
               )
-            </div>
+            </div> -->
           </div>
           <!-- <div class="status">
             {{ element.serviceDetails[colIndex].serviceStatus }}

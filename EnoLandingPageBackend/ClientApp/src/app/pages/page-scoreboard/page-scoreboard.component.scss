@@ -1,12 +1,44 @@
 #scoreboard-title {
-  margin-top: 20px;
+  margin: 10px 0;
   display: flex;
   justify-content: space-between;
   text-align: center;
   vertical-align: middle;
 
-  h2 {
-    margin: 0;
+  .middle {
+    align-self: center;
+
+    h2 {
+      margin: 0;
+    }
+  }
+
+  .chevrons {
+    align-self: center;
+  }
+}
+
+.team-cell-th {
+  text-align: center;
+}
+
+.team-cell-td {
+  min-width: 50px;
+  padding-left: 2px !important;
+
+  .team-cell {
+    display: flex;
+
+    .teamId {
+      align-self: center;
+      margin: 2px 8px 2px 0;
+      width: 3em;
+      text-align: right;
+    }
+    
+    .texts {
+      padding: 2px 8px;
+    }
   }
 }
 
@@ -69,7 +101,7 @@
 }
 
 .scoreboard-table {
-  width: 100vw;
+  width: 100%;
   display: flex;
 
   mat-table {
