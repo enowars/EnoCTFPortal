@@ -1,25 +1,24 @@
-import { DataSource } from '@angular/cdk/collections';
 import { HttpClient } from '@angular/common/http';
 import {
   Component,
   OnInit,
   ViewChild,
-  AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort, SortDirection } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { ScoreboardInfoService } from 'projects/backend-api/src/lib';
-import { ScoreboardInfo } from 'projects/backend-api/src/lib/model/scoreboardInfo';
-import { ScoreboardInfoTeam } from 'projects/backend-api/src/lib/model/scoreboardInfoTeam';
+import {
+  Scoreboard,
+  ScoreboardInfoService,
+} from 'projects/backend-api/src/lib';
 import { ScoreboardService } from 'projects/backend-api/src/lib/model/scoreboardService';
 import { ScoreboardTeam } from 'projects/backend-api/src/lib/model/scoreboardTeam';
-import { ScoreboardTeamServiceDetails } from 'projects/backend-api/src/lib/model/scoreboardTeamServiceDetails';
-import { merge, Observable, of as observableOf } from 'rxjs';
-import { catchError, map, startWith, switchMap } from 'rxjs/operators';
-import { DialogInfoComponent } from './dialog-info/dialog-info.component';
+import {
+  DialogInfoComponent,
+  InfoDialogData,
+} from './dialog-info/dialog-info.component';
 
 @Component({
   selector: 'app-page-scoreboard',
@@ -30,18 +29,21 @@ import { DialogInfoComponent } from './dialog-info/dialog-info.component';
 export class PageScoreboardComponent implements OnInit {
   public round: number = 0;
   public isCurrentRound: boolean = false;
-  public displayedColumns: string[] = ['teamId'];
+  public get displayedColumns(): string[] {
+    return ['teamId', ...this.columns];
+  }
 
-  // public scoreboard: ScoreboardInfo;
-  public teams: ScoreboardTeam[] | undefined;
   public services: ScoreboardService[] | undefined;
-  public tableData: TableData | undefined;
 
-  public dataSource: MatTableDataSource<ScoreboardTeam> = (new MatTableDataSource([])) as any;
+  public dataSource: MatTableDataSource<any> = new MatTableDataSource(
+    []
+  ) as any;
+
+  public columns: string[] = [];
 
   public countDownConfig = {
     leftTime: 60,
-    format: 'mm:ss'
+    format: 'mm:ss',
   };
 
   @ViewChild(MatSort) sort!: MatSort;
@@ -52,30 +54,32 @@ export class PageScoreboardComponent implements OnInit {
     private scoreboardInfoService: ScoreboardInfoService,
     private ref: ChangeDetectorRef
   ) {}
-  
+
   ngOnInit(): void {
     // this.ref.detach();
   }
-    ngAfterViewInit() {
-      this.loadRound();
+  ngAfterViewInit() {
+    this.loadRound();
 
-      this.scoreboardInfoService.apiScoreboardInfoScoreboardJsonGet()
-      this.scoreboardInfoService.apiScoreboardInfoScoreboardroundIdJsonGet(23);
+    // this.scoreboardInfoService.apiScoreboardInfoScoreboardJsonGet();
+    // this.scoreboardInfoService.apiScoreboardInfoScoreboardroundIdJsonGet(23);
   }
 
   public loadRound(round: number | null = null): void {
-    let suffix: any = "";
+    let suffix: any = '';
     if (round !== null) {
       suffix = Math.max(round, 0);
     }
 
     this._httpClient
       .get('/assets/scoreboard' + suffix + '.json')
-      .subscribe((scoreboard: ScoreboardInfo) => {
+      .subscribe((scoreboard: Scoreboard) => {
         this.round = scoreboard.currentRound!;
-        this.teams = scoreboard.teams!;
-        this.dataSource.data = scoreboard.teams!;
-        this.services = scoreboard.services!;
+        this.services =
+          scoreboard.services?.sort((a, b) => a.serviceId! - b.serviceId!) ||
+          [];
+
+        console.log(this.services);
 
         let currentTime = new Date();
         let startTime = new Date(scoreboard.startTimestamp!);
@@ -83,28 +87,30 @@ export class PageScoreboardComponent implements OnInit {
         /** @ts-ignore */
         let roundLength = endTime - startTime;
         // TODO: check if this is working
-        this.isCurrentRound = (roundLength + (endTime.getTime() - currentTime.getTime()) / 1000) >= 0;
+        this.isCurrentRound =
+          roundLength + (endTime.getTime() - currentTime.getTime()) / 1000 >= 0;
 
         this.countDownConfig = {
           ...this.countDownConfig,
           leftTime: (endTime.getTime() - currentTime.getTime()) / 1000,
         };
 
-        this.teams.forEach((team) => {
-          let services: any = [];
-
-          if (team && team.serviceDetails) {
-            team.serviceDetails.forEach((el) => {
-              services[el.serviceId!] = el;
+        this.dataSource.data =
+          scoreboard.teams?.map((team) => {
+            let row: any = {
+              team: team,
+            };
+            team.serviceDetails?.forEach((service) => {
+              row[service.serviceId!.toString()] = service;
             });
-          }
-        });
-        this.displayedColumns = ['teamId']
-        scoreboard.services?.forEach((service) => {
-          if (service.serviceId) {
-            this.displayedColumns.push('service-' + service.serviceId);
-          }
-        });
+            return row;
+          }) || [];
+
+        this.columns =
+          scoreboard.services?.reduce((accumulator, service) => {
+            accumulator.push(service.serviceId!.toString());
+            return accumulator;
+          }, [] as string[]) || [];
         this.ref.markForCheck();
       });
   }
@@ -130,18 +136,13 @@ export class PageScoreboardComponent implements OnInit {
     return item.teamId;
   }
 
-  openInfo(info: any) {
+  openInfo(row: any, service: ScoreboardService) {
+    let data: InfoDialogData = {
+      row: row,
+      service: service,
+    };
     this.dialog.open(DialogInfoComponent, {
-      data: {
-        info
-      }
+      data: data,
     });
   }
-}
-
-interface TableData {
-  teamName: string;
-  services: {
-    [service: string]: ScoreboardService;
-  };
 }

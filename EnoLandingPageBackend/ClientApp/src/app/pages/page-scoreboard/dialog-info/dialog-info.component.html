@@ -1,4 +1,36 @@
-<h1 mat-dialog-title>Information for {{info.service}} of {{info.team}}</h1>
+<h1 mat-dialog-title>
+  Information for {{ data.service.serviceName }} of {{ data.row.team.teamName }}
+</h1>
 <div mat-dialog-content>
-    {{info | json}}
+  <p>
+    This status of the service is:
+    <mat-chip>{{ data.row[data.service.serviceId!].serviceStatus }}</mat-chip>
+  </p>
+
+  <mat-card [ngSwitch]="data.row[data.service.serviceId!].serviceStatus">
+    <p *ngSwitchCase="statusEnum.Ok">Everything is fine!</p>
+    <p *ngSwitchCase="statusEnum.Offline">Your service is offline.</p>
+    <p *ngSwitchCase="statusEnum.Recovering">
+      Your service was offline but is recovering.
+    </p>
+    <p *ngSwitchCase="statusEnum.Mumble">
+      You service is online but the part of the functionality is degraded.
+    </p>
+    <p *ngSwitchCase="statusEnum.InternalError">This error is on our side.</p>
+    <p *ngSwitchCase="statusEnum.Inactive">Something is wrong.</p>
+    <p *ngSwitchDefault>Unknow Status that, that should not have happend.</p>
+    <p>
+      Find more information in our
+      <a mat-button href="https://enowars.github.io/docs/"
+        >Documentation <mat-icon inline="true">open_in_new</mat-icon></a
+      >
+    </p>
+  </mat-card>
+
+  <ng-container *ngIf="data.row[data.service.serviceId!].message">
+    <h3>Error Message:</h3>
+    <code>
+      {{ data.row[data.service.serviceId!].message | json }}
+    </code>
+  </ng-container>
 </div>

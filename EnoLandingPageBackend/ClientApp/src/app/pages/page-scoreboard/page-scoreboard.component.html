@@ -35,18 +35,19 @@
         <td mat-cell *matCellDef="let row" class="team-cell-td">
           <div class="team-cell">
             <div class="teamId">
-              {{ row.teamId }}
+              {{ row.team.teamId }}
             </div>
             <div>
-              <app-team-logo [logoUrl]="row.logoUrl"></app-team-logo>
+              <app-team-logo [logoUrl]="row.team.logoUrl"></app-team-logo>
             </div>
             <div class="texts">
               <div class="team-name">
-                {{ row.teamName }} (10.0.0.{{ row.teamId }})
+                {{ row.team.teamName }} <br>
+                (10.0.0.{{ row.team.teamId }})
               </div>
               <app-country-flag
-                *ngIf="row.countryCode"
-                [isoCountryCode]="row.countryCode"
+                *ngIf="row.team.countryCode"
+                [isoCountryCode]="row.team.countryCode"
               ></app-country-flag>
             </div>
           </div>
@@ -54,8 +55,8 @@
       </ng-container>
 
       <ng-container
-        *ngFor="let service of services; let colIndex = index" 
-        matColumnDef="service-{{ service.serviceId }}"
+        *ngFor="let service of services" 
+        [matColumnDef]="'' + service.serviceId!"
       >
         <th mat-header-cell *matHeaderCellDef>
           <div>
@@ -65,25 +66,24 @@
               Flagstores: {{ service.flagVariants }}
             </div>
           </div>
+
         </th>
         <td
           mat-cell
           *matCellDef="let element"
           class="service-cell {{
-            element.serviceDetails[colIndex].serviceStatus
+            element[service.serviceId!].serviceStatus
           }}"
-          [matTooltip]="element.serviceDetails[colIndex].serviceStatus"
-          (click)="openInfo(element.serviceDetails[colIndex])"
+          [matTooltip]="element[service.serviceId!].serviceStatus"
+          (click)="openInfo(element, service)"
         >
 
           <!-- TODO: Make more performant by using a custom whitespace padded string instead of html elements -->
           <div class="sla">
             <div class="div1">⚔</div>
-            <!-- <div class="div2">
+            <div class="div2">
               {{
-                element.serviceDetails[
-                  colIndex
-                ].serviceLevelAgreementScore.toFixed(0)
+                element[service.serviceId!].serviceLevelAgreementScore.toFixed(0)
               }}
             </div>
             <div class="div3">
@@ -93,7 +93,7 @@
             </div>
             <div class="div4">🛡</div>
             <div class="div5">
-              {{ element.serviceDetails[colIndex].attackScore.toFixed(0) }}
+              {{ element[service.serviceId!].attackScore.toFixed(0) }}
             </div>
             <div class="div6">
               (
@@ -102,17 +102,14 @@
             </div>
             <div class="div7">⛨</div>
             <div class="div8">
-              {{ element.serviceDetails[colIndex].defenseScore.toFixed(0) }}
+              {{ element[service.serviceId!].defenseScore.toFixed(0) }}
             </div>
             <div class="div9">
               (
               {{ +0 }}
               )
-            </div> -->
+            </div>
           </div>
-          <!-- <div class="status">
-            {{ element.serviceDetails[colIndex].serviceStatus }}
-          </div> -->
         </td>
       </ng-container>
       <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
