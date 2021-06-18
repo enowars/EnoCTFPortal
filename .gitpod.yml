@@ -7,6 +7,7 @@ tasks:
   - name: Init
     before: |
       mkdir EnoLandingPageBackend/data
+      cp EnoLandingPageBackend/appsettings.example.json EnoLandingPageBackend/appsettings.Development.json
       cd EnoLandingPageBackend/ClientApp
       npm install
       npm build
