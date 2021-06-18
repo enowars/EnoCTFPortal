@@ -35,6 +35,7 @@ vscode:
     - ms-azuretools.vscode-docker
     - angular.ng-template
     - esbenp.prettier-vscode
+    - k--kato.docomment
 
 github:
   prebuilds:

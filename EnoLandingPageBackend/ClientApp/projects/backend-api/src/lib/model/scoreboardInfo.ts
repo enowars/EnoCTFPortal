@@ -14,7 +14,11 @@ import { ScoreboardService } from './scoreboardService';
 
 
 export interface ScoreboardInfo { 
+    currentRound?: number | null;
     dnsSuffix?: string | null;
+    startTimestamp?: string | null;
+    endTimestamp?: string | null;
+
     services?: Array<ScoreboardService> | null;
     teams?: Array<ScoreboardInfoTeam> | null;
 }
