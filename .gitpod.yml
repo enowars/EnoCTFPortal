@@ -6,13 +6,14 @@ image:
 tasks:
   - name: Init
     before: |
+      mkdir EnoLandingPageBackend/data
       cd EnoLandingPageBackend/ClientApp
       npm install
-      mkdir EnoLandingPageBackend/data
+      npm build
   - name: Frontend
     command: |
       cd EnoLandingPageBackend/ClientApp
-      npm run start
+      npm start
   - name: Backend
     command: |
       cd EnoLandingPageBackend
