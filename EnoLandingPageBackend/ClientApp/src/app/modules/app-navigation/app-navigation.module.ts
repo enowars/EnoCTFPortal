@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatListModule } from '@angular/material/list';
+import { CountdownModule } from 'ngx-countdown';
 
 @NgModule({
   declarations: [AppNavigationComponent],
@@ -22,6 +23,7 @@ import { MatListModule } from '@angular/material/list';
     MatMenuModule,
     MatListModule,
     RouterModule,
+    CountdownModule,
   ],
   exports: [AppNavigationComponent],
 })

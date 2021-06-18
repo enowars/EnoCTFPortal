@@ -47,6 +47,11 @@ export class AppNavigationComponent
   @Select(AppState.ctfInfo)
   public ctfInfo$!: Observable<CtfInfoMessage>;
 
+  public countDownConfig = {
+    leftTime: 60,
+    format: 'HH:mm:ss',
+  };
+
   constructor(private store: Store) {
     super();
   }
@@ -72,6 +77,11 @@ export class AppNavigationComponent
       .pipe(untilComponentDestroyed(this))
       .subscribe((state: AppStateModel) => {
         this.themeValue = state.activeTheme;
+        this.countDownConfig = {
+          ...this.countDownConfig,
+          leftTime:
+            Date.parse(state.ctfInfo?.startTime!) - new Date().getTime(),
+        };
       });
   }
   public ngOnDestroy() {}

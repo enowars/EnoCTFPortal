@@ -123,6 +123,34 @@ export class AppState implements NgxsOnInit {
     return state.ctfInfo;
   }
 
+  @Selector()
+  public static ctfRegistrationOpen(state: AppStateModel): boolean {
+    let now = new Date().getTime();
+    if (Date.parse(state.ctfInfo?.registrationCloseOffset!) >= now) {
+      return true
+    }
+    return false;
+  }
+  @Selector()
+  public static ctfCheckinOpen(state: AppStateModel): boolean {
+    let now = new Date().getTime();
+    if (
+      Date.parse(state.ctfInfo?.checkInBeginOffset!) <= now &&
+      Date.parse(state.ctfInfo?.checkInEndOffset!) >= now
+    ) {
+      return true
+    }
+    return false;
+  }
+  @Selector()
+  public static ctfInProgress(state: AppStateModel): boolean {
+    let now = new Date().getTime();
+    if (Date.parse(state.ctfInfo?.startTime!) <= now) {
+      return true;
+    }
+    return false;
+  }
+
   @Action(ServiceWorkerNotificationDisplayed)
   public serviceWorkerNotificationDisplayed(ctx: StateContext<AppStateModel>) {
     const state = ctx.getState();

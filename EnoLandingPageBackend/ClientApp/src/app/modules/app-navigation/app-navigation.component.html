@@ -99,9 +99,13 @@
               </button>
               <button mat-button [routerLink]="['/']">
                 <span class="mat-display-1" id="title">
-                  <ng-container *ngIf="(ctfInfo$ | async) as ctfInfo">{{ctfInfo.title}}</ng-container>
-                  <ng-container *ngIf="!(ctfInfo$ | async)">ENOWARS</ng-container>
-                   </span>
+                  <ng-container *ngIf="ctfInfo$ | async as ctfInfo">{{
+                    ctfInfo.title
+                  }}</ng-container>
+                  <ng-container *ngIf="!(ctfInfo$ | async)"
+                    >ENOWARS</ng-container
+                  >
+                </span>
               </button>
             </div>
 
@@ -172,10 +176,11 @@
           </mat-toolbar-row>
           <mat-toolbar-row class="banner" *ngIf="ctfInfo$ | async as ctfInfo">
             <div>
-              CTF Starting at
-              <ng-container>
+              CTF Starting in
+              <countdown [config]="countDownConfig"></countdown>
+              <!-- <ng-container>
                 {{ ctfInfo.startTime | date: "medium" }}
-              </ng-container>
+              </ng-container> -->
             </div>
           </mat-toolbar-row>
         </mat-toolbar>
