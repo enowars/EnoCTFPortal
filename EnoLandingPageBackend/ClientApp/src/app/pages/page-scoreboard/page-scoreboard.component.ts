@@ -99,6 +99,7 @@ export class PageScoreboardComponent implements OnInit {
             });
           }
         });
+        this.displayedColumns = ['teamId']
         scoreboard.services?.forEach((service) => {
           if (service.serviceId) {
             this.displayedColumns.push('service-' + service.serviceId);
