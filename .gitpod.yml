@@ -4,10 +4,14 @@ image:
 
 # List the start up tasks. Learn more https://www.gitpod.io/docs/config-start-tasks/
 tasks:
-  - name: Init
-    init: |
+  - name: Init Backend
+    before: |
       mkdir EnoLandingPageBackend/data
       cp EnoLandingPageBackend/appsettings.example.json EnoLandingPageBackend/appsettings.Development.json
+  - name: Init Frontend
+    env:
+      NG_CLI_ANALYTICS: ci
+    before: |
       cd EnoLandingPageBackend/ClientApp
       npm install
       npm build
