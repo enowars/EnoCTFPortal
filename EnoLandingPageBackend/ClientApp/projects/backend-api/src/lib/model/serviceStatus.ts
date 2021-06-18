@@ -11,14 +11,14 @@
  */
 
 
-export type ServiceStatus = 0 | 1 | 2 | 3 | 4 | 5;
+export type ServiceStatus = 'INTERNAL_ERROR' | 'OK' | 'RECOVERING' | 'MUMBLE' | 'OFFLINE' | 'INACTIVE';
 
 export const ServiceStatus = {
-    NUMBER_0: 0 as ServiceStatus,
-    NUMBER_1: 1 as ServiceStatus,
-    NUMBER_2: 2 as ServiceStatus,
-    NUMBER_3: 3 as ServiceStatus,
-    NUMBER_4: 4 as ServiceStatus,
-    NUMBER_5: 5 as ServiceStatus
+    InternalError: 'INTERNAL_ERROR' as ServiceStatus,
+    Ok: 'OK' as ServiceStatus,
+    Recovering: 'RECOVERING' as ServiceStatus,
+    Mumble: 'MUMBLE' as ServiceStatus,
+    Offline: 'OFFLINE' as ServiceStatus,
+    Inactive: 'INACTIVE' as ServiceStatus
 };
 

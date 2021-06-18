@@ -11,11 +11,11 @@
  */
 
 
-export type LandingPageVulnboxStatus = 0 | 1 | 2;
+export type LandingPageVulnboxStatus = 'None' | 'Creating' | 'Created';
 
 export const LandingPageVulnboxStatus = {
-    NUMBER_0: 0 as LandingPageVulnboxStatus,
-    NUMBER_1: 1 as LandingPageVulnboxStatus,
-    NUMBER_2: 2 as LandingPageVulnboxStatus
+    None: 'None' as LandingPageVulnboxStatus,
+    Creating: 'Creating' as LandingPageVulnboxStatus,
+    Created: 'Created' as LandingPageVulnboxStatus
 };
 

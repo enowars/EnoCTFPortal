@@ -33,6 +33,7 @@ namespace EnoLandingPageBackend
     using Microsoft.Extensions.Logging;
     using Microsoft.OpenApi.Models;
     using Microsoft.AspNetCore.SpaServices.AngularCli;
+    using System.Text.Json.Serialization;
 
     public class Startup
     {
@@ -130,7 +131,11 @@ namespace EnoLandingPageBackend
                     };
                 });
             services.AddAuthorization();
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                options.JsonSerializerOptions.IgnoreNullValues = true;
+            });;
             services.AddDbContextPool<LandingPageDatabaseContext>(options => options.UseSqlite(LandingPageDatabaseContext.CONNECTIONSTRING));
             services.AddScoped<LandingPageDatabase>();
             // Register Swagger services 
@@ -143,9 +148,7 @@ namespace EnoLandingPageBackend
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
                 c.EnableAnnotations();
-                // TODO Maybe add Filters
-                //c.DocumentFilter<DefaultFilter>();
-                //c.DescribeAllEnumsAsStrings();
+                // c.SchemaFilter<EnumSchemaFilter>();
             });
             services.AddSingleton<HetznerCloudApi>();
 

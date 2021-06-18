@@ -410,12 +410,11 @@
       },
       "LandingPageVulnboxStatus": {
         "enum": [
-          0,
-          1,
-          2
+          "None",
+          "Creating",
+          "Created"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "Scoreboard": {
         "type": "object",
@@ -580,15 +579,14 @@
       },
       "ServiceStatus": {
         "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5
+          "INTERNAL_ERROR",
+          "OK",
+          "RECOVERING",
+          "MUMBLE",
+          "OFFLINE",
+          "INACTIVE"
         ],
-        "type": "integer",
-        "format": "int32"
+        "type": "string"
       },
       "TeamDetailsMessage": {
         "type": "object",
