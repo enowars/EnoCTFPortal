@@ -24,7 +24,7 @@
 </div>
 
 <div class="scoreboard-table">
-  <ng-container *ngIf="dataSource != null">
+  <ng-container *ngIf="dataSource != null && dataSource.data.length > 0">
     <table mat-table [dataSource]="dataSource" [trackBy]="trackById">
       <!-- matSort
       matSortDirection="asc"

@@ -35,7 +35,7 @@
       width: 3em;
       text-align: right;
     }
-    
+
     .texts {
       padding: 2px 8px;
     }
@@ -102,10 +102,31 @@
 
 .scoreboard-table {
   width: 100%;
-  display: flex;
+  display: block;
+  overflow-x: auto;
 
-  mat-table {
-    overflow: auto;
+  .mat-table {
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 1rem;
+    display: table;
+    border-collapse: collapse;
+    margin: 0px;
+  }
+  .mat-row,
+  .mat-header-row {
+    display: table-row;
+  }
+  .mat-cell,
+  .mat-header-cell {
+    word-wrap: initial;
+    display: table-cell;
+    padding: 0px 5px;
+    line-break: unset;
+    width: auto;
+    white-space: nowrap;
+    overflow: hidden;
+    vertical-align: middle;
   }
 }
 
