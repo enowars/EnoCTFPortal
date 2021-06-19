@@ -36,6 +36,7 @@ vscode:
     - angular.ng-template
     - esbenp.prettier-vscode
     - k--kato.docomment
+    - https://github.com/OmniSharp/omnisharp-vscode/releases/download/v1.23.12/csharp-1.23.12.vsix
 
 github:
   prebuilds:
