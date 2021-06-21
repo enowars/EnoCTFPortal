@@ -15,6 +15,7 @@ import { ScoreboardTeam } from './scoreboardTeam';
 
 export interface Scoreboard { 
     currentRound: number;
+    roundLength?: number;
     startTimestamp?: string | null;
     endTimestamp?: string | null;
     dnsSuffix?: string | null;

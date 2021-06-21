@@ -4,6 +4,10 @@ image:
 
 # List the start up tasks. Learn more https://www.gitpod.io/docs/config-start-tasks/
 tasks:
+  - name: Setup
+    before: | 
+      dotnet tool install --global dotnet-ef
+      export PATH="$PATH:$HOME/.dotnet/tools/"
   - name: Frontend
     env:
       NG_CLI_ANALYTICS: ci

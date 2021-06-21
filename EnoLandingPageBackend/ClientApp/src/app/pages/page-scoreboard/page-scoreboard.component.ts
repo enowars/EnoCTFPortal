@@ -29,6 +29,7 @@ import {
 })
 export class PageScoreboardComponent implements OnInit {
   public round: number = 0;
+  public roundLength: number = 60;
   public isCurrentRound: boolean = false;
   public get displayedColumns(): string[] {
     return ['teamId', ...this.columns];
@@ -73,9 +74,11 @@ export class PageScoreboardComponent implements OnInit {
     }
 
     this._httpClient
-      .get<Scoreboard>('/assets/scoreboard' + suffix + '.json')
+      .get<Scoreboard>('/api/scoreboardinfo/scoreboard' + suffix + '.json')
       .subscribe((scoreboard) => {
         this.round = scoreboard.currentRound!;
+        // TODO: debug!!!
+        this.roundLength = 15; //scoreboard.roundLength ?? 60;
         this.services =
           scoreboard.services?.sort((a, b) => a.serviceId! - b.serviceId!) ||
           [];
@@ -85,15 +88,16 @@ export class PageScoreboardComponent implements OnInit {
         let currentTime = new Date();
         let startTime = new Date(scoreboard.startTimestamp!);
         let endTime = new Date(scoreboard.endTimestamp!);
-        /** @ts-ignore */
-        let roundLength = endTime - startTime;
-        // TODO: check if this is working
-        this.isCurrentRound =
-          roundLength + (endTime.getTime() - currentTime.getTime()) / 1000 >= 0;
+        const timeLeft =
+          (endTime.getTime() +
+            this.roundLength * 1000 -
+            currentTime.getTime()) /
+          1000;
+        this.isCurrentRound = timeLeft >= 0;
 
         this.countDownConfig = {
           ...this.countDownConfig,
-          leftTime: (endTime.getTime() - currentTime.getTime()) / 1000,
+          leftTime: timeLeft,
         };
 
         this.dataSource.data =
@@ -113,6 +117,10 @@ export class PageScoreboardComponent implements OnInit {
             return accumulator;
           }, [] as string[]) || [];
         this.ref.markForCheck();
+
+        if (this.isCurrentRound) {
+          setTimeout(() => this.gotoCurrentRound(), (1.5 + timeLeft) * 1000);
+        }
       });
   }
 
