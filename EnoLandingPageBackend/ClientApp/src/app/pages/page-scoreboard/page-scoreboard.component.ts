@@ -5,6 +5,7 @@ import {
   ViewChild,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
+  TrackByFunction,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort, SortDirection } from '@angular/material/sort';
@@ -72,8 +73,8 @@ export class PageScoreboardComponent implements OnInit {
     }
 
     this._httpClient
-      .get('/assets/scoreboard' + suffix + '.json')
-      .subscribe((scoreboard: Scoreboard) => {
+      .get<Scoreboard>('/assets/scoreboard' + suffix + '.json')
+      .subscribe((scoreboard) => {
         this.round = scoreboard.currentRound!;
         this.services =
           scoreboard.services?.sort((a, b) => a.serviceId! - b.serviceId!) ||
@@ -132,9 +133,12 @@ export class PageScoreboardComponent implements OnInit {
     this.loadRound();
   }
 
-  public trackById(index: any, item: ScoreboardTeam) {
+  public trackById: TrackByFunction<ScoreboardTeam> = (
+    index: number,
+    item: ScoreboardTeam
+  ) => {
     return item.teamId;
-  }
+  };
 
   openInfo(row: any, service: ScoreboardService) {
     let data: InfoDialogData = {
