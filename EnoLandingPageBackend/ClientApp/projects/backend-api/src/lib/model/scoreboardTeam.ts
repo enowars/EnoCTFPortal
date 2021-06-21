@@ -13,14 +13,14 @@ import { ScoreboardTeamServiceDetails } from './scoreboardTeamServiceDetails';
 
 
 export interface ScoreboardTeam { 
-    teamName?: string | null;
-    teamId?: number;
+    teamName: string;
+    teamId: number;
     logoUrl?: string | null;
     countryCode?: string | null;
-    totalScore?: number;
-    attackScore?: number;
-    defenseScore?: number;
-    serviceLevelAgreementScore?: number;
-    serviceDetails?: Array<ScoreboardTeamServiceDetails> | null;
+    totalScore: number;
+    attackScore: number;
+    defenseScore: number;
+    serviceLevelAgreementScore: number;
+    serviceDetails: Array<ScoreboardTeamServiceDetails>;
 }
 

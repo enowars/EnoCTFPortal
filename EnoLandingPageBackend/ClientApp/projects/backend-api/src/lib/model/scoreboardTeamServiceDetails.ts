@@ -13,11 +13,11 @@ import { ServiceStatus } from './serviceStatus';
 
 
 export interface ScoreboardTeamServiceDetails { 
-    serviceId?: number;
-    attackScore?: number;
-    defenseScore?: number;
-    serviceLevelAgreementScore?: number;
-    serviceStatus?: ServiceStatus;
+    serviceId: number;
+    attackScore: number;
+    defenseScore: number;
+    serviceLevelAgreementScore: number;
+    serviceStatus: ServiceStatus;
     message?: string | null;
 }
 

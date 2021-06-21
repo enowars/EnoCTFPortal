@@ -13,9 +13,9 @@ import { ScoreboardFirstBlood } from './scoreboardFirstBlood';
 
 
 export interface ScoreboardService { 
-    serviceId?: number;
-    serviceName?: string | null;
-    flagVariants?: number;
-    firstBloods?: Array<ScoreboardFirstBlood> | null;
+    serviceId: number;
+    serviceName: string;
+    flagVariants: number;
+    firstBloods: Array<ScoreboardFirstBlood>;
 }
 

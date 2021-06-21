@@ -417,6 +417,11 @@
         "type": "string"
       },
       "Scoreboard": {
+        "required": [
+          "currentRound",
+          "services",
+          "teams"
+        ],
         "type": "object",
         "properties": {
           "currentRound": {
@@ -439,20 +444,25 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ScoreboardService"
-            },
-            "nullable": true
+            }
           },
           "teams": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ScoreboardTeam"
-            },
-            "nullable": true
+            }
           }
         },
         "additionalProperties": false
       },
       "ScoreboardFirstBlood": {
+        "required": [
+          "flagVariantId",
+          "roundId",
+          "teamId",
+          "teamName",
+          "timestamp"
+        ],
         "type": "object",
         "properties": {
           "teamId": {
@@ -460,12 +470,10 @@
             "format": "int64"
           },
           "teamName": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "timestamp": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "roundId": {
             "type": "integer",
@@ -479,6 +487,12 @@
         "additionalProperties": false
       },
       "ScoreboardService": {
+        "required": [
+          "firstBloods",
+          "flagVariants",
+          "serviceId",
+          "serviceName"
+        ],
         "type": "object",
         "properties": {
           "serviceId": {
@@ -486,8 +500,7 @@
             "format": "int64"
           },
           "serviceName": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "flagVariants": {
             "type": "integer",
@@ -497,18 +510,25 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ScoreboardFirstBlood"
-            },
-            "nullable": true
+            }
           }
         },
         "additionalProperties": false
       },
       "ScoreboardTeam": {
+        "required": [
+          "attackScore",
+          "defenseScore",
+          "serviceDetails",
+          "serviceLevelAgreementScore",
+          "teamId",
+          "teamName",
+          "totalScore"
+        ],
         "type": "object",
         "properties": {
           "teamName": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "teamId": {
             "type": "integer",
@@ -542,13 +562,19 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/ScoreboardTeamServiceDetails"
-            },
-            "nullable": true
+            }
           }
         },
         "additionalProperties": false
       },
       "ScoreboardTeamServiceDetails": {
+        "required": [
+          "attackScore",
+          "defenseScore",
+          "serviceId",
+          "serviceLevelAgreementScore",
+          "serviceStatus"
+        ],
         "type": "object",
         "properties": {
           "serviceId": {

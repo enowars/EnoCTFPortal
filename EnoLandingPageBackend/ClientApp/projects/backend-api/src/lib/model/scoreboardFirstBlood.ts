@@ -12,10 +12,10 @@
 
 
 export interface ScoreboardFirstBlood { 
-    teamId?: number;
-    teamName?: string | null;
-    timestamp?: string | null;
-    roundId?: number;
-    flagVariantId?: number;
+    teamId: number;
+    teamName: string;
+    timestamp: string;
+    roundId: number;
+    flagVariantId: number;
 }
 
