@@ -4,8 +4,10 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using EnoCore.Scoreboard;
     using EnoLandingPageCore;
     using EnoLandingPageCore.Database;
+    using EnoLandingPageCore.Models;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.EntityFrameworkCore.Infrastructure;
 
@@ -22,6 +24,8 @@
 
         public DbSet<LandingPageTeam> Teams { get; set; }
 
+        public DbSet<DatabaseScoreboard> Scoreboards { get; set; }
+
         public DbSet<LandingPageTeamVulnbox> Vulnboxes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -37,6 +41,9 @@
                 .HasOne(lpt => lpt.Vulnbox)
                 .WithOne(lptv => lptv.LandingPageTeam)
                 .HasForeignKey<LandingPageTeamVulnbox>(lptv => lptv.LandingPageTeamId);
+
+            modelBuilder.Entity<DatabaseScoreboard>()
+                .HasKey(t => t.roundId);
         }
     }
 }
