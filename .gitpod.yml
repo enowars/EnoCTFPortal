@@ -8,6 +8,10 @@ tasks:
     before: | 
       dotnet tool install --global dotnet-ef
       export PATH="$PATH:$HOME/.dotnet/tools/"
+  - name: Run Mock
+    before: | 
+      cd mock
+      python3 generate_scoreboard.py
   - name: Frontend
     env:
       NG_CLI_ANALYTICS: ci
