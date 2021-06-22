@@ -79,7 +79,7 @@ export class PageScoreboardComponent implements OnInit {
         let startTime = new Date(scoreboard.startTimestamp!);
         let endTime = new Date(scoreboard.endTimestamp!);
 
-        this.round = Math.floor(
+        this.roundLength = Math.floor(
           (endTime.getTime() - startTime.getTime()) / 1000
         );
         this.services =
