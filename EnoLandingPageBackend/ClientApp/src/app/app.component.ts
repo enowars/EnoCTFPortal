@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { Store } from '@ngxs/store';
 import { DataService } from 'projects/backend-api/src/lib';
-import { AppState, InitTheme } from './shared/states/App.state';
+import { AppState, AppStateModel, InitTheme } from './shared/states/App.state';
 import { filter } from 'rxjs/operators';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-root',
@@ -11,8 +12,9 @@ import { filter } from 'rxjs/operators';
 })
 export class AppComponent {
   public data: any;
-  constructor(private store: Store) {
-    this.store.select(AppState).subscribe((app) => {
+  constructor(private store: Store, private title: Title) {
+    this.store.select(AppState).subscribe((app: AppStateModel) => {
+      this.title.setTitle(app.ctfInfo?.title!);
       console.log(app);
     });
   }
