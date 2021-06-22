@@ -76,9 +76,12 @@ export class PageScoreboardComponent implements OnInit {
     this._httpClient
       .get<Scoreboard>('/api/scoreboardinfo/scoreboard' + suffix + '.json')
       .subscribe((scoreboard) => {
-        this.round = scoreboard.currentRound!;
-        // TODO: debug!!!
-        this.roundLength = 15; //scoreboard.roundLength ?? 60;
+        let startTime = new Date(scoreboard.startTimestamp!);
+        let endTime = new Date(scoreboard.endTimestamp!);
+
+        this.round = Math.floor(
+          (endTime.getTime() - startTime.getTime()) / 1000
+        );
         this.services =
           scoreboard.services?.sort((a, b) => a.serviceId! - b.serviceId!) ||
           [];
@@ -86,8 +89,6 @@ export class PageScoreboardComponent implements OnInit {
         console.log(this.services);
 
         let currentTime = new Date();
-        let startTime = new Date(scoreboard.startTimestamp!);
-        let endTime = new Date(scoreboard.endTimestamp!);
         const timeLeft =
           (endTime.getTime() +
             this.roundLength * 1000 -
