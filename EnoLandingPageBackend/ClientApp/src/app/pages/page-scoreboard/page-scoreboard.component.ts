@@ -78,7 +78,7 @@ export class PageScoreboardComponent implements OnInit {
       .subscribe((scoreboard) => {
         let startTime = new Date(scoreboard.startTimestamp!);
         let endTime = new Date(scoreboard.endTimestamp!);
-
+        this.round = scoreboard.currentRound;
         this.roundLength = Math.floor(
           (endTime.getTime() - startTime.getTime()) / 1000
         );
