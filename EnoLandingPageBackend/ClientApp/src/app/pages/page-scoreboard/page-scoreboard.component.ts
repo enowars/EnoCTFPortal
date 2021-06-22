@@ -93,7 +93,8 @@ export class PageScoreboardComponent implements OnInit {
           (endTime.getTime() +
             this.roundLength * 1000 -
             currentTime.getTime()) /
-          1000;
+            1000 +
+          1;
         this.isCurrentRound = timeLeft >= 0;
 
         this.countDownConfig = {
