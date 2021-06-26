@@ -1,14 +1,33 @@
 <div>
-  <div *ngIf="teams != null">
-    <h2>Confirmed Teams</h2>
-    <mat-list>
-      <app-team *ngFor="let team of teams.confirmedTeams" [team]="team">
-      </app-team>
-    </mat-list>
-    <h2>Registered Teams</h2>
-    <mat-list>
-      <app-team *ngFor="let team of teams.registeredTeams" [team]="team">
-      </app-team>
-    </mat-list>
-  </div>
+  <!-- TODO: Use mat-action-list as soon as there is a team site -->
+  <mat-list *ngIf="teams != null">
+    <div mat-subheader>Confirmed Teams</div>
+    <mat-list-item *ngIf="teams.confirmedTeams!.length == 0">
+      None yet :(
+    </mat-list-item>
+    <mat-list-item *ngFor="let team of teams.confirmedTeams">
+      <app-team-logo mat-list-icon *ngIf="team.logoUrl" [logoUrl]="team.logoUrl"></app-team-logo>
+      <a mat-line [href]="'https://ctftime.org/team/' + team.ctftimeId">{{ team.name }}</a>
+      <app-country-flag
+        *ngIf="team.countryCode"
+        [isoCountryCode]="team.countryCode"
+      ></app-country-flag>
+    </mat-list-item>
+      <mat-divider></mat-divider>
+    <div mat-subheader>Registered Teams</div>
+      <mat-list-item *ngIf="teams.registeredTeams!.length == 0">
+        None yet :(
+      </mat-list-item>
+
+      <mat-list-item *ngFor="let team of teams.registeredTeams">
+        <img matListAvatar [src]="team.logoUrl" referrerpolicy="no-referrer" />
+        <h3 mat-line>{{ team.name }}
+          <!-- <a [href]="'https://ctftime.org/team/' + team.ctftimeId"></a> -->
+        </h3>
+        <app-country-flag
+          *ngIf="team.countryCode"
+          [isoCountryCode]="team.countryCode"
+        ></app-country-flag>
+      </mat-list-item>
+  </mat-list>
 </div>
