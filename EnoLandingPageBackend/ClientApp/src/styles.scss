@@ -1,7 +1,7 @@
 // Custom Theming for Angular Material
 // For more information: https://material.angular.io/guide/theming
 @use '~@angular/material' as mat;
-
+@use '~@pebula/ngrid' as ngrid;
 // Plus imports for other components in your app.
 
 // $custom-typography: mat-typography-config(
@@ -125,6 +125,10 @@ $default-dark: mat.define-dark-theme(
   )
 );
 
+$pbl-ngrid-dark-theme: ngrid.define-dark-theme($default-light);
+$pbl-ngrid-light-theme: ngrid.define-light-theme($default-dark);
+@include ngrid.ngrid-typography();
+
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
@@ -132,10 +136,12 @@ $default-dark: mat.define-dark-theme(
 
 .default_light_theme {
   @include mat.all-component-colors($default-light);
+  @include ngrid.ngrid-theme($pbl-ngrid-light-theme);
 }
 
 .default_dark_theme {
   @include mat.all-component-colors($default-dark);
+  @include ngrid.ngrid-theme($pbl-ngrid-dark-theme);
 }
 
 html,
@@ -148,15 +154,36 @@ app-root {
   padding: 0;
 }
 
-.pb-expand {
+.page-expand {
   width: 100%;
   height: 100%;
   display: flex;
+  flex-direction: column;
 }
 
 .pb-spacer {
   flex: 1;
   flex-grow: 1;
+}
+
+.pbl-ngrid-row {
+  min-height: 70px !important;
+}
+
+.OK {
+  background-color: #9ccc65;
+}
+
+.MUMBLE {
+  background-color: #ffee58;
+}
+
+.INTERNAL_ERROR {
+  background-color: #ef5350;
+}
+
+.RECOVERING {
+  background-color: #29b6f6;
 }
 
 $small-breakpoint: 468px;

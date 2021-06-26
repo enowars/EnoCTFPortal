@@ -30,7 +30,7 @@ import {
   selector: 'app-navigation',
   templateUrl: './app-navigation.component.html',
   styleUrls: ['./app-navigation.component.scss'],
-  host: { class: 'pb-expand' },
+  host: { class: 'page-expand' },
 })
 export class AppNavigationComponent
   extends OnDestroyMixin

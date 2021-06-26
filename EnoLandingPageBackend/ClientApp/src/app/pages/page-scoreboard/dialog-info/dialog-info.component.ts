@@ -2,11 +2,13 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import {
   ScoreboardService,
+  ScoreboardTeamServiceDetails,
   ServiceStatus,
 } from 'projects/backend-api/src/lib/model/models';
 
 export interface InfoDialogData {
   row: any;
+  serviceDetails: ScoreboardTeamServiceDetails;
   service: ScoreboardService;
 }
 

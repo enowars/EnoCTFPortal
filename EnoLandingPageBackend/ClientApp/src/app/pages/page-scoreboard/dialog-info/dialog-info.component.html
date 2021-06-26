@@ -4,10 +4,10 @@
 <div mat-dialog-content>
   <p>
     This status of the service is:
-    <mat-chip>{{ data.row[data.service.serviceId!].serviceStatus }}</mat-chip>
+    <mat-chip>{{ data.serviceDetails.serviceStatus }}</mat-chip>
   </p>
 
-  <mat-card [ngSwitch]="data.row[data.service.serviceId!].serviceStatus">
+  <mat-card [ngSwitch]="data.serviceDetails.serviceStatus">
     <p *ngSwitchCase="statusEnum.Ok">Everything is fine!</p>
     <p *ngSwitchCase="statusEnum.Offline">Your service is offline.</p>
     <p *ngSwitchCase="statusEnum.Recovering">
@@ -27,10 +27,10 @@
     </p>
   </mat-card>
 
-  <ng-container *ngIf="data.row[data.service.serviceId!].message">
+  <ng-container *ngIf="data.serviceDetails.message">
     <h3>Error Message:</h3>
     <code>
-      {{ data.row[data.service.serviceId!].message | json }}
+      {{ data.serviceDetails.message | json }}
     </code>
   </ng-container>
 </div>

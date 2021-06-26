@@ -13,6 +13,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import {
   Scoreboard,
   ScoreboardInfoService,
+  ScoreboardTeamServiceDetails,
 } from 'projects/backend-api/src/lib';
 import { ScoreboardService } from 'projects/backend-api/src/lib/model/scoreboardService';
 import { ScoreboardTeam } from 'projects/backend-api/src/lib/model/scoreboardTeam';
@@ -20,28 +21,30 @@ import {
   DialogInfoComponent,
   InfoDialogData,
 } from './dialog-info/dialog-info.component';
+import {
+  createDS,
+  columnFactory,
+  PblDataSource,
+  PblNgridColumnSet,
+  PblColumnDefinition,
+} from '@pebula/ngrid';
 
 @Component({
   selector: 'app-page-scoreboard',
   templateUrl: './page-scoreboard.component.html',
   styleUrls: ['./page-scoreboard.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: { class: 'page-expand' },
 })
 export class PageScoreboardComponent implements OnInit {
+  public columns: PblNgridColumnSet = columnFactory().build();
+  public ds: PblDataSource = createDS<any>()
+    .onTrigger(() => [])
+    .create();
   public round: number = 0;
   public roundLength: number = 60;
   public isCurrentRound: boolean = false;
-  public get displayedColumns(): string[] {
-    return ['teamId', ...this.columns];
-  }
-
   public services: ScoreboardService[] | undefined;
-
-  public dataSource: MatTableDataSource<any> = new MatTableDataSource(
-    []
-  ) as any;
-
-  public columns: string[] = [];
 
   public countDownConfig = {
     leftTime: 60,
@@ -102,22 +105,51 @@ export class PageScoreboardComponent implements OnInit {
           leftTime: timeLeft,
         };
 
-        this.dataSource.data =
-          scoreboard.teams?.map((team) => {
-            let row: any = {
-              team: team,
-            };
-            team.serviceDetails?.forEach((service) => {
-              row[service.serviceId!.toString()] = service;
-            });
-            return row;
-          }) || [];
+        this.ds = createDS<any>()
+          .onTrigger(() => {
+            return (
+              scoreboard.teams?.map((team) => {
+                let row: any = {
+                  team: team,
+                };
+                team.serviceDetails?.forEach((service) => {
+                  row['service-' + service.serviceId!] = service;
+                });
+                return row;
+              }) || []
+            );
+          })
+          .create();
 
-        this.columns =
-          scoreboard.services?.reduce((accumulator, service) => {
-            accumulator.push(service.serviceId!.toString());
-            return accumulator;
-          }, [] as string[]) || [];
+        this.columns = columnFactory()
+          .default({ minWidth: 200 })
+          .table(
+            {
+              prop: 'team',
+              // id: 'id',
+              label: 'Team',
+              minWidth: 250,
+              width: '40px',
+              pin: 'start',
+              pIndex: true,
+              wontBudge: true,
+            },
+            ...(scoreboard.services?.reduce((accumulator, service) => {
+              let col: PblColumnDefinition = {
+                prop: 'service-' + service.serviceId,
+                label: service.serviceName,
+                minWidth: 100,
+                width: '100px',
+                reorder: true,
+                type: 'service',
+                data: service,
+              };
+              accumulator.push(col);
+              return accumulator;
+            }, [] as any[]) || [])
+          )
+          .build();
+
         this.ref.markForCheck();
 
         if (this.isCurrentRound) {
@@ -150,9 +182,14 @@ export class PageScoreboardComponent implements OnInit {
     return item.teamId;
   };
 
-  openInfo(row: any, service: ScoreboardService) {
+  openInfo(
+    row: any,
+    details: ScoreboardTeamServiceDetails,
+    service: ScoreboardService
+  ) {
     let data: InfoDialogData = {
       row: row,
+      serviceDetails: details,
       service: service,
     };
     this.dialog.open(DialogInfoComponent, {

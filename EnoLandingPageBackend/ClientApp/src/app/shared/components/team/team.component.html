@@ -1,8 +1,0 @@
-<mat-card>
-  <app-team-logo *ngIf="team.logoUrl" [logoUrl]="team.logoUrl"></app-team-logo>
-  <a [href]="'https://ctftime.org/team/' + team.ctftimeId">{{ team.name }}</a>
-  <app-country-flag
-    *ngIf="team.countryCode"
-    [isoCountryCode]="team.countryCode"
-  ></app-country-flag>
-</mat-card>

@@ -23,98 +23,95 @@
   </div>
 </div>
 
-<div class="scoreboard-table">
-  <ng-container *ngIf="dataSource != null && dataSource.data.length > 0">
-    <table mat-table [dataSource]="dataSource" [trackBy]="trackById">
-      <!-- matSort
-      matSortDirection="asc"
-      matSortActive="teamName" -->
+<div style="flex: 1 1 100%; display: flex; min-height: 0px; height: 100%">
+  <pbl-ngrid
+    class="pbl-ngrid-cell-ellipsis pbl-ngrid-header-cell-ellipsis"
+    style="height: 100%; width: 100%; max-width: 100%"
+    [dataSource]="ds"
+    [columns]="columns"
+    vScrollFixed
+    maxBufferPx="200"
+    minBufferPx="50"
+    showHeader
+    columnReorder
+    blockUi
+    matSort
+    cellTooltip
+  >
+    <div *pblNgridBlockUiDef class="pbl-ngrid-ui-block">
+      Loading
+      <!-- <mat-progress-bar mode="indeterminate"></mat-progress-bar> -->
+    </div>
 
-      <ng-container matColumnDef="teamId" sticky>
-        <th mat-header-cell *matHeaderCellDef class="team-cell-th">Team</th>
-        <td mat-cell *matCellDef="let row" class="team-cell-td">
-          <div class="team-cell">
-            <div class="teamId">
-              {{ row.team.teamId }}
-            </div>
-            <div>
-              <app-team-logo [logoUrl]="row.team.logoUrl"></app-team-logo>
-            </div>
-            <div class="texts">
-              <div class="team-name">
-                {{ row.team.teamName }} <br>
-                (10.0.0.{{ row.team.teamId }})
-              </div>
-              <app-country-flag
-                *ngIf="row.team.countryCode"
-                [isoCountryCode]="row.team.countryCode"
-              ></app-country-flag>
-            </div>
-            <div class="score">{{ row.team.totalScore.toFixed(0) }} Punkte</div>
-          </div>
-        </td>
-      </ng-container>
+    <div
+      *pblNgridHeaderCellTypeDef="'service'; col as col"
+      class="pbl-ngrid-no-data"
+    >
+      {{ col.label }}
+      <div>Flagstores: {{ col.data.flagVariants }}</div>
+    </div>
 
-      <ng-container
-        *ngFor="let service of services" 
-        [matColumnDef]="'' + service.serviceId!"
-      >
-        <th mat-header-cell *matHeaderCellDef>
-          <div>
-            {{ service.serviceName }}
-            <div>
-              <!-- TODO: Better data stucture??? -->
-              Flagstores: {{ service.flagVariants }}
-            </div>
-          </div>
+    <div *pblNgridNoDataRef class="pbl-ngrid-no-data">
+      <span>Seems like no round could be loaded.</span>
+    </div>
 
-        </th>
-        <td
-          mat-cell
-          *matCellDef="let element"
-          class="service-cell {{
-            element[service.serviceId!].serviceStatus
-          }}"
-          [matTooltip]="element[service.serviceId!].serviceStatus"
-          (click)="openInfo(element, service)"
-        >
+    <div *pblNgridCellDef="'team'; value as team" class="team-cell">
+      <div class="teamId">
+        {{ team.teamId }}
+      </div>
+      <img
+        *ngIf="team.logoUrl"
+        class="team-logo"
+        [src]="team.logoUrl"
+        referrerpolicy="no-referrer"
+      />
+      <div class="texts">
+        <div class="team-name">
+          {{ team.teamName }} <br />
+          (10.0.0.{{ team.teamId }})
+        </div>
+        <app-country-flag
+          *ngIf="team.countryCode"
+          [isoCountryCode]="team.countryCode"
+        ></app-country-flag>
+      </div>
+      <div class="score">{{ team.totalScore.toFixed(0) }} Points</div>
+    </div>
 
-          <!-- TODO: Make more performant by using a custom whitespace padded string instead of html elements -->
-          <div class="sla">
-            <div class="div1">⚔</div>
-            <div class="div2">
-              {{
-                element[service.serviceId!].serviceLevelAgreementScore.toFixed(0)
-              }}
-            </div>
-            <div class="div3">
-              (
-              {{ +0 }}
-              )
-            </div>
-            <div class="div4">🛡</div>
-            <div class="div5">
-              {{ element[service.serviceId!].attackScore.toFixed(0) }}
-            </div>
-            <div class="div6">
-              (
-              {{ -0 }}
-              )
-            </div>
-            <div class="div7">⛨</div>
-            <div class="div8">
-              {{ element[service.serviceId!].defenseScore.toFixed(0) }}
-            </div>
-            <div class="div9">
-              (
-              {{ +0 }}
-              )
-            </div>
-          </div>
-        </td>
-      </ng-container>
-      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-    </table>
-  </ng-container>
+    <div
+      *pblNgridCellTypeDef="'service'; value as service; row as row; col as col"
+      [ngridCellClass]="service.serviceStatus"
+      (click)="openInfo(row, service, col.data)"
+    >
+      <div class="sla">
+        <div class="div1">⚔</div>
+        <div class="div2">
+          {{ service.serviceLevelAgreementScore.toFixed(0) }}
+        </div>
+        <div class="div3">
+          (
+          {{ +0 }}
+          )
+        </div>
+        <div class="div4">🛡</div>
+        <div class="div5">
+          {{ service.attackScore.toFixed(0) }}
+        </div>
+        <div class="div6">
+          (
+          {{ -0 }}
+          )
+        </div>
+        <div class="div7">⛨</div>
+        <div class="div8">
+          {{ service.defenseScore.toFixed(0) }}
+        </div>
+        <div class="div9">
+          (
+          {{ +0 }}
+          )
+        </div>
+      </div>
+    </div>
+  </pbl-ngrid>
 </div>
