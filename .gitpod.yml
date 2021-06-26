@@ -35,6 +35,8 @@ tasks:
 ports:
   - port: 5000
     onOpen: notify
+  - port: 5001
+    onOpen: ignore
   - port: 4200
     onOpen: ignore
 
