@@ -62,7 +62,7 @@
         <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
     </Target>
 
-    <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish" Condition="exists('$(NO_WEB_APP)')">
+    <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish"  Condition="$(NO_WEB_APP)!='true'">
         <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
         <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
         <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build" />
