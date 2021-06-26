@@ -12,7 +12,6 @@
     using Microsoft.Extensions.Caching.Memory;
     using EnoLandingPageBackend.Cache;
     using EnoLandingPageBackend.Database;
-    using Newtonsoft.Json;
     using System.Threading;
 
     /// <summary>
