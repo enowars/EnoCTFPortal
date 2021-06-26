@@ -1,4 +1,4 @@
-<div class="container p-3">
+<mat-card>
   <ng-container *ngIf="(teamInfo$ | async) == null">
     You should have been logged in.
   </ng-container>
@@ -128,8 +128,7 @@
       </a>
     </div>
   </ng-container>
-</div>
-
+</mat-card>
 <!-- <mat-vertical-stepper [linear]="true" #stepper>
   <mat-step>
     <form>

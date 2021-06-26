@@ -137,11 +137,20 @@ $pbl-ngrid-light-theme: ngrid.define-light-theme($default-dark);
 .default_light_theme {
   @include mat.all-component-colors($default-light);
   @include ngrid.ngrid-theme($pbl-ngrid-light-theme);
+
+  // a {
+  //   color: mat($my-palette, "500-contrast") !important;
+  // }
 }
 
 .default_dark_theme {
   @include mat.all-component-colors($default-dark);
   @include ngrid.ngrid-theme($pbl-ngrid-dark-theme);
+  $color-config: mat.get-color-config($default-dark);
+
+  a {
+    color: mat.get-color-from-palette($ClientApp-accent, 200) !important;
+  }
 }
 
 html,
