@@ -46,6 +46,8 @@ export class AppNavigationComponent
   public info$!: Observable<TeamDetailsMessage>;
   @Select(AppState.ctfInfo)
   public ctfInfo$!: Observable<CtfInfoMessage>;
+  @Select(AppState.ctfInProgress)
+  public ctfInProgress$!: Observable<boolean>;
 
   public countDownConfig = {
     leftTime: 60,

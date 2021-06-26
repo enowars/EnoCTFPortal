@@ -22,7 +22,7 @@
             (click)="sidenav.close()"
           >
             <mat-icon>gavel</mat-icon>
-            Rules
+            Information
           </button>
         </mat-list-item>
         <mat-list-item>
@@ -122,22 +122,24 @@
                 mat-button
                 [routerLink]="[routes.scoreboard]"
                 routerLinkActive="mat-stroked-button"
+                *ngIf="ctfInProgress$ | async"
               >
                 Scoreboard
+              </button>
+              <button
+                mat-button
+                [routerLink]="[routes.teams]"
+                routerLinkActive="mat-stroked-button"
+                *ngIf="!(ctfInProgress$ | async)"
+              >
+                Teams
               </button>
               <button
                 mat-button
                 [routerLink]="[routes.information]"
                 routerLinkActive="mat-stroked-button"
               >
-                Rules
-              </button>
-              <button
-                mat-button
-                [routerLink]="[routes.teams]"
-                routerLinkActive="mat-stroked-button"
-              >
-                Teams
+                Information
               </button>
               <button
                 mat-button
