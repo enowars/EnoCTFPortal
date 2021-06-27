@@ -177,13 +177,15 @@
             </div>
           </mat-toolbar-row>
           <mat-toolbar-row class="banner" *ngIf="ctfInfo$ | async as ctfInfo">
-            <div>
-              CTF Starting in
+            <ng-container *ngIf="!(ctfInProgress$ | async)">
+              CTF Starting in&nbsp;
               <countdown [config]="countDownConfig"></countdown>
-              <!-- <ng-container>
-                {{ ctfInfo.startTime | date: "medium" }}
-              </ng-container> -->
-            </div>
+              Register Now!
+            </ng-container>
+            <ng-container *ngIf="ctfInProgress$ | async">
+              CTF ends in&nbsp;
+              <countdown [config]="countDownConfig"></countdown>
+            </ng-container>
           </mat-toolbar-row>
         </mat-toolbar>
       </nav>

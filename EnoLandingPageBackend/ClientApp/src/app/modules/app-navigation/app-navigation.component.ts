@@ -79,11 +79,22 @@ export class AppNavigationComponent
       .pipe(untilComponentDestroyed(this))
       .subscribe((state: AppStateModel) => {
         this.themeValue = state.activeTheme;
-        this.countDownConfig = {
-          ...this.countDownConfig,
-          leftTime:
-            Date.parse(state.ctfInfo?.startTime!) - new Date().getTime(),
-        };
+        if (AppState.ctfInProgress(state)) {
+          this.countDownConfig = {
+            ...this.countDownConfig,
+            leftTime:
+              Date.parse(state.ctfInfo?.startTime!) +
+              // 10 hours
+              10 * 60 * 60 * 1000 -
+              new Date().getTime(),
+          };
+        } else {
+          this.countDownConfig = {
+            ...this.countDownConfig,
+            leftTime:
+              Date.parse(state.ctfInfo?.startTime!) - new Date().getTime(),
+          };
+        }
       });
   }
   public ngOnDestroy() {}

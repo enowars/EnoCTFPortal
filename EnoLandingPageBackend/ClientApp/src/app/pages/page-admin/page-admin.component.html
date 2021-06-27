@@ -1,11 +1,29 @@
-<div class="container p-3">
+<mat-card>
   <h1>AdminView</h1>
-  <input bind="AdminSecret" placeholder="adminsecret" />
-  <br />
-  <input bind="TeamId" placeholder="teamid" />
-  <a href="/api/admin/bootvm?adminsecret=@(AdminSecret)&teamid=@(TeamId)"
-    >boot vm</a
+  <mat-form-field class="example-full-width" appearance="fill">
+    <mat-label>Admin secret</mat-label>
+    <input matInput type="text" [(ngModel)]="secret" />
+  </mat-form-field>
+  <mat-form-field appearance="fill" *ngIf="teams">
+    <mat-label>Team</mat-label>
+    <mat-select [(value)]="selectedTeam">
+      <mat-option *ngFor="let team of teams" [value]="team.ctftimeId">
+        {{ team.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <button
+    mat-button
+    (click)="restartMachine()"
+    [disabled]="selectedTeam == undefined || secret == ''"
   >
-  <br />
-  <a href="/api/admin/ctfjson?adminsecret=@(AdminSecret)">ctf.json</a>
-</div>
+    Reboot VM
+  </button>
+  <a
+    mat-button
+    [href]="'/api/admin/ctfjson?adminsecret=' + secret"
+    target="_blank"
+    rel="noopener noreferrer"
+    >ctf.json</a
+  >
+</mat-card>
