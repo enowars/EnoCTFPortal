@@ -39,12 +39,13 @@ import {
 export class PageScoreboardComponent implements OnInit {
   public columns: PblNgridColumnSet = columnFactory().build();
   public ds: PblDataSource = createDS<any>()
-    .onTrigger(() => [])
+    .onTrigger(() => this.data)
     .create();
   public round: number = 0;
   public roundLength: number = 60;
   public isCurrentRound: boolean = false;
   public services: ScoreboardService[] | undefined;
+  private data: any[] = [];
 
   public countDownConfig = {
     leftTime: 60,
@@ -105,50 +106,48 @@ export class PageScoreboardComponent implements OnInit {
           leftTime: timeLeft,
         };
 
-        this.ds = createDS<any>()
-          .onTrigger(() => {
-            return (
-              scoreboard.teams?.map((team) => {
-                let row: any = {
-                  team: team,
+        this.data =
+          scoreboard.teams?.map((team) => {
+            let row: any = {
+              team: team,
+            };
+            team.serviceDetails?.forEach((service) => {
+              row['service-' + service.serviceId!] = service;
+            });
+            return row;
+          }) || [];
+        this.ds.refresh();
+        // Only get columns on first load
+        if (this.columns.table.cols.length == 0) {
+          this.columns = columnFactory()
+            .default({ minWidth: 200 })
+            .table(
+              {
+                prop: 'team',
+                // id: 'id',
+                label: 'Team',
+                minWidth: 250,
+                width: '40px',
+                pin: 'start',
+                pIndex: true,
+                wontBudge: true,
+              },
+              ...(scoreboard.services?.reduce((accumulator, service) => {
+                let col: PblColumnDefinition = {
+                  prop: 'service-' + service.serviceId,
+                  label: service.serviceName,
+                  minWidth: 100,
+                  width: '100px',
+                  reorder: true,
+                  type: 'service',
+                  data: service,
                 };
-                team.serviceDetails?.forEach((service) => {
-                  row['service-' + service.serviceId!] = service;
-                });
-                return row;
-              }) || []
-            );
-          })
-          .create();
-
-        this.columns = columnFactory()
-          .default({ minWidth: 200 })
-          .table(
-            {
-              prop: 'team',
-              // id: 'id',
-              label: 'Team',
-              minWidth: 250,
-              width: '40px',
-              pin: 'start',
-              pIndex: true,
-              wontBudge: true,
-            },
-            ...(scoreboard.services?.reduce((accumulator, service) => {
-              let col: PblColumnDefinition = {
-                prop: 'service-' + service.serviceId,
-                label: service.serviceName,
-                minWidth: 100,
-                width: '100px',
-                reorder: true,
-                type: 'service',
-                data: service,
-              };
-              accumulator.push(col);
-              return accumulator;
-            }, [] as any[]) || [])
-          )
-          .build();
+                accumulator.push(col);
+                return accumulator;
+              }, [] as any[]) || [])
+            )
+            .build();
+        }
 
         this.ref.markForCheck();
 
