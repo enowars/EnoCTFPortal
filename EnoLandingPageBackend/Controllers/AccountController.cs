@@ -124,14 +124,17 @@
         public async Task<ActionResult> CheckIn()
         {
             long teamId = this.GetTeamId();
-            if (DateTime.UtcNow > this.settings.GetCheckInCloseTime() ||
-                this.settings.GetCheckInBeginTime() > DateTime.UtcNow)
+            if (DateTime.UtcNow > this.settings.GetCheckInCloseTime())
             {
-                return this.Forbid();
+                return BadRequest("Checkin is already over.");
+            }
+            if (this.settings.GetCheckInBeginTime() > DateTime.UtcNow)
+            {
+                return BadRequest("Checkin has not yet begun.");
             }
 
             await this.db.CheckIn(teamId, this.HttpContext.RequestAborted);
-            return this.Ok();
+            return Ok();
         }
     }
 }
