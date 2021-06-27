@@ -23,6 +23,7 @@ import { PageProfileModule } from './pages/page-profile/page-profile.module';
 import { PageInformationModule } from './pages/page-information/page-information.module';
 import { PageContactModule } from './pages/page-contact/page-contact.module';
 import { PageAdminModule } from './pages/page-admin/page-admin.module';
+import { MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/snack-bar';
 export function apiConfigFactory(): Configuration {
   const params: ConfigurationParameters = {
     basePath: environment.backendBaseUrl,
@@ -52,7 +53,10 @@ export function apiConfigFactory(): Configuration {
     PageAdminModule,
     BrowserAnimationsModule,
   ],
-  providers: [ThemeService],
+  providers: [
+    ThemeService,
+    { provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: { duration: 3000 } },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

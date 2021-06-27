@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import {
   AdminService,
   DataService,
@@ -18,7 +19,8 @@ export class PageAdminComponent implements OnInit {
 
   constructor(
     private adminService: AdminService,
-    private _dataService: DataService
+    private _dataService: DataService,
+    private _snackBar: MatSnackBar
   ) {}
   ngOnInit(): void {
     this._dataService.apiDataTeamsGet().subscribe((info) => {
@@ -27,9 +29,15 @@ export class PageAdminComponent implements OnInit {
   }
 
   restartMachine() {
-    this.adminService.apiAdminBootVmGet(this.secret, this.selectedTeam).subscribe(
-      (success) => {},
-      (error) => {}
-    );
+    this.adminService
+      .apiAdminBootVmGet(this.secret, this.selectedTeam)
+      .subscribe(
+        (success) => {
+          this._snackBar.open('Rebooted!');
+        },
+        (error) => {
+          this._snackBar.open('Something went wrong!');
+        }
+      );
   }
 }
