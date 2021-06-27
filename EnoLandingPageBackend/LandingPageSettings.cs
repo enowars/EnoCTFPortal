@@ -7,23 +7,31 @@
     using System.Text;
     using System.Threading.Tasks;
 
+    // TODO: Schema validation!
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
     public class LandingPageSettings
     {
         [Required]
-        public string Title { get; set; } = "BambiCTF";
+        public string Title { get; set; } = "Foobar CTF";
 
         [Required]
         public DateTime StartTime { get; set; }
 
         [Required]
-        public long RegistrationCloseOffset { get; set; }
+        public long RegistrationCloseOffset { get; set; } = 24;
 
         [Required]
-        public long CheckInBeginOffset { get; set; }
+        public long CheckInBeginOffset { get; set; } = 24;
 
         [Required]
-        public long CheckInEndOffset { get; set; }
+        public long CheckInEndOffset { get; set; } = 2;
+
+        /// <summary>
+        /// The duration of the CTF Beginning at Start Time in full Hours.
+        /// </summary>
+        /// <value></value>
+        [Required]
+        public long Duration { get; set; } = 10;
 
         [Required]
         public string HetznerCloudApiToken { get; set; }
@@ -49,6 +57,10 @@
         [Required]
         public string AdminSecret { get; set; }
 
+        public DateTime GetCtfEndTime()
+        {
+            return this.StartTime.AddHours(this.Duration).ToUniversalTime();
+        }
 
         public DateTime GetRegistrationCloseTime()
         {

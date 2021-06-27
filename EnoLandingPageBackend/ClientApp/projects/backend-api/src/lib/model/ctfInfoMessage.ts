@@ -18,22 +18,26 @@ export interface CtfInfoMessage {
     /**
      * The Title of the CTF.
      */
-    title?: string | null;
+    title: string;
     /**
      * The StartTime of the CTF.
      */
-    startTime?: string;
+    ctfStartTime: string;
+    /**
+     * The EndTime of the CTF.
+     */
+    ctfEndTime: string;
     /**
      * The Time until Teams have to be registred.
      */
-    registrationCloseOffset?: string;
+    registrationCloseTime: string;
     /**
      * The Time when the checkin will be available.
      */
-    checkInBeginOffset?: string;
+    checkInBeginTime: string;
     /**
      * The Time until Teams have to be checked in.
      */
-    checkInEndOffset?: string;
+    checkInEndTime: string;
 }
 

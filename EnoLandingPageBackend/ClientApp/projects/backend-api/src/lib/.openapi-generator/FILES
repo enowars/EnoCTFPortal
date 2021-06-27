@@ -8,8 +8,6 @@ api/admin.serviceInterface.ts
 api/api.ts
 api/data.service.ts
 api/data.serviceInterface.ts
-api/enoEngine.service.ts
-api/enoEngine.serviceInterface.ts
 api/scoreboardInfo.service.ts
 api/scoreboardInfo.serviceInterface.ts
 api/vulnbox.service.ts

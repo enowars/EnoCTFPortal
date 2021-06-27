@@ -14,18 +14,17 @@
     <ng-container *ngIf="!(teamInfo$ | async)!.confirmed">
       <div class="alert alert-success" role="alert">
         Your participation hasn't been confirmed yet! Please check in
-        <ng-container *ngIf="(ctfInfo$ | async)!.checkInBeginOffset">
+        <ng-container *ngIf="(ctfInfo$ | async)!.checkInBeginTime">
         </ng-container>
         after
-        @(ctfInfo.StartTime.AddHours(-ctfInfo.CheckInBeginOffset).ToUniversalTime().ToString())
+        {{ (ctfInfo$ | async)!.checkInBeginTime | date: "full" }}
         UTC.
         (ctfInfo.StartTime.AddHours(-ctfInfo.CheckInBeginOffset).ToUniversalTime()
         > DateTime.UtcNow && false) // CheckIn has not started
-        <ng-container *ngIf="(ctfInfo$ | async)!.checkInEndOffset">
+        <ng-container *ngIf="(ctfInfo$ | async)!.checkInEndTime">
         </ng-container>
         Your participation hasn't been confirmed yet! Please check in before
-        @(ctfInfo.StartTime.AddHours(-ctfInfo.CheckInBeginOffset).ToUniversalTime().ToString())
-        UTC.
+        {{ (ctfInfo$ | async)!.checkInEndTime | date: "full" }}.
       </div>
     </ng-container>
 
@@ -33,15 +32,19 @@
       <div class="alert alert-success" role="alert">
         <div class="alert alert-danger" role="alert">
           You did not confirm your participation before
-          @(ctfInfo.StartTime.AddHours(-ctfInfo.CheckInEndOffset).ToUniversalTime().ToString())
-          UTC. if (DateTime.UtcNow >
-          ctfInfo.StartTime.AddHours(-ctfInfo.CheckInEndOffset).ToUniversalTime()
-          && false) // CheckIn is over
+          {{ (ctfInfo$ | async)!.checkInEndTime | date: "full" }}. // CheckIn is
+          over
         </div>
       </div>
     </ng-container>
 
-    <button mat-raised-button (click)="checkin()">Check In!</button>
+    <button
+      mat-raised-button
+      *ngIf="!(teamInfo$ | async)!.confirmed"
+      (click)="checkin()"
+    >
+      Check In!
+    </button>
     <!-- (ctfInfo.StartTime < DateTime.UtcNow) { if
     (teamInformation.VulnboxStatus == LandingPageVulnboxStatus.None)  -->
     <button mat-raised-button (click)="start()">Create VM</button>
@@ -127,6 +130,7 @@
         Download
       </a>
     </div>
+    <!-- TODO: Add AttackInfo -->
   </ng-container>
 </mat-card>
 <!-- <mat-vertical-stepper [linear]="true" #stepper>

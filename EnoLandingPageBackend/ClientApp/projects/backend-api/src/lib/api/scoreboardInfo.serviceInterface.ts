@@ -31,17 +31,18 @@ export interface ScoreboardInfoServiceInterface {
     apiScoreboardInfoScoreboardJsonGet(extraHttpRequestParams?: any): Observable<Scoreboard>;
 
     /**
-     * Gets the scoreboard of a given roundId.
+     * Gets the scoreboard of a given roundId.  The round will be parsed from the JSON.
      * 
-     * @param roundId Number of the round.
+     * @param adminSecret The admin secret for authenticating the request.
+     * @param scoreboard 
      */
-    apiScoreboardInfoScoreboardroundIdJsonGet(roundId: number, extraHttpRequestParams?: any): Observable<Scoreboard>;
+    apiScoreboardInfoScoreboardPost(adminSecret?: string, scoreboard?: Scoreboard, extraHttpRequestParams?: any): Observable<{}>;
 
     /**
      * Gets the scoreboard of a given roundId.
      * 
      * @param roundId Number of the round.
      */
-    apiScoreboardInfoScoreboardroundIdJsonPost(roundId: number, extraHttpRequestParams?: any): Observable<Scoreboard>;
+    apiScoreboardInfoScoreboardroundIdJsonGet(roundId: number, extraHttpRequestParams?: any): Observable<Scoreboard>;
 
 }

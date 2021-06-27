@@ -32,6 +32,7 @@
             return this.Ok(new CtfInfoMessage(
                 this.settings.Title,
                 this.settings.StartTime.ToUniversalTime(),
+                this.settings.GetCtfEndTime(),
                 this.settings.GetRegistrationCloseTime(),
                 this.settings.GetCheckInBeginTime(),
                 this.settings.GetCheckInCloseTime()));

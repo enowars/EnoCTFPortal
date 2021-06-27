@@ -3,17 +3,17 @@
     <h2>Timing</h2>
     <li>
       The game will start on
-      {{ (ctfInfo$ | async)!.startTime | date: "full" }}.
+      {{ (ctfInfo$ | async)!.ctfStartTime | date: "full" }}.
     </li>
     <li>
       You must register before
-      {{ (ctfInfo$ | async)!.registrationCloseOffset | date: "full" }}
+      {{ (ctfInfo$ | async)!.registrationCloseTime | date: "full" }}
       UTC.
     </li>
     <li>
       You must <a href="/profile">check in</a> between
-      {{ (ctfInfo$ | async)!.checkInBeginOffset | date: "full" }} and
-      {{ (ctfInfo$ | async)!.checkInEndOffset | date: "full" }}
+      {{ (ctfInfo$ | async)!.checkInBeginTime | date: "full" }} and
+      {{ (ctfInfo$ | async)!.checkInEndTime | date: "full" }}
       .
     </li>
     <li>

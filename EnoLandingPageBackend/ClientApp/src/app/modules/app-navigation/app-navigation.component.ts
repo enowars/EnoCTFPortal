@@ -49,6 +49,12 @@ export class AppNavigationComponent
   @Select(AppState.ctfInProgress)
   public ctfInProgress$!: Observable<boolean>;
 
+  @Select(AppState.ctfCheckinOpen)
+  public ctfCheckinOpen$!: Observable<boolean>;
+
+  @Select(AppState.ctfRegistrationOpen)
+  public ctfRegistrationOpen$!: Observable<boolean>;
+
   public countDownConfig = {
     leftTime: 60,
     format: 'HH:mm:ss',
@@ -79,21 +85,43 @@ export class AppNavigationComponent
       .pipe(untilComponentDestroyed(this))
       .subscribe((state: AppStateModel) => {
         this.themeValue = state.activeTheme;
-        if (AppState.ctfInProgress(state)) {
-          this.countDownConfig = {
-            ...this.countDownConfig,
-            leftTime:
-              Date.parse(state.ctfInfo?.startTime!) +
-              // 10 hours
-              10 * 60 * 60 * 1000 -
-              new Date().getTime(),
-          };
-        } else {
-          this.countDownConfig = {
-            ...this.countDownConfig,
-            leftTime:
-              Date.parse(state.ctfInfo?.startTime!) - new Date().getTime(),
-          };
+        if (state.ctfInfo != null) {
+          if (AppState.ctfInProgress(state)) {
+            // CTF is in progress
+            this.countDownConfig = {
+              ...this.countDownConfig,
+              leftTime:
+                (Date.parse(state.ctfInfo.ctfEndTime) +
+                  // 10 hours
+                  10 * 60 * 60 * 1000 -
+                  new Date().getTime()) /
+                1000,
+            };
+          } else if (AppState.ctfCheckinOpen(state)) {
+            this.countDownConfig = {
+              ...this.countDownConfig,
+              leftTime:
+                (Date.parse(state.ctfInfo.checkInEndTime) -
+                  new Date().getTime()) /
+                1000,
+            };
+          } else if (AppState.ctfRegistrationOpen(state)) {
+            this.countDownConfig = {
+              ...this.countDownConfig,
+              leftTime:
+                (Date.parse(state.ctfInfo.registrationCloseTime) -
+                  new Date().getTime()) /
+                1000,
+            };
+          } else {
+            this.countDownConfig = {
+              ...this.countDownConfig,
+              leftTime:
+                (Date.parse(state.ctfInfo.ctfStartTime) -
+                  new Date().getTime()) /
+                1000,
+            };
+          }
         }
       });
   }

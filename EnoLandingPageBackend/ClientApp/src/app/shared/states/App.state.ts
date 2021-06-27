@@ -126,8 +126,8 @@ export class AppState implements NgxsOnInit {
   @Selector()
   public static ctfRegistrationOpen(state: AppStateModel): boolean {
     let now = new Date().getTime();
-    if (Date.parse(state.ctfInfo?.registrationCloseOffset!) >= now) {
-      return true
+    if (Date.parse(state.ctfInfo?.registrationCloseTime!) >= now) {
+      return true;
     }
     return false;
   }
@@ -135,17 +135,20 @@ export class AppState implements NgxsOnInit {
   public static ctfCheckinOpen(state: AppStateModel): boolean {
     let now = new Date().getTime();
     if (
-      Date.parse(state.ctfInfo?.checkInBeginOffset!) <= now &&
-      Date.parse(state.ctfInfo?.checkInEndOffset!) >= now
+      Date.parse(state.ctfInfo?.checkInBeginTime!) <= now &&
+      Date.parse(state.ctfInfo?.checkInEndTime!) >= now
     ) {
-      return true
+      return true;
     }
     return false;
   }
   @Selector()
   public static ctfInProgress(state: AppStateModel): boolean {
     let now = new Date().getTime();
-    if (Date.parse(state.ctfInfo?.startTime!) <= now) {
+    if (
+      Date.parse(state.ctfInfo?.ctfStartTime!) <= now &&
+      Date.parse(state.ctfInfo?.ctfEndTime!) >= now
+    ) {
       return true;
     }
     return false;

@@ -131,6 +131,67 @@ export class ScoreboardInfoService implements ScoreboardInfoServiceInterface {
     }
 
     /**
+     * Gets the scoreboard of a given roundId.  The round will be parsed from the JSON.
+     * @param adminSecret The admin secret for authenticating the request.
+     * @param scoreboard 
+     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
+     * @param reportProgress flag to report request and response progress.
+     */
+    public apiScoreboardInfoScoreboardPost(adminSecret?: string, scoreboard?: Scoreboard, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined}): Observable<any>;
+    public apiScoreboardInfoScoreboardPost(adminSecret?: string, scoreboard?: Scoreboard, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined}): Observable<HttpResponse<any>>;
+    public apiScoreboardInfoScoreboardPost(adminSecret?: string, scoreboard?: Scoreboard, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: undefined}): Observable<HttpEvent<any>>;
+    public apiScoreboardInfoScoreboardPost(adminSecret?: string, scoreboard?: Scoreboard, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: undefined}): Observable<any> {
+
+        let queryParameters = new HttpParams({encoder: this.encoder});
+        if (adminSecret !== undefined && adminSecret !== null) {
+          queryParameters = this.addToHttpParams(queryParameters,
+            <any>adminSecret, 'adminSecret');
+        }
+
+        let headers = this.defaultHeaders;
+
+        let httpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
+        if (httpHeaderAcceptSelected === undefined) {
+            // to determine the Accept header
+            const httpHeaderAccepts: string[] = [
+            ];
+            httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
+        }
+        if (httpHeaderAcceptSelected !== undefined) {
+            headers = headers.set('Accept', httpHeaderAcceptSelected);
+        }
+
+
+        // to determine the Content-Type header
+        const consumes: string[] = [
+            'application/json',
+            'text/json',
+            'application/_*+json'
+        ];
+        const httpContentTypeSelected: string | undefined = this.configuration.selectHeaderContentType(consumes);
+        if (httpContentTypeSelected !== undefined) {
+            headers = headers.set('Content-Type', httpContentTypeSelected);
+        }
+
+        let responseType_: 'text' | 'json' = 'json';
+        if(httpHeaderAcceptSelected && httpHeaderAcceptSelected.startsWith('text')) {
+            responseType_ = 'text';
+        }
+
+        return this.httpClient.post<any>(`${this.configuration.basePath}/api/ScoreboardInfo/scoreboard`,
+            scoreboard,
+            {
+                params: queryParameters,
+                responseType: <any>responseType_,
+                withCredentials: this.configuration.withCredentials,
+                headers: headers,
+                observe: observe,
+                reportProgress: reportProgress
+            }
+        );
+    }
+
+    /**
      * Gets the scoreboard of a given roundId.
      * @param roundId Number of the round.
      * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
@@ -167,54 +228,6 @@ export class ScoreboardInfoService implements ScoreboardInfoServiceInterface {
         }
 
         return this.httpClient.get<Scoreboard>(`${this.configuration.basePath}/api/ScoreboardInfo/scoreboard${encodeURIComponent(String(roundId))}.json`,
-            {
-                responseType: <any>responseType_,
-                withCredentials: this.configuration.withCredentials,
-                headers: headers,
-                observe: observe,
-                reportProgress: reportProgress
-            }
-        );
-    }
-
-    /**
-     * Gets the scoreboard of a given roundId.
-     * @param roundId Number of the round.
-     * @param observe set whether or not to return the data Observable as the body, response or events. defaults to returning the body.
-     * @param reportProgress flag to report request and response progress.
-     */
-    public apiScoreboardInfoScoreboardroundIdJsonPost(roundId: number, observe?: 'body', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json'}): Observable<Scoreboard>;
-    public apiScoreboardInfoScoreboardroundIdJsonPost(roundId: number, observe?: 'response', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json'}): Observable<HttpResponse<Scoreboard>>;
-    public apiScoreboardInfoScoreboardroundIdJsonPost(roundId: number, observe?: 'events', reportProgress?: boolean, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json'}): Observable<HttpEvent<Scoreboard>>;
-    public apiScoreboardInfoScoreboardroundIdJsonPost(roundId: number, observe: any = 'body', reportProgress: boolean = false, options?: {httpHeaderAccept?: 'text/plain' | 'application/json' | 'text/json'}): Observable<any> {
-        if (roundId === null || roundId === undefined) {
-            throw new Error('Required parameter roundId was null or undefined when calling apiScoreboardInfoScoreboardroundIdJsonPost.');
-        }
-
-        let headers = this.defaultHeaders;
-
-        let httpHeaderAcceptSelected: string | undefined = options && options.httpHeaderAccept;
-        if (httpHeaderAcceptSelected === undefined) {
-            // to determine the Accept header
-            const httpHeaderAccepts: string[] = [
-                'text/plain',
-                'application/json',
-                'text/json'
-            ];
-            httpHeaderAcceptSelected = this.configuration.selectHeaderAccept(httpHeaderAccepts);
-        }
-        if (httpHeaderAcceptSelected !== undefined) {
-            headers = headers.set('Accept', httpHeaderAcceptSelected);
-        }
-
-
-        let responseType_: 'text' | 'json' = 'json';
-        if(httpHeaderAcceptSelected && httpHeaderAcceptSelected.startsWith('text')) {
-            responseType_ = 'text';
-        }
-
-        return this.httpClient.post<Scoreboard>(`${this.configuration.basePath}/api/ScoreboardInfo/scoreboard${encodeURIComponent(String(roundId))}.json`,
-            null,
             {
                 responseType: <any>responseType_,
                 withCredentials: this.configuration.withCredentials,
