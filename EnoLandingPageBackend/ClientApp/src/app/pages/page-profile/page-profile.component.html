@@ -3,135 +3,176 @@
     You should have been logged in.
   </ng-container>
   <ng-container *ngIf="(teamInfo$ | async) != null">
-    <h1>{{ (teamInfo$ | async)!.teamName }}</h1>
+    <mat-card-title
+      >Team Info: {{ (teamInfo$ | async)!.teamName }}</mat-card-title
+    >
 
     <ng-container *ngIf="(teamInfo$ | async)!.confirmed">
       <div class="alert alert-success" role="alert">
-        Your participation has been confirmed!
+        Your participation has been confirmed! Check back here when the CTF
+        starts to start your Vulnbox.
       </div>
     </ng-container>
 
     <ng-container *ngIf="!(teamInfo$ | async)!.confirmed">
+      <!-- Team has not yet checked in -->
       <div class="alert alert-success" role="alert">
         Your participation hasn't been confirmed yet! Please check in
-        <ng-container *ngIf="(ctfInfo$ | async)!.checkInBeginTime">
+        <ng-container
+          *ngIf="!(ctfCheckinOpen$ | async) && !(ctfInProgress$ | async)"
+        >
+          <!-- Checkin has not started yet -->
+          after
+          {{ (ctfInfo$ | async)!.checkInBeginTime | date: "full" }}
+          .
         </ng-container>
-        after
-        {{ (ctfInfo$ | async)!.checkInBeginTime | date: "full" }}
-        UTC.
-        (ctfInfo.StartTime.AddHours(-ctfInfo.CheckInBeginOffset).ToUniversalTime()
-        > DateTime.UtcNow && false) // CheckIn has not started
-        <ng-container *ngIf="(ctfInfo$ | async)!.checkInEndTime">
+        <ng-container *ngIf="ctfCheckinOpen$ | async">
+          before
+          {{ (ctfInfo$ | async)!.checkInEndTime | date: "full" }}.
         </ng-container>
-        Your participation hasn't been confirmed yet! Please check in before
-        {{ (ctfInfo$ | async)!.checkInEndTime | date: "full" }}.
       </div>
     </ng-container>
 
-    <ng-container *ngIf="!(teamInfo$ | async)!.confirmed">
-      <div class="alert alert-success" role="alert">
-        <div class="alert alert-danger" role="alert">
-          You did not confirm your participation before
-          {{ (ctfInfo$ | async)!.checkInEndTime | date: "full" }}. // CheckIn is
-          over
-        </div>
-      </div>
+    <ng-container
+      *ngIf="!(teamInfo$ | async)!.confirmed && (ctfInProgress$ | async)"
+    >
+      You did not confirm your participation before
+      {{ (ctfInfo$ | async)!.checkInEndTime | date: "full" }}. The Checkin is
+      over.
     </ng-container>
 
     <button
       mat-raised-button
       *ngIf="!(teamInfo$ | async)!.confirmed"
+      [disabled]="!(ctfCheckinOpen$ | async)"
+      color="primary"
       (click)="checkin()"
     >
       Check In!
     </button>
-    <!-- (ctfInfo.StartTime < DateTime.UtcNow) { if
-    (teamInformation.VulnboxStatus == LandingPageVulnboxStatus.None)  -->
-    <button mat-raised-button (click)="start()">Create VM</button>
+  </ng-container>
+</mat-card>
 
-    <!--  else if (teamInformation.VulnboxStatus ==
-    LandingPageVulnboxStatus.Creating)  -->
-    <!-- <p>Your VM is starting!</p> -->
+<mat-card *ngIf="(teamInfo$ | async) != null">
+  <mat-card-title>Your Vulnbox</mat-card-title>
+  <mat-card-content>
+    <div class="one-line">
+      <mat-form-field appearance="outline">
+        <mat-label>Vulnbox Status</mat-label>
+        <input
+          matInput
+          type="text"
+          [value]="(teamInfo$ | async)!.vulnboxStatus || 'coming soon'"
+          disabled
+        />
+        <button
+          mat-icon-button
+          matSuffix
+          [cdkCopyToClipboard]="
+            (teamInfo$ | async)!.internalIpAddress || 'coming soon'
+          "
+          (click)="copiedToast()"
+          attr.aria-label="Copy"
+        >
+          <mat-icon>content_copy</mat-icon>
+        </button>
+      </mat-form-field>
 
-    <!-- else if (teamInformation.VulnboxStatus ==
-    LandingPageVulnboxStatus.Created)  -->
-    <button mat-raised-button (click)="forceReboot()">Force Reboot VM</button>
-
-    <!-- if (vmInteractionFeedback != null)
-    <p>@vmInteractionFeedback</p> -->
-
-    <mat-form-field appearance="outline">
-      <mat-label>External IP Address</mat-label>
-      <input
-        matInput
-        type="text"
-        [value]="(teamInfo$ | async)!.externalIpAddress || 'coming soon'"
-        disabled
-      />
       <button
-        mat-icon-button
-        matSuffix
-        [cdkCopyToClipboard]="
-          (teamInfo$ | async)!.externalIpAddress || 'coming soon'
+        mat-raised-button
+        *ngIf="
+          (ctfInProgress$ | async) &&
+          (teamInfo$ | async)!.vulnboxStatus == vulnboxStatus.None
         "
-        (click)="copiedToast()"
-        attr.aria-label="Copy"
+        (click)="start()"
       >
-        <mat-icon>content_copy</mat-icon>
+        Create VM
       </button>
-    </mat-form-field>
-    <mat-form-field appearance="outline">
-      <mat-label>Root Password</mat-label>
-      <input
-        matInput
-        type="text"
-        [value]="(teamInfo$ | async)!.rootPassword || 'coming soon'"
-        disabled
-      />
+
       <button
-        mat-icon-button
-        matSuffix
-        [cdkCopyToClipboard]="
-          (teamInfo$ | async)!.rootPassword || 'coming soon'
-        "
-        (click)="copiedToast()"
-        attr.aria-label="Copy"
+        mat-raised-button
+        *ngIf="(teamInfo$ | async)!.vulnboxStatus == vulnboxStatus.Created"
+        (click)="forceReboot()"
+        color="warn"
       >
-        <mat-icon>content_copy</mat-icon>
+        Force Reboot VM
       </button>
-    </mat-form-field>
-    <mat-form-field appearance="outline">
-      <mat-label>Internal IP Address</mat-label>
-      <input
-        matInput
-        type="text"
-        [value]="(teamInfo$ | async)!.internalIpAddress || 'coming soon'"
-        disabled
-      />
-      <button
-        mat-icon-button
-        matSuffix
-        [cdkCopyToClipboard]="
-          (teamInfo$ | async)!.internalIpAddress || 'coming soon'
-        "
-        (click)="copiedToast()"
-        attr.aria-label="Copy"
-      >
-        <mat-icon>content_copy</mat-icon>
-      </button>
-    </mat-form-field>
-    <div>
-      <div>Vulnbox Status:</div>
-      <code>{{ (teamInfo$ | async)!.vulnboxStatus || "coming soon" }}</code>
     </div>
-    <div>
-      <div>Vpn Configuration:</div>
+
+    <div class="one-line">
+      <mat-form-field appearance="outline">
+        <mat-label>External IP Address</mat-label>
+        <input
+          matInput
+          type="text"
+          [value]="(teamInfo$ | async)!.externalIpAddress || 'coming soon'"
+          disabled
+        />
+        <button
+          mat-icon-button
+          matSuffix
+          [cdkCopyToClipboard]="
+            (teamInfo$ | async)!.externalIpAddress || 'coming soon'
+          "
+          (click)="copiedToast()"
+          attr.aria-label="Copy"
+        >
+          <mat-icon>content_copy</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+    <div class="one-line">
+      <mat-form-field appearance="outline">
+        <mat-label>Root Password</mat-label>
+        <input
+          matInput
+          type="text"
+          [value]="(teamInfo$ | async)!.rootPassword || 'coming soon'"
+          disabled
+        />
+        <button
+          mat-icon-button
+          matSuffix
+          [cdkCopyToClipboard]="
+            (teamInfo$ | async)!.rootPassword || 'coming soon'
+          "
+          (click)="copiedToast()"
+          attr.aria-label="Copy"
+        >
+          <mat-icon>content_copy</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+    <div class="one-line">
+      <mat-form-field appearance="outline">
+        <mat-label>Internal IP Address</mat-label>
+        <input
+          matInput
+          type="text"
+          [value]="(teamInfo$ | async)!.internalIpAddress || 'coming soon'"
+          disabled
+        />
+        <button
+          mat-icon-button
+          matSuffix
+          [cdkCopyToClipboard]="
+            (teamInfo$ | async)!.internalIpAddress || 'coming soon'
+          "
+          (click)="copiedToast()"
+          attr.aria-label="Copy"
+        >
+          <mat-icon>content_copy</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+
+    <div class="one-line">
       <a mat-raised-button href="/api/account/vpnconfig" target="_blank">
-        Download
+        Download Vpn Configuration
       </a>
     </div>
-    <!-- TODO: Add AttackInfo -->
-  </ng-container>
+  </mat-card-content>
+  <!-- TODO: Add AttackInfo -->
 </mat-card>
 <!-- <mat-vertical-stepper [linear]="true" #stepper>
   <mat-step>

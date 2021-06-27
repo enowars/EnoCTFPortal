@@ -4,6 +4,7 @@ import { Select } from '@ngxs/store';
 import {
   AccountService,
   CtfInfoMessage,
+  LandingPageVulnboxStatus,
   VulnboxService,
 } from 'projects/backend-api/src/lib';
 import { TeamDetailsMessage } from 'projects/backend-api/src/lib/model/teamDetailsMessage';
@@ -20,6 +21,13 @@ export class PageProfileComponent implements OnInit {
   public teamInfo$!: Observable<TeamDetailsMessage>;
   @Select(AppState.ctfInfo)
   public ctfInfo$!: Observable<CtfInfoMessage>;
+  @Select(AppState.ctfInProgress)
+  public ctfInProgress$!: Observable<CtfInfoMessage>;
+  @Select(AppState.ctfCheckinOpen)
+  public ctfCheckinOpen$!: Observable<boolean>;
+
+  public vulnboxStatus: typeof LandingPageVulnboxStatus =
+    LandingPageVulnboxStatus;
   constructor(
     private accountService: AccountService,
     private vulnboxService: VulnboxService,

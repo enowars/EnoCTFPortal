@@ -25,6 +25,7 @@ import {
   runtimeEnvironment,
   RuntimeEnvironmentInterface,
 } from 'src/environments/runtime-environment';
+import { CountdownEvent } from 'ngx-countdown';
 
 @Component({
   selector: 'app-navigation',
@@ -64,6 +65,11 @@ export class AppNavigationComponent
     super();
   }
 
+  public countdownend(event: CountdownEvent) {
+    if (event.action == 'done') {
+      this.refreshTimer(this.store.selectSnapshot(AppState));
+    }
+  }
   public toggleTheme() {
     if (this.themeValue == Theme.default_dark) {
       this.store.dispatch(new SetTheme(Theme.default_light));
@@ -79,50 +85,49 @@ export class AppNavigationComponent
       return 'dark_mode';
     }
   }
+
+  public refreshTimer(state: AppStateModel) {
+    if (state.ctfInfo != null) {
+      if (AppState.ctfInProgress(state)) {
+        // CTF is in progress
+        this.countDownConfig = {
+          ...this.countDownConfig,
+          leftTime:
+            (Date.parse(state.ctfInfo.ctfEndTime) - new Date().getTime()) /
+            1000,
+        };
+      } else if (AppState.ctfCheckinOpen(state)) {
+        this.countDownConfig = {
+          ...this.countDownConfig,
+          leftTime:
+            (Date.parse(state.ctfInfo.checkInEndTime) - new Date().getTime()) /
+            1000,
+        };
+      } else if (AppState.ctfRegistrationOpen(state)) {
+        this.countDownConfig = {
+          ...this.countDownConfig,
+          leftTime:
+            (Date.parse(state.ctfInfo.registrationCloseTime) -
+              new Date().getTime()) /
+            1000,
+        };
+      } else {
+        this.countDownConfig = {
+          ...this.countDownConfig,
+          leftTime:
+            (Date.parse(state.ctfInfo.ctfStartTime) - new Date().getTime()) /
+            1000,
+        };
+      }
+    }
+  }
   public ngOnInit() {
     this.store
       .select(AppState)
       .pipe(untilComponentDestroyed(this))
       .subscribe((state: AppStateModel) => {
         this.themeValue = state.activeTheme;
-        if (state.ctfInfo != null) {
-          if (AppState.ctfInProgress(state)) {
-            // CTF is in progress
-            this.countDownConfig = {
-              ...this.countDownConfig,
-              leftTime:
-                (Date.parse(state.ctfInfo.ctfEndTime) +
-                  // 10 hours
-                  10 * 60 * 60 * 1000 -
-                  new Date().getTime()) /
-                1000,
-            };
-          } else if (AppState.ctfCheckinOpen(state)) {
-            this.countDownConfig = {
-              ...this.countDownConfig,
-              leftTime:
-                (Date.parse(state.ctfInfo.checkInEndTime) -
-                  new Date().getTime()) /
-                1000,
-            };
-          } else if (AppState.ctfRegistrationOpen(state)) {
-            this.countDownConfig = {
-              ...this.countDownConfig,
-              leftTime:
-                (Date.parse(state.ctfInfo.registrationCloseTime) -
-                  new Date().getTime()) /
-                1000,
-            };
-          } else {
-            this.countDownConfig = {
-              ...this.countDownConfig,
-              leftTime:
-                (Date.parse(state.ctfInfo.ctfStartTime) -
-                  new Date().getTime()) /
-                1000,
-            };
-          }
-        }
+        this.refreshTimer(state);
       });
   }
   public ngOnDestroy() {}

@@ -1,3 +1,17 @@
 mat-card {
   margin: 1vh 2vw;
 }
+
+mat-card-content {
+  display: flex;
+  flex-flow: column;
+
+  mat-form-field {
+    margin: 0 10px;
+  }
+
+  button,
+  a {
+    margin: 0 10px;
+  }
+}

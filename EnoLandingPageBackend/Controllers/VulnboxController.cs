@@ -12,6 +12,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
 
+    // TODO: Move to Account Controller
     [Authorize]
     [ApiController]
     [Route("/api/[controller]/[action]")]
@@ -35,7 +36,7 @@
             this.logger.LogInformation($"StartVulnbox {teamId}");
             if (this.settings.StartTime.ToUniversalTime() > DateTime.UtcNow)
             {
-                return this.Forbid();
+                return this.BadRequest("The CTF has not started.");
             }
 
             try
@@ -61,7 +62,7 @@
             this.logger.LogInformation($"ResetVulnbox {teamId}");
             if (this.settings.StartTime.ToUniversalTime() > DateTime.UtcNow)
             {
-                return this.Forbid();
+                return this.BadRequest("The CTF has not started.");
             }
 
             await this.hetznerApi.Call(teamId, HetznerCloudApiCallType.Reset);

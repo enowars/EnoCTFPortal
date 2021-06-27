@@ -179,13 +179,13 @@
           <mat-toolbar-row class="banner" *ngIf="ctfInfo$ | async as ctfInfo">
             <ng-container *ngIf="ctfRegistrationOpen$ | async">
               CTF Starting in&nbsp;
-              <countdown [config]="countDownConfig"></countdown>.&nbsp; Register
-              Now!
+              <ng-container *ngTemplateOutlet="countdown"></ng-container>&nbsp;
+              Register Now!
             </ng-container>
             <ng-container *ngIf="ctfCheckinOpen$ | async">
               CTF Starting in&nbsp;
-              <countdown [config]="countDownConfig"></countdown>.&nbsp; Register
-              Now!
+              <ng-container *ngTemplateOutlet="countdown"></ng-container>
+              .&nbsp; Check in now!
             </ng-container>
             <ng-container
               *ngIf="
@@ -195,11 +195,11 @@
               "
             >
               CTF starts in&nbsp;
-              <countdown [config]="countDownConfig"></countdown>
+              <ng-container *ngTemplateOutlet="countdown"></ng-container>
             </ng-container>
             <ng-container *ngIf="ctfInProgress$ | async">
               CTF ends in&nbsp;
-              <countdown [config]="countDownConfig"></countdown>
+              <ng-container *ngTemplateOutlet="countdown"></ng-container>
             </ng-container>
           </mat-toolbar-row>
         </mat-toolbar>
@@ -211,3 +211,10 @@
     </ng-content>
   </mat-sidenav-content>
 </mat-sidenav-container>
+
+<ng-template #countdown>
+  <countdown
+    [config]="countDownConfig"
+    (event)="countdownend($event)"
+  ></countdown>
+</ng-template>
