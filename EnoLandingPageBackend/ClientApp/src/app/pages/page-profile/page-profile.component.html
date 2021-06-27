@@ -41,10 +41,10 @@
       </div>
     </ng-container>
 
-    <button mat-raised-button>Check In!</button>
+    <button mat-raised-button (click)="checkin()">Check In!</button>
     <!-- (ctfInfo.StartTime < DateTime.UtcNow) { if
     (teamInformation.VulnboxStatus == LandingPageVulnboxStatus.None)  -->
-    <button mat-raised-button>Create VM</button>
+    <button mat-raised-button (click)="start()">Create VM</button>
 
     <!--  else if (teamInformation.VulnboxStatus ==
     LandingPageVulnboxStatus.Creating)  -->
@@ -52,7 +52,7 @@
 
     <!-- else if (teamInformation.VulnboxStatus ==
     LandingPageVulnboxStatus.Created)  -->
-    <button mat-raised-button>Reboot VM</button>
+    <button mat-raised-button (click)="forceReboot()">Force Reboot VM</button>
 
     <!-- if (vmInteractionFeedback != null)
     <p>@vmInteractionFeedback</p> -->

@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Select } from '@ngxs/store';
-import { CtfInfoMessage } from 'projects/backend-api/src/lib';
+import {
+  AccountService,
+  CtfInfoMessage,
+  VulnboxService,
+} from 'projects/backend-api/src/lib';
 import { TeamDetailsMessage } from 'projects/backend-api/src/lib/model/teamDetailsMessage';
 import { Observable } from 'rxjs';
 import { AppState } from 'src/app/shared/states/App.state';
@@ -16,9 +20,46 @@ export class PageProfileComponent implements OnInit {
   public teamInfo$!: Observable<TeamDetailsMessage>;
   @Select(AppState.ctfInfo)
   public ctfInfo$!: Observable<CtfInfoMessage>;
-  constructor(private _snackBar: MatSnackBar) {}
+  constructor(
+    private accountService: AccountService,
+    private vulnboxService: VulnboxService,
+    private _snackBar: MatSnackBar
+  ) {}
 
   ngOnInit(): void {}
+
+  public checkin() {
+    this.accountService.apiAccountCheckInPost().subscribe(
+      (success) => {
+        this._snackBar.open('You are checked in!');
+      },
+      (error) => {
+        this._snackBar.open('Something went wrong!');
+      }
+    );
+  }
+
+  public start() {
+    this.vulnboxService.apiVulnboxStartVulnboxPost().subscribe(
+      (success) => {
+        this._snackBar.open('Your machine was started!');
+      },
+      (error) => {
+        this._snackBar.open('Something went wrong!');
+      }
+    );
+  }
+
+  public forceReboot() {
+    this.vulnboxService.apiVulnboxResetVulnboxPost().subscribe(
+      (success) => {
+        this._snackBar.open('Your machine will be forcefully rebooted!');
+      },
+      (error) => {
+        this._snackBar.open('Something went wrong!');
+      }
+    );
+  }
 
   copiedToast() {
     this._snackBar.open('Copied!');
