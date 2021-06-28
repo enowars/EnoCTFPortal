@@ -63,7 +63,7 @@
           <ng-container *ngIf="!(authenticated$ | async)">
             <a
               mat-menu-item
-              href="/api/account/login?redirectUri=http://localhost:5000/settings"
+              [href]="'/api/account/login?redirectUri=' + currentUrl"
               (click)="sidenav.close()"
             >
               <mat-icon>login</mat-icon>
@@ -151,7 +151,7 @@
               <ng-container *ngIf="!(authenticated$ | async) && !staticHosting">
                 <a
                   mat-icon-button
-                  href="/api/account/login?redirectUri=http://localhost:5000/settings"
+                  [href]="'/api/account/login?redirectUri=' + currentUrl"
                 >
                   <mat-icon>login</mat-icon>
                 </a>

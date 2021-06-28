@@ -110,6 +110,7 @@ export class AppNavigationComponent
             (Date.parse(state.ctfInfo.registrationCloseTime) -
               new Date().getTime()) /
             1000,
+          format: 'dd:HH:mm:ss',
         };
       } else {
         this.countDownConfig = {
@@ -117,9 +118,14 @@ export class AppNavigationComponent
           leftTime:
             (Date.parse(state.ctfInfo.ctfStartTime) - new Date().getTime()) /
             1000,
+          format: 'dd:HH:mm:ss',
         };
       }
     }
+  }
+
+  public get currentUrl(): string {
+    return window.location.href;
   }
   public ngOnInit() {
     this.store
