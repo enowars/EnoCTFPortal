@@ -150,10 +150,11 @@
               </button>
               <ng-container *ngIf="!(authenticated$ | async) && !staticHosting">
                 <a
-                  mat-icon-button
+                  mat-button
                   [href]="'/api/account/login?redirectUri=' + currentUrl"
                 >
-                  <mat-icon>login</mat-icon>
+                  <mat-icon inline="true">login</mat-icon>
+                  Login
                 </a>
               </ng-container>
               <ng-container *ngIf="(authenticated$ | async) && !staticHosting">
