@@ -2,90 +2,73 @@
 <mat-sidenav-container>
   <mat-sidenav #sidenav [mode]="'push'" [position]="'end'">
     <nav id="pb-nav-mobile">
-      <mat-list>
-        <mat-list-item>
-          <button
-            mat-menu-item
-            [routerLink]="[routes.scoreboard]"
-            routerLinkActive="mat-elevation-z4"
-            (click)="sidenav.close()"
-          >
-            <mat-icon>score</mat-icon>
-            Scoreboard
-          </button>
+      <mat-nav-list>
+        <mat-list-item
+          [routerLink]="[routes.scoreboard]"
+          routerLinkActive="mat-elevation-z4"
+          (click)="sidenav.close()"
+        >
+          <mat-icon mat-list-icon>score</mat-icon>
+          Scoreboard
         </mat-list-item>
-        <mat-list-item>
-          <button
-            mat-menu-item
-            [routerLink]="[routes.information]"
-            routerLinkActive="mat-elevation-z4"
-            (click)="sidenav.close()"
-          >
-            <mat-icon>gavel</mat-icon>
-            Information
-          </button>
+        <mat-list-item
+          [routerLink]="[routes.information]"
+          routerLinkActive="mat-elevation-z4"
+          (click)="sidenav.close()"
+        >
+          <mat-icon mat-list-icon>gavel</mat-icon>
+          Information
         </mat-list-item>
-        <mat-list-item>
-          <button
-            mat-menu-item
-            [routerLink]="[routes.teams]"
-            routerLinkActive="mat-elevation-z4"
-            (click)="sidenav.close()"
-          >
-            <mat-icon>groups</mat-icon>
-            Teams
-          </button>
+        <mat-list-item
+          [routerLink]="[routes.teams]"
+          routerLinkActive="mat-elevation-z4"
+          (click)="sidenav.close()"
+        >
+          <mat-icon mat-list-icon>groups</mat-icon>
+          Teams
         </mat-list-item>
-        <mat-list-item>
-          <button
-            mat-menu-item
-            [routerLink]="[routes.contact]"
-            routerLinkActive="mat-elevation-z4"
-            (click)="sidenav.close()"
-          >
-            <mat-icon>contact_support</mat-icon>
-            Contact
-          </button>
+        <mat-list-item
+          [routerLink]="[routes.contact]"
+          routerLinkActive="mat-elevation-z4"
+          (click)="sidenav.close()"
+        >
+          <mat-icon mat-list-icon>contact_support</mat-icon>
+          Contact
         </mat-list-item>
-        <mat-list-item>
-          <a
-            mat-menu-item
-            href="https://github.com/enowars/docs"
-            target="_blank"
-            (click)="sidenav.close()"
-          >
-            <mat-icon>open_in_new</mat-icon>
-            Documentation
-          </a>
-        </mat-list-item>
+        <a
+          mat-list-item
+          href="https://github.com/enowars/docs"
+          target="_blank"
+          (click)="sidenav.close()"
+        >
+          <mat-icon mat-list-icon>open_in_new</mat-icon>
+          Documentation
+        </a>
         <mat-divider></mat-divider>
-        <mat-list-item>
-          <ng-container *ngIf="!(authenticated$ | async)">
-            <a
-              mat-menu-item
-              [href]="'/api/account/login?redirectUri=' + currentUrl"
-              (click)="sidenav.close()"
-            >
-              <mat-icon>login</mat-icon>
-              Login
-            </a>
-          </ng-container>
-          <ng-container *ngIf="authenticated$ | async">
-            <button
-              mat-menu-item
-              [routerLink]="[routes.profile]"
-              routerLinkActive="mat-elevation-z4"
-              (click)="sidenav.close()"
-            >
-              <!-- [matMenuTriggerFor]="personalmenu" -->
-              <mat-icon>group</mat-icon>
-              <ng-container *ngIf="info$ | async as info">
-                {{ info.teamName || "My Team" }}
-              </ng-container>
-            </button>
-          </ng-container>
-        </mat-list-item>
-      </mat-list>
+        <ng-container *ngIf="!(authenticated$ | async)">
+          <a
+            mat-list-item
+            [href]="'/api/account/login?redirectUri=' + currentUrl"
+            (click)="sidenav.close()"
+          >
+            <mat-icon mat-list-icon>login</mat-icon>
+            Login
+          </a>
+        </ng-container>
+        <ng-container *ngIf="authenticated$ | async">
+          <button
+            mat-list-item
+            [routerLink]="[routes.profile]"
+            routerLinkActive="mat-elevation-z4"
+            (click)="sidenav.close()"
+          >
+            <mat-icon mat-list-icon>group</mat-icon>
+            <ng-container *ngIf="info$ | async as info">
+              {{ info.teamName || "My Team" }}
+            </ng-container>
+          </button>
+        </ng-container>
+      </mat-nav-list>
     </nav>
   </mat-sidenav>
   <mat-sidenav-content>
