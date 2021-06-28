@@ -26,4 +26,6 @@ COPY scoreboard/ /usr/share/nginx/html/api/scoreboard/
 
 COPY --from=build /usr/src/app/dist/ClientApp/index.html /template/index.html
 COPY --from=build /usr/src/app/dist/ClientApp /usr/share/nginx/html
+COPY ./customization /usr/share/nginx/html/assets/customization
+
 
