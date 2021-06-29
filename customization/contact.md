@@ -2,7 +2,7 @@
 
 ## Email
 
-[bambi@@enoflag.de](mailto:bambi@@enoflag.de)
+[bambi@enoflag.de](mailto:bambi@enoflag.de)
 
 ## Twitter
 
