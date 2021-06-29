@@ -10,6 +10,12 @@ obj/
 /EnoLandingPageBackend/data
 /EnoLandingPageBackend/appsettings.Development.json
 /EnoLandingPageBackend/wwwroot
+/EnoLandingPageBackend/bin
+/EnoLandingPageBackend/obj
+/EnoLandingPageCore/bin
+/EnoLandingPageCore/obj
+/EnoLandingPageFrontend/bin
+/EnoLandingPageFrontend/obj
 /data
 /scoreboard
 /sessions
