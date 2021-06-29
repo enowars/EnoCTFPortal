@@ -3,7 +3,7 @@
   <mat-list *ngIf="teams != null">
     <div mat-subheader>Confirmed Teams</div>
     <mat-list-item *ngIf="teams.confirmedTeams!.length == 0">
-      None yet :(
+      None yet
     </mat-list-item>
     <mat-list-item *ngFor="let team of teams.confirmedTeams">
       <img matListAvatar *ngIf="team.logoUrl" [src]="team.logoUrl" />

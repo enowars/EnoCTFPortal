@@ -41,7 +41,8 @@ docker build . -f static.Dockerfile -t ghcr.io/enowars/enoportal:<year>-<event>
 docker push ghcr.io/enowars/enoportal:<year>-<event>
 ```
 
+## Developmemt
 
-## Developmemt 
+The Fronted App is inside the `EnoLandingPageBackend/ClientApp` folder.
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/enowars/EnoLandingPage)

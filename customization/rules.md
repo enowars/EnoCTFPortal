@@ -2,7 +2,7 @@
 
 - Vulnboxes and VPN servers are provided by us, you don't have to provide or take care of anything.
 - A round lasts 60 seconds, flags are valid for several rounds.
-- Flag format: <code>{{ "ENO[A-Za-z0-9+\/=]{48}" }}</code>
+- Flag format: <code> ENO[A-Za-z0-9+\/=]{48}</code>
 - Flag submission: <code>nc flags.bambi.ovh 1337</code>
 - You will find an [Arkime](https://github.com/arkime/arkime) installation on your vulnbox. Arkime is a traffic analysis tool, not a vulnerable service.
 

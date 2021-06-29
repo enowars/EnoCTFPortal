@@ -17,26 +17,28 @@ services:
       - 'traefik.http.routers.whoami.rule=Host(`enowars.aquiver.de`)'
       - 'traefik.http.routers.whoami.entrypoints=websecure'
       - 'traefik.http.routers.whoami.tls.certresolver=myresolver'
-  traefik:
-    image: 'traefik:v2.4'
-    container_name: 'traefik'
-    command:
-      #- "--log.level=DEBUG"
-      - '--api.insecure=true'
-      - '--providers.docker=true'
-      - '--providers.docker.exposedbydefault=false'
-      - '--entrypoints.websecure.address=:443'
-      - '--entrypoints.web.address=:80'
-      - --entrypoints.web.http.redirections.entrypoint.to=websecure
-      - --entrypoints.web.http.redirections.entrypoint.scheme=https
-      - '--certificatesresolvers.myresolver.acme.tlschallenge=true'
-      #- "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
-      - '--certificatesresolvers.myresolver.acme.email=daniel-habenicht@outlook.de'
-      - '--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json'
     ports:
-      - '80:80'
-      - '443:443'
-      - '8080:8080'
-    volumes:
-      - './letsencrypt:/letsencrypt'
-      - '/var/run/docker.sock:/var/run/docker.sock:ro'
+      - 80:80
+#   traefik:
+#     image: 'traefik:v2.4'
+#     container_name: 'traefik'
+#     command:
+#       #- "--log.level=DEBUG"
+#       - '--api.insecure=true'
+#       - '--providers.docker=true'
+#       - '--providers.docker.exposedbydefault=false'
+#       - '--entrypoints.websecure.address=:443'
+#       - '--entrypoints.web.address=:80'
+#       - --entrypoints.web.http.redirections.entrypoint.to=websecure
+#       - --entrypoints.web.http.redirections.entrypoint.scheme=https
+#       - '--certificatesresolvers.myresolver.acme.tlschallenge=true'
+#       #- "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+#       - '--certificatesresolvers.myresolver.acme.email=daniel-habenicht@outlook.de'
+#       - '--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json'
+#     ports:
+#       - '80:80'
+#       - '443:443'
+#       - '8080:8080'
+#     volumes:
+#       - './letsencrypt:/letsencrypt'
+#       - '/var/run/docker.sock:/var/run/docker.sock:ro'
