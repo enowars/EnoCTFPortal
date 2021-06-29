@@ -73,7 +73,7 @@ def generate(scoreboard, currentRound):
                 "attackScore": scoreboard["teams"][t]["serviceDetails"][s]["attackScore"] + attack,
                 "defenseScore": scoreboard["teams"][t]["serviceDetails"][s]["defenseScore"] + defense,
                 "serviceLevelAgreementScore": scoreboard["teams"][t]["serviceDetails"][s]["serviceLevelAgreementScore"] + sla,
-                "serviceStatus": "OK",  # todo: make random ?
+                "serviceStatus":  random.choice(["OK", "OK", "OK", "OK", "OK", "OK", "MUMBLE", "OFFLINE", "RECOVERING", "INTERNAL_ERROR"]),
                 "message": None
             }
 
