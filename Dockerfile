@@ -44,7 +44,7 @@ RUN chmod +x /substitute_variables.sh
 COPY --from=backend-build /app .
 COPY --from=build /usr/src/app/dist/ClientApp/index.html /template/index.html
 COPY --from=build /usr/src/app/dist /app/ClientApp/dist
-COPY ./customization /app/ClientApp/dist/assets/customization
+COPY ./customization /app/ClientApp/dist/ClientApp/assets/customization
 COPY EnoLandingPageBackend/appsettings.json .
 # ENTRYPOINT ["dotnet", "EnoLandingPageBackend.dll"]
 ENTRYPOINT ["/bin/sh", "-c" , "/substitute_variables.sh && dotnet EnoLandingPageBackend.dll"]
