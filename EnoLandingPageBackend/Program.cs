@@ -24,8 +24,6 @@ namespace EnoLandingPageBackend
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    // TODO: needed?
-                    webBuilder.UseSetting("https_port", "443");
                     webBuilder.UseStartup<Startup>();
                 });
     }
