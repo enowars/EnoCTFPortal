@@ -162,7 +162,7 @@
           </mat-toolbar-row>
           <mat-toolbar-row class="banner" *ngIf="ctfInfo$ | async as ctfInfo">
             <ng-container *ngIf="ctfRegistrationOpen$ | async">
-              CTF Starting in&nbsp;
+              CTF Registration closing in&nbsp;
               <ng-container *ngTemplateOutlet="countdown"></ng-container>&nbsp;
               <a
                 *ngIf="!(authenticated$ | async)"
@@ -171,7 +171,7 @@
               >
             </ng-container>
             <ng-container *ngIf="ctfCheckinOpen$ | async">
-              CTF Starting in&nbsp;
+              CTF CheckIn closing in&nbsp;
               <ng-container *ngTemplateOutlet="countdown"></ng-container>
               .&nbsp; Check in now!
             </ng-container>
