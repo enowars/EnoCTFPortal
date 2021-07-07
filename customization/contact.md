@@ -10,8 +10,8 @@
 
 ## IRC
 
-[#bambictf at freenode](https://webchat.freenode.net/#bambictf)
+[#enowars at libera.chat](https://web.libera.chat/#enowars)
 
 ## Discord
 
-[Discord](https://discord.gg/2ZnmS4NYDn)
+[Discord](https://discord.gg/usxm6Stugr)
