@@ -100,7 +100,7 @@
                 team.Vulnbox.ExternalAddress != null, // vpnconfig available
                 team.Vulnbox.RootPassword,
                 team.Vulnbox.ExternalAddress,
-                $"10.0.0.{team.Id}", // internal ip
+                Utils.VulnboxIpAddressForId(team.Id), // internal ip
                 team.Vulnbox.VulnboxStatus));
         }
 
