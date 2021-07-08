@@ -1,0 +1,142 @@
+﻿.scoreboard {
+    width: 100%;
+    table-layout: fixed;
+}
+
+    /* Gracefully borrowed from bambiscoreboard. */
+    .scoreboard .blood {
+        color: #b40000;
+    }
+
+    /* Flag stores should start at the top of their container */
+    .scoreboard .firstblood-list-cell {
+        vertical-align: top;
+    }
+
+    /* The droplet and text is separated by 5px, and the text does not wrap over overflow. */
+    .scoreboard .firstblood-list {
+        display: flex;
+        overflow: hidden;
+        gap: 5px;
+        white-space: nowrap;
+    }
+
+    /* Our fa icons may be in <a> tags, but we don't want them blue */
+    .scoreboard .fabutton {
+        color: inherit;
+    }
+
+    /* The backward buttons should stick to the left, the round to the middle, and the forward buttons to the right */
+    .scoreboard .roundcontrol {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    /* Highlight your own team's row */
+    .scoreboard .ownrow {
+        border: 1px solid rgb(198, 202, 209);
+        border-collapse: collapse;
+        background-color: dodgerblue;
+    }
+
+    /* Boring borders for the others */
+    .scoreboard .otherrow {
+        border: 1px solid rgb(198, 202, 209);
+        border-collapse: collapse;
+    }
+
+    /* The error message is visible if one hovers over the parent service-block */
+    .scoreboard .service-block:hover .errormessage {
+        visibility: visible;
+    }
+
+    .scoreboard .errormessage {
+        transform: translateX(-50%) translateY(calc(-75% - .25em));
+        border-radius: .5em;
+        position: absolute;
+        width: 20em;
+        background-color: black;
+        text-align: center;
+        visibility: hidden;
+        color: #fff;
+        z-index: 1;
+    }
+
+    .scoreboard .rightaligned {
+        text-align: right;
+    }
+
+    .scoreboard .team-rank {
+        border: none;
+        text-align: center;
+    }
+
+    .scoreboard .team-container {
+        overflow: hidden;
+        font-weight: bold;
+        border: none;
+        display: flex;
+        align-items: center;
+    }
+
+    .scoreboard .team-name {
+        padding: 16px;
+    }
+
+    .scoreboard .team-logo-container {
+        min-width: 64px;
+        min-height: 64px;
+    }
+
+    .scoreboard .team-logo {
+        max-width: 64px;
+        max-height: 64px;
+    }
+
+    .scoreboard .team-countryflag {
+        max-width: 32px;
+        max-height: 32px;
+    }
+
+    .scoreboard .team-score {
+        border: none;
+        padding: 2px;
+    }
+
+    .scoreboard .service-stats {
+        display: grid;
+        grid-column-gap: 5px;
+        grid-template-columns: min-content min-content min-content;
+    }
+
+    .scoreboard .scoreboard-icon {
+        line-height: inherit;
+    }
+
+    .scoreboard .scoreboard-text {
+        text-align: right
+    }
+
+.service-OK {
+    background-color: rgb(125, 252, 116);
+}
+
+.service-INTERNAL_ERROR {
+    background-color: white;
+}
+
+.service-RECOVERING {
+    background-color: rgb(81, 145, 255);
+}
+
+.service-MUMBLE {
+    background-color: rgb(255, 193, 0);
+}
+
+.service-OFFLINE {
+    background-color: rgb(255, 91, 91);
+}
+
+.service-INACTIVE {
+    background-color: gray;
+}

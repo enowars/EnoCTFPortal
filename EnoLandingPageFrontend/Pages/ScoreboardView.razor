@@ -97,7 +97,7 @@
                         <div class="team-logo-container">
                             <img src="@team.LogoUrl" class="team-logo" referrerpolicy="no-referrer" />
                         </div>
-                        <div class="team-name">@team.TeamName (10.0.0.@team.TeamId)</div>
+                        <div class="team-name"><a href="/scoreboard/team/@team.TeamId">@team.TeamName (10.0.0.@team.TeamId)</a></div>
                         <img src="@countryUrl" class="team-countryflag" referrerpolicy="no-referrer" />
                     </div>
                 </td>
@@ -120,10 +120,6 @@
                             @if (serviceDetails.Message != null)
                             {
                                 <div class="errormessage">@serviceDetails.Message</div>
-                            }
-                            else
-                            {
-                                <div class="errormessage">testmessage</div>
                             }
                             <div class="service-stats">
                                 <i class="scoreboard-icon fas fa-meteor" />
@@ -237,6 +233,7 @@
 
     private void HandleOldScoreboardEvent(Scoreboard oldScoreboard)
     {
+        logger.LogInformation($"HandleOldScoreboardEvent round {oldScoreboard.CurrentRound}");
         if (selectedRoundId is long roundId)
         {
             // We are in "show old round" mode.
@@ -262,7 +259,7 @@
 
     private void HandleNewScoreboardEvent(Scoreboard newScoreboard)
     {
-        logger.LogInformation("HandleNewScoreboardEvent");
+        logger.LogInformation($"HandleNewScoreboardEvent round {newScoreboard.CurrentRound}");
         if (selectedRoundId == null) // We are in "show current round" mode.
         {
             if (newScoreboard.CurrentRound > currentScoreboard?.CurrentRound)
