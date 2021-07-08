@@ -16,5 +16,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - name: add .env file
+        run: touch .env
       - name: run docker-compose build
         run: docker-compose build
