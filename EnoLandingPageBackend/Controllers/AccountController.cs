@@ -109,14 +109,19 @@
         public async Task<ActionResult> VpnConfig()
         {
             var team = await this.db.GetTeamAndVulnbox(this.GetTeamId(), this.HttpContext.RequestAborted);
-            if (team.Vulnbox.ExternalAddress == null)
-            {
-                return this.NotFound();
-            }
-
             var config = System.IO.File.ReadAllText($"{LandingPageBackendUtil.TeamDataDirectory}{Path.DirectorySeparatorChar}teamdata{Path.DirectorySeparatorChar}team{team.Id}{Path.DirectorySeparatorChar}client.conf");
             var contentType = "application/force-download";
-            return this.File(Encoding.ASCII.GetBytes(config.Replace("REMOTE_IP_PLACEHOLDER", team.Vulnbox.ExternalAddress)), contentType, "client.conf");
+            return this.File(Encoding.ASCII.GetBytes(config), contentType, "client.conf");
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult> WireguardConfig()
+        {
+            var team = await this.db.GetTeamAndVulnbox(this.GetTeamId(), this.HttpContext.RequestAborted);
+            var config = System.IO.File.ReadAllText($"{LandingPageBackendUtil.TeamDataDirectory}{Path.DirectorySeparatorChar}teamdata{Path.DirectorySeparatorChar}team{team.Id}{Path.DirectorySeparatorChar}wireguard.conf");
+            var contentType = "application/force-download";
+            return this.File(Encoding.ASCII.GetBytes(config), contentType, "wireguard.conf");
         }
 
         [HttpPost]
@@ -126,15 +131,15 @@
             long teamId = this.GetTeamId();
             if (DateTime.UtcNow > this.settings.GetCheckInCloseTime())
             {
-                return BadRequest("Checkin is already over.");
+                return this.BadRequest("Checkin is already over.");
             }
             if (this.settings.GetCheckInBeginTime() > DateTime.UtcNow)
             {
-                return BadRequest("Checkin has not yet begun.");
+                return this.BadRequest("Checkin has not yet begun.");
             }
 
             await this.db.CheckIn(teamId, this.HttpContext.RequestAborted);
-            return Ok();
+            return this.Ok();
         }
     }
 }
