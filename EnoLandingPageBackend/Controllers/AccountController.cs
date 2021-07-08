@@ -8,8 +8,8 @@
     using System.Text;
     using System.Threading.Tasks;
     using System.Web;
-    using EnoLandingPageBackend.Database;
     using EnoLandingPageBackend.CTFTime;
+    using EnoLandingPageBackend.Database;
     using EnoLandingPageCore;
     using EnoLandingPageCore.Database;
     using EnoLandingPageCore.Messages;
@@ -104,14 +104,19 @@
         public async Task<ActionResult> VpnConfig()
         {
             var team = await this.db.GetTeamAndVulnbox(this.GetTeamId(), this.HttpContext.RequestAborted);
-            if (team.Vulnbox.ExternalAddress == null)
-            {
-                return this.NotFound();
-            }
-
             var config = System.IO.File.ReadAllText($"{LandingPageBackendUtil.TeamDataDirectory}{Path.DirectorySeparatorChar}teamdata{Path.DirectorySeparatorChar}team{team.Id}{Path.DirectorySeparatorChar}client.conf");
             var contentType = "application/force-download";
-            return this.File(Encoding.ASCII.GetBytes(config.Replace("REMOTE_IP_PLACEHOLDER", team.Vulnbox.ExternalAddress)), contentType, "client.conf");
+            return this.File(Encoding.ASCII.GetBytes(config), contentType, "client.conf");
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult> WireguardConfig()
+        {
+            var team = await this.db.GetTeamAndVulnbox(this.GetTeamId(), this.HttpContext.RequestAborted);
+            var config = System.IO.File.ReadAllText($"{LandingPageBackendUtil.TeamDataDirectory}{Path.DirectorySeparatorChar}teamdata{Path.DirectorySeparatorChar}team{team.Id}{Path.DirectorySeparatorChar}wireguard.conf");
+            var contentType = "application/force-download";
+            return this.File(Encoding.ASCII.GetBytes(config), contentType, "wireguard.conf");
         }
 
         [HttpPost]
@@ -122,11 +127,16 @@
             if (DateTime.UtcNow > this.settings.StartTime.AddHours(-this.settings.CheckInEndOffset).ToUniversalTime() ||
                 this.settings.StartTime.AddHours(-this.settings.CheckInBeginOffset).ToUniversalTime() > DateTime.UtcNow)
             {
-                return this.Forbid();
+                return this.BadRequest("Checkin is already over.");
+            }
+
+            if (this.settings.StartTime.AddHours(this.settings.CheckInEndOffset) > DateTime.UtcNow)
+            {
+                return this.BadRequest("Checkin has not yet begun.");
             }
 
             await this.db.CheckIn(teamId, this.HttpContext.RequestAborted);
-            return this.NoContent();
+            return this.Ok();
         }
     }
 }
