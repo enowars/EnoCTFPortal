@@ -165,7 +165,6 @@
               CTF Registration closing in&nbsp;
               <ng-container *ngTemplateOutlet="countdown"></ng-container>&nbsp;
               <a
-                *ngIf="!(authenticated$ | async)"
                 [href]="'/api/account/login?redirectUri=' + currentUrl"
                 >Register Now!</a
               >
@@ -173,7 +172,11 @@
             <ng-container *ngIf="ctfCheckinOpen$ | async">
               CTF CheckIn closing in&nbsp;
               <ng-container *ngTemplateOutlet="countdown"></ng-container>
-              .&nbsp; Check in now!
+              .&nbsp;
+              <a
+                [href]="'/api/account/login?redirectUri=' + currentUrl"
+                >Check in now!</a
+              >
             </ng-container>
             <ng-container
               *ngIf="
