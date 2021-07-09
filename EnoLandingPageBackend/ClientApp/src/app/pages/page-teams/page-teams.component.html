@@ -22,7 +22,11 @@
     </mat-list-item>
 
     <mat-list-item *ngFor="let team of teams.registeredTeams">
-      <img matListAvatar [src]="team.logoUrl" referrerpolicy="no-referrer" />
+      <img
+        matListAvatar
+        [src]="team.logoUrl || './assets/nologo.png'"
+        referrerpolicy="no-referrer"
+      />
       <h3 mat-line>
         {{ team.name }}
         <!-- <a [href]="'https://ctftime.org/team/' + team.ctftimeId"></a> -->
