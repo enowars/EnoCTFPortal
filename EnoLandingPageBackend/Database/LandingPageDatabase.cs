@@ -99,32 +99,5 @@
             dbTeam.Confirmed = true;
             await this.context.SaveChangesAsync(token);
         }
-
-        public async Task SaveScoreboard(Scoreboard scoreboard, CancellationToken token)
-        {
-            // TODO: Maybe save locally to make exporting it easier?
-            this.context.Scoreboards.Add(new DatabaseScoreboard(scoreboard.CurrentRound, JsonSerializer.Serialize(scoreboard)));
-            await this.context.SaveChangesAsync(token);
-        }
-
-        public async Task<Scoreboard> GetCurrentScoreboard(CancellationToken token)
-        {
-            var scoreboard = await this.context.Scoreboards.OrderByDescending(u => u.roundId).FirstOrDefaultAsync();
-            if (scoreboard == null)
-            {
-                return null;
-            }
-            return JsonSerializer.Deserialize<Scoreboard>(scoreboard.scoreboardString);
-        }
-
-        public async Task<Scoreboard> GetScoreboard(long roundId, CancellationToken token)
-        {
-            var scoreboard = await this.context.Scoreboards.Where(s => s.roundId == roundId).FirstOrDefaultAsync();
-            if (scoreboard == null)
-            {
-                return null;
-            }
-            return JsonSerializer.Deserialize<Scoreboard>(scoreboard.scoreboardString);
-        }
     }
 }

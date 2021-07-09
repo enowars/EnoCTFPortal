@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using EnoCore.Scoreboard;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 
@@ -18,9 +17,9 @@ namespace EnoLandingPageBackend.Cache
             });
         }
 
-        public Scoreboard TryGetDefault()
+        public string TryGetDefault()
         {
-            Scoreboard cacheEntry;
+            string cacheEntry;
             this._cache.TryGetValue(defaultKey, out cacheEntry);
             return cacheEntry;
         }
@@ -29,16 +28,16 @@ namespace EnoLandingPageBackend.Cache
             this._cache.Remove(defaultKey);
         }
 
-        public void CreateDefault(Scoreboard scoreboard)
+        public void CreateDefault(string scoreboard)
         {
             var cacheEntryOptions = new MemoryCacheEntryOptions()
                 .SetSize(1);
             _cache.Set(this.defaultKey, scoreboard, cacheEntryOptions);
         }
 
-        public Scoreboard GetOrCreate(object key, Func<Scoreboard> createItem)
+        public string GetOrCreate(object key, Func<string> createItem)
         {
-            Scoreboard cacheEntry;
+            string cacheEntry;
             if (!_cache.TryGetValue(key, out cacheEntry))// Look for cache key.
             {
                 cacheEntry = createItem();
@@ -52,7 +51,7 @@ namespace EnoLandingPageBackend.Cache
             return cacheEntry;
         }
 
-        public async Task<Scoreboard> GetOrCreateAsync(object key, Func<Task<Scoreboard>> createItem)
+        public async Task<string> GetOrCreateAsync(object key, Func<Task<string>> createItem)
         {
             var func = await createItem();
             return this.GetOrCreate(key, () =>

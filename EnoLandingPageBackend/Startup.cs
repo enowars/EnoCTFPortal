@@ -153,7 +153,7 @@ namespace EnoLandingPageBackend
             });
             services.AddSingleton<HetznerCloudApi>();
             services.AddSingleton<ScoreboardCache>();
-            services.AddSingleton<AttackCache>();
+            services.AddSingleton<CustomMemoryCache<string>>();
 
             services.AddSpaStaticFiles(configuration =>
             {
