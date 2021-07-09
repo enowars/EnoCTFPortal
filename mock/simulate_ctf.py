@@ -82,7 +82,16 @@ def generateScoreboard(scoreboard, currentRound):
                 "defenseScore": scoreboard["teams"][t]["serviceDetails"][s]["defenseScore"] + defense,
                 "serviceLevelAgreementScore": scoreboard["teams"][t]["serviceDetails"][s]["serviceLevelAgreementScore"] + sla,
                 "serviceStatus":  random.choice(["OK", "OK", "OK", "OK", "OK", "OK", "MUMBLE", "OFFLINE", "RECOVERING", "INTERNAL_ERROR"]),
-                "message": None
+                "message": random.choice(["""Traceback (most recent call last):
+  File "tb.py", line 15, in <module>
+    a()
+  File "tb.py", line 3, in a
+    j = b(i)
+  File "tb.py", line 9, in b
+    c()
+  File "tb.py", line 13, in c
+    error()
+NameError: name 'error' is not defined""", None])
             }
 
             attack_sum += attack
