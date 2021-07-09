@@ -1,11 +1,13 @@
 config:
-  target: "http://localhost"
+  target: "https://localhost:5001"
   phases:
     - duration: 10
-      arrivalRate: 500
+      arrivalRate: 1000
 scenarios:
   - flow:
       - get:
           url: "/"
       - get:
           url: "/api/scoreboardInfo/scoreboard.json"
+      # - get:
+      #     url: "/api/attackinfo"

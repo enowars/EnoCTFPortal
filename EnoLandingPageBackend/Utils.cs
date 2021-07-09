@@ -1,3 +1,5 @@
+using System.IO;
+
 namespace EnoLandingPageBackend
 {
     public class Utils
@@ -13,5 +15,7 @@ namespace EnoLandingPageBackend
         {
             return $"::ffff:10.1.{id}.0";
         }
+
+        public static string path = Directory.GetCurrentDirectory() + "/enginedata";
     }
 }

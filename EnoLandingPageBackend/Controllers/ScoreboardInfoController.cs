@@ -13,6 +13,8 @@
     using EnoLandingPageBackend.Cache;
     using EnoLandingPageBackend.Database;
     using System.Threading;
+    using System.IO;
+    using System.Text.Json;
 
     /// <summary>
     /// Retrieve the scoreboard.
@@ -24,7 +26,6 @@
     {
         private readonly ILogger<ScoreboardInfoController> logger;
         private readonly LandingPageSettings settings;
-        private readonly LandingPageDatabase database;
         private ScoreboardCache _cache;
 
         /// <summary>
@@ -32,11 +33,10 @@
         /// </summary>
         /// <param name="logger"></param>
         /// <param name="settings"></param>
-        public ScoreboardInfoController(ILogger<ScoreboardInfoController> logger, LandingPageSettings settings, LandingPageDatabase db, ScoreboardCache cache)
+        public ScoreboardInfoController(ILogger<ScoreboardInfoController> logger, LandingPageSettings settings, ScoreboardCache cache)
         {
             this.logger = logger;
             this.settings = settings;
-            this.database = db;
             this._cache = cache;
         }
 
@@ -48,18 +48,22 @@
         [Route("scoreboard.json")]
         public async Task<ActionResult<Scoreboard>> GetDefaultScoreboard(CancellationToken cancellationToken)
         {
-            Scoreboard scoreboard;
+            string scoreboard;
             scoreboard = this._cache.TryGetDefault();
             if (scoreboard == null)
             {
-                scoreboard = await this.database.GetCurrentScoreboard(cancellationToken);
-                this._cache.CreateDefault(scoreboard);
+                using (var reader = System.IO.File.OpenText(this.getScoreboardFilePath()))
+                {
+                    scoreboard = await reader.ReadToEndAsync();
+                    this.logger.LogInformation(scoreboard);
+                    this._cache.CreateDefault(scoreboard);
+                }
             }
             if (scoreboard == null)
             {
                 return NotFound();
             }
-            return this.Ok(scoreboard);
+            return Content(scoreboard);
         }
 
         /// <summary>
@@ -71,24 +75,31 @@
         [Route("scoreboard{roundId}.json")]
         public async Task<ActionResult<Scoreboard>> GetScoreboard(CancellationToken cancellationToken, int roundId = -1)
         {
-            Scoreboard scoreboard;
+            string scoreboard;
             try
             {
                 scoreboard = await this._cache.GetOrCreateAsync(roundId, async () =>
                 {
-                    var scoreboard = await this.database.GetScoreboard(roundId, cancellationToken);
-                    if (scoreboard == null)
+                    try
+                    {
+                        using (var reader = System.IO.File.OpenText(getScoreboardFilePath()))
+                        {
+                            var scoreboard = await reader.ReadToEndAsync();
+                            return scoreboard;
+                        }
+                    }
+                    catch (FileNotFoundException)
                     {
                         throw new ScoreboardNotFoundException();
                     }
-                    return scoreboard;
                 });
             }
-            catch (ScoreboardNotFoundException)
+            catch (Exception e)
             {
+                logger.LogError(e.Message);
                 return NotFound();
             }
-            return this.Ok(scoreboard);
+            return Content(scoreboard);
         }
 
         /// <summary>
@@ -107,10 +118,21 @@
                 this.logger.LogInformation("Somebody unauthorized tried to update the Scoreboard.");
                 return this.Unauthorized();
             }
-            await this.database.SaveScoreboard(scoreboard, cancellationToken);
+
+            using (var createStream = System.IO.File.Create(getScoreboardFilePath()))
+            using (var scoreboardRoundFile = System.IO.File.Create(getScoreboardFilePath(scoreboard.CurrentRound)))
+            {
+                await JsonSerializer.SerializeAsync(createStream, scoreboard, EnoCore.EnoCoreUtil.CamelCaseEnumConverterOptions);
+                await JsonSerializer.SerializeAsync(scoreboardRoundFile, scoreboard, EnoCore.EnoCoreUtil.CamelCaseEnumConverterOptions);
+            }
             this._cache.InvalidateDefault();
             this.logger.LogDebug("New Scoreboard set.");
             return Ok();
+        }
+
+        private string getScoreboardFilePath(long roundId = -1)
+        {
+            return Path.Combine(Utils.path, "scoreboard" + (roundId < 0 ? "" : roundId) + ".json");
         }
     }
 
