@@ -1,7 +1,9 @@
 <div>
   <!-- TODO: Use mat-action-list as soon as there is a team site -->
   <mat-list *ngIf="teams != null">
-    <div mat-subheader>Confirmed Teams</div>
+    <div mat-subheader>
+      Confirmed Teams ({{ teams.confirmedTeams!.length }})
+    </div>
     <mat-list-item *ngIf="teams.confirmedTeams!.length == 0">
       None yet
     </mat-list-item>
@@ -16,7 +18,9 @@
       ></app-country-flag>
     </mat-list-item>
     <mat-divider></mat-divider>
-    <div mat-subheader>Registered Teams</div>
+    <div mat-subheader>
+      Registered Teams ({{ teams.registeredTeams!.length }})
+    </div>
     <mat-list-item *ngIf="teams.registeredTeams!.length == 0">
       None yet :(
     </mat-list-item>
