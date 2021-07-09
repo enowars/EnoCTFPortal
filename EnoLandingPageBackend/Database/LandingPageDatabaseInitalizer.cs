@@ -11,10 +11,11 @@ namespace EnoLandingPageBackend.Database
     {
         public static async Task Seed(LandingPageDatabase context)
         {
-            if (!(await context.GetTeams(new System.Threading.CancellationToken())).Any())
-            {
-                await context.GetOrUpdateLandingPageTeam(1, "testTeam", null, null, null, new System.Threading.CancellationToken());
-            }
+            // Comment in after enowars5 is over
+            // if (!(await context.GetTeams(new System.Threading.CancellationToken())).Any())
+            // {
+            //     await context.GetOrUpdateLandingPageTeam(1, "testTeam", null, null, null, new System.Threading.CancellationToken());
+            // }
         }
     }
 }
