@@ -46,3 +46,8 @@ docker push ghcr.io/enowars/enoportal:<year>-<event>
 The Fronted App is inside the `EnoLandingPageBackend/ClientApp` folder.
 
 [![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/enowars/EnoLandingPage)
+
+
+### Loadtest
+
+`npx artillery run loadtest/artillery.yml --insecure`
