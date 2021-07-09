@@ -4,7 +4,15 @@
 <div mat-dialog-content>
   <p>
     This status of the service is:
-    <mat-chip>{{ data.serviceDetails.serviceStatus }}</mat-chip>
+    <code>{{ data.serviceDetails.serviceStatus }}</code>
+  </p>
+  <p>
+    <ng-container *ngIf="data.serviceDetails.message">
+      <h3>Error Message:</h3>
+      <code class="retain-line-break">
+        {{ data.serviceDetails.message }}
+      </code>
+    </ng-container>
   </p>
 
   <mat-card [ngSwitch]="data.serviceDetails.serviceStatus">
@@ -21,16 +29,11 @@
     <p *ngSwitchDefault>Unknow Status that, that should not have happend.</p>
     <p>
       Find more information in our
-      <a mat-button href="https://enowars.github.io/docs/"
+      <a
+        mat-button
+        href="https://enowars.github.io/docs/play/service-status.html"
         >Documentation <mat-icon inline="true">open_in_new</mat-icon></a
       >
     </p>
   </mat-card>
-
-  <ng-container *ngIf="data.serviceDetails.message">
-    <h3>Error Message:</h3>
-    <code>
-      {{ data.serviceDetails.message | json }}
-    </code>
-  </ng-container>
 </div>
