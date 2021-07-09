@@ -184,7 +184,7 @@ app-root {
 }
 
 .MUMBLE {
-  background-color: #ffee58;
+  background-color: #fdd835;
 }
 
 .INTERNAL_ERROR {
@@ -196,6 +196,23 @@ app-root {
 
 .OFFLINE {
   background-color: #ef5350;
+}
+
+.pbl-ngrid-column-type-service {
+  &.MUMBLE,
+  &.RECOVERING,
+  &.OFFLINE {
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      position: relative;
+      box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.3);
+      border-radius: 3px;
+      transform: scale(1.05);
+      z-index: 9999;
+    }
+  }
 }
 
 $small-breakpoint: 468px;
