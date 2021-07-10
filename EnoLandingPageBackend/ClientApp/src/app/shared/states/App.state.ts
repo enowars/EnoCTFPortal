@@ -45,6 +45,10 @@ export class Login {
   public static readonly type: string = '[App State] Login';
 }
 
+export class RefreshTeamInfo {
+  public static readonly type: string = '[App State] Refresh Team Info';
+}
+
 export interface AppStateModel {
   serviceWorkerNotificationDisplayed: boolean;
   version: string;
@@ -70,18 +74,11 @@ export class AppState implements NgxsOnInit {
   constructor(
     private themeService: ThemeService,
     private accountService: AccountService,
-    private dataService: DataService
+    private dataService: DataService,
+    private store: Store
   ) {}
   ngxsOnInit(ctx: StateContext<AppStateModel>) {
-    this.accountService.apiAccountInfoGet().subscribe(
-      (accountInfo) => {
-        let state = ctx.getState();
-        ctx.setState({ ...state, authenticated: true, teamInfo: accountInfo });
-      },
-      (error) => {
-        // Do nothing the use is simply not authenticated
-      }
-    );
+    this.store.dispatch(new RefreshTeamInfo());
     this.dataService.apiDataCtfInfoGet().subscribe(
       (ctfInfo) => {
         let state = ctx.getState();
@@ -213,5 +210,18 @@ export class AppState implements NgxsOnInit {
   public initTheme(ctx: StateContext<AppStateModel>) {
     const state = ctx.getState();
     this.themeService.setTheme(state.activeTheme);
+  }
+
+  @Action(RefreshTeamInfo)
+  public refreshTeamInfo(ctx: StateContext<AppStateModel>) {
+    this.accountService.apiAccountInfoGet().subscribe(
+      (accountInfo) => {
+        let state = ctx.getState();
+        ctx.setState({ ...state, authenticated: true, teamInfo: accountInfo });
+      },
+      (error) => {
+        // Do nothing the use is simply not authenticated
+      }
+    );
   }
 }
