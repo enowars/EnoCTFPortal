@@ -15,6 +15,7 @@ import {
 import { TeamDetailsMessage } from 'projects/backend-api/src/lib/model/teamDetailsMessage';
 import { ThemeService } from 'src/app/services/theme.service';
 import { Theme } from 'src/app/shared/models/enumberables/theme';
+import { environment } from 'src/environments/environment';
 
 export class ServiceWorkerNotificationDisplayed {
   public static readonly type: string =
@@ -90,6 +91,23 @@ export class AppState implements NgxsOnInit {
         // Do nothing for now
       }
     );
+    if (!environment.production) {
+      let state = ctx.getState();
+      ctx.setState({
+        ...state,
+        authenticated: true,
+        teamInfo: {
+          id: 10,
+          confirmed: true,
+          teamName: '',
+          vpnConfigAvailable: true,
+          rootPassword: '',
+          externalIpAddress: '',
+          internalIpAddress: '',
+          vulnboxStatus: 'None',
+        },
+      });
+    }
   }
 
   @Selector()
@@ -149,6 +167,15 @@ export class AppState implements NgxsOnInit {
       Date.parse(state.ctfInfo?.ctfStartTime!) <= now &&
       Date.parse(state.ctfInfo?.ctfEndTime!) >= now
     ) {
+      return true;
+    }
+    return false;
+  }
+
+  @Selector()
+  public static ctfIsOver(state: AppStateModel): boolean {
+    let now = new Date().getTime();
+    if (Date.parse(state.ctfInfo?.ctfEndTime!) <= now) {
       return true;
     }
     return false;
