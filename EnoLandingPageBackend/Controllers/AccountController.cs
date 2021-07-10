@@ -108,6 +108,10 @@
         [Authorize]
         public async Task<ActionResult> VpnConfig()
         {
+            if (!await this.db.IsCheckedIn(this.GetTeamId(), this.HttpContext.RequestAborted))
+            {
+                return BadRequest("Checkin is already over.");
+            }
             var team = await this.db.GetTeamAndVulnbox(this.GetTeamId(), this.HttpContext.RequestAborted);
             var config = System.IO.File.ReadAllText($"{LandingPageBackendUtil.TeamDataDirectory}{Path.DirectorySeparatorChar}teamdata{Path.DirectorySeparatorChar}team{team.Id}{Path.DirectorySeparatorChar}client.conf");
             var contentType = "application/force-download";
@@ -118,6 +122,10 @@
         [Authorize]
         public async Task<ActionResult> WireguardConfig()
         {
+            if (!await this.db.IsCheckedIn(this.GetTeamId(), this.HttpContext.RequestAborted))
+            {
+                return BadRequest("Checkin is already over.");
+            }
             var team = await this.db.GetTeamAndVulnbox(this.GetTeamId(), this.HttpContext.RequestAborted);
             var config = System.IO.File.ReadAllText($"{LandingPageBackendUtil.TeamDataDirectory}{Path.DirectorySeparatorChar}teamdata{Path.DirectorySeparatorChar}team{team.Id}{Path.DirectorySeparatorChar}wireguard.conf");
             var contentType = "application/force-download";

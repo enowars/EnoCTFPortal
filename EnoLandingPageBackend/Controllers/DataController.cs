@@ -48,8 +48,8 @@
             var teams = await this.db.GetTeams(this.HttpContext.RequestAborted);
             return this.Json(
                 new TeamsMessage(
-                    teams.Where(t => t.Confirmed).Select(t => new TeamMessage(t.Name, t.CtftimeId, t.LogoUrl, t.CountryCode)).ToList(),
-                    teams.Where(t => !t.Confirmed).Select(t => new TeamMessage(t.Name, t.CtftimeId, t.LogoUrl, t.CountryCode)).ToList()));
+                    teams.Where(t => t.Confirmed).Select(t => new TeamMessage(t.Id, t.Name, t.CtftimeId, t.LogoUrl, t.CountryCode)).ToList(),
+                    teams.Where(t => !t.Confirmed).Select(t => new TeamMessage(t.Id, t.Name, t.CtftimeId, t.LogoUrl, t.CountryCode)).ToList()));
         }
 
         [HttpGet]

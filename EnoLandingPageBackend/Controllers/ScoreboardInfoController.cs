@@ -180,7 +180,7 @@
                 previousScoreboard = scoreboard;
             }
             logger.LogWarning($"Prev: {previousScoreboard.Teams.Count()} Current: {scoreboard.Teams.Count()}");
-            var bothScoreboardTeams = previousScoreboard.Teams.Zip(scoreboard.Teams, (n, w) => new { previous = n, current = w });
+            var bothScoreboardTeams = previousScoreboard.Teams.OrderBy(team => team.TeamId).Zip(scoreboard.Teams.OrderBy(team => team.TeamId), (n, w) => new { previous = n, current = w });
             OverrideScoreboardTeam[] overrideTeams = bothScoreboardTeams.Select(bothTeams =>
             {
                 var bothServiceDetails = bothTeams.previous.ServiceDetails.Zip(bothTeams.current.ServiceDetails, (n, w) => new { previous = n, current = w });
@@ -220,8 +220,7 @@
                     scoreboard.EndTimestamp,
                     scoreboard.DnsSuffix,
                     scoreboard.Services,
-                     overrideTeams
-
+                    overrideTeams.OrderBy(team => team.TotalScore).ToArray()
                 );
 
             using (var createStream = System.IO.File.Create(getScoreboardFilePath()))

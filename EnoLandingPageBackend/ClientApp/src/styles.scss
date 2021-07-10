@@ -189,7 +189,12 @@ app-root {
 }
 
 .team-cell-highlight {
-  background-color: cornflowerblue;
+  font-weight: bold;
+}
+
+.team-cell-middle.team-cell-highlight {
+  // background-color: cornflowerblue;
+  // width: 100%;
 }
 
 .OK {

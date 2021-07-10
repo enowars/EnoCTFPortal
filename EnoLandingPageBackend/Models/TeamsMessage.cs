@@ -8,5 +8,5 @@
 
     public record TeamsMessage(List<TeamMessage> ConfirmedTeams, List<TeamMessage> RegisteredTeams);
 
-    public record TeamMessage(string Name, long? CtftimeId, string? LogoUrl, string? CountryCode);
+    public record TeamMessage(long Id, string Name, long? CtftimeId, string? LogoUrl, string? CountryCode);
 }
