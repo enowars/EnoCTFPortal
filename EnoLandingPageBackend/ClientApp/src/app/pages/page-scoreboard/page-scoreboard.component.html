@@ -54,7 +54,18 @@
       class="flagstore-cell"
     >
       Flagstores:
-      <div *ngFor="let flagstore of col.data.flagstores">
+      <div
+        *ngFor="let flagstore of col.data.flagstores"
+        [matTooltip]="
+          flagstore.firstBlood
+            ? 'Expoited in round ' +
+              flagstore.firstBlood.roundId +
+              '(at ' +
+              (flagstore.firstBlood.roundId | date: 'longTime') +
+              ')'
+            : ''
+        "
+      >
         <i
           class="flagstore-icon fas fa-tint"
           [class]="flagstore.firstBlood ? 'exploited' : ''"
