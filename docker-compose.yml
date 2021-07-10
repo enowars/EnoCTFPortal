@@ -1,4 +1,4 @@
-version: "3.7"
+version: '3.7'
 services:
   enoportal:
     build:
@@ -10,17 +10,19 @@ services:
       - ./sessions:/root/.aspnet/DataProtection-Keys
       # For the Database
       - ./data:/app/data
+      # For the Scoreboard (just at the moment)
+      - ./enginedata:/app/enginedata
       # For Scoreboard and AttackInfo (if they are not supplied via the HTTP Endpoint)
       - ./scoreboard:/app/wwwroot/scoreboard
     # volumes:
     #   - ./EnoLandingPageBackend/appsettings.Development.json:/app/appsettings.json
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.whoami.rule=Host(`enowars.aquiver.de`)"
-      - "traefik.http.routers.whoami.entrypoints=websecure"
-      - "traefik.http.routers.whoami.tls.certresolver=myresolver"
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.whoami.rule=Host(`enowars.aquiver.de`)'
+      - 'traefik.http.routers.whoami.entrypoints=websecure'
+      - 'traefik.http.routers.whoami.tls.certresolver=myresolver'
     ports:
-      - 80:80
+      - 8080:80
 #   traefik:
 #     image: 'traefik:v2.4'
 #     container_name: 'traefik'
