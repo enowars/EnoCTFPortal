@@ -12,12 +12,15 @@
 import { ServiceStatus } from './serviceStatus';
 
 
-export interface ScoreboardTeamServiceDetails { 
+export interface ScoreboardTeamServiceDetails {
     serviceId: number;
     attackScore: number;
+    attackScoreDelta: number;
     defenseScore: number;
+    defenseScoreDelta: number;
     serviceLevelAgreementScore: number;
+    serviceLevelAgreementScoreDelta: number;
     serviceStatus: ServiceStatus;
     message?: string | null;
-}
+  }
 

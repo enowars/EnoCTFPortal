@@ -26,7 +26,13 @@ import {
   PblDataSource,
   PblNgridColumnSet,
   PblColumnDefinition,
+  PblColumnGroupDefinition,
 } from '@pebula/ngrid';
+import { ScoreboardOverrideService } from 'src/app/scoreboard-override.service';
+import { TeamDetailsMessage } from 'projects/backend-api/src/lib/model/teamDetailsMessage';
+import { Observable } from 'rxjs';
+import { AppState } from 'src/app/shared/states/App.state';
+import { Select } from '@ngxs/store';
 
 @Component({
   selector: 'app-page-scoreboard',
@@ -36,6 +42,9 @@ import {
   host: { class: 'page-expand' },
 })
 export class PageScoreboardComponent implements OnInit {
+  @Select(AppState.teamInfo)
+  public teamInfo$!: Observable<TeamDetailsMessage>;
+
   public columns: PblNgridColumnSet = columnFactory().build();
   public ds: PblDataSource = createDS<any>()
     .onTrigger(() => this.data)
@@ -43,6 +52,7 @@ export class PageScoreboardComponent implements OnInit {
   public round: number = 0;
   public roundLength: number = 60;
   public isCurrentRound: boolean = false;
+  public isLoading: boolean = false;
   public services: ScoreboardService[] | undefined;
   private data: any[] = [];
 
@@ -57,6 +67,7 @@ export class PageScoreboardComponent implements OnInit {
     public dialog: MatDialog,
     private _httpClient: HttpClient,
     private scoreboardInfoService: ScoreboardInfoService,
+    private scoreboardOverrideService: ScoreboardOverrideService,
     private ref: ChangeDetectorRef
   ) {}
 
@@ -70,14 +81,17 @@ export class PageScoreboardComponent implements OnInit {
     // this.scoreboardInfoService.apiScoreboardInfoScoreboardroundIdJsonGet(23);
   }
 
-  public loadRound(round: number | null = null): void {
-    let suffix: any = '';
+  public loadRound(round: number | null = null, retryCount: number = 0): void {
+    let suffix: number = -1;
     if (round !== null) {
       suffix = Math.max(round, 0);
     }
 
-    this._httpClient
-      .get<Scoreboard>('/api/scoreboardinfo/scoreboard' + suffix + '.json')
+    let previousRound = this.round;
+    this.isLoading = true;
+
+    this.scoreboardOverrideService
+      .getScoreboard(suffix)
       .subscribe((scoreboard) => {
         let startTime = new Date(scoreboard.startTimestamp!);
         let endTime = new Date(scoreboard.endTimestamp!);
@@ -88,8 +102,6 @@ export class PageScoreboardComponent implements OnInit {
         this.services =
           scoreboard.services?.sort((a, b) => a.serviceId! - b.serviceId!) ||
           [];
-
-        console.log(this.services);
 
         let currentTime = new Date();
         const timeLeft =
@@ -122,13 +134,29 @@ export class PageScoreboardComponent implements OnInit {
             .default({ minWidth: 200 })
             .table(
               {
+                prop: 'team.rank',
+                label: 'Rank',
+                minWidth: 40,
+                width: '10px',
+                pin: 'start',
+                wontBudge: true,
+              },
+              {
                 prop: 'team',
-                // id: 'id',
                 label: 'Team',
-                minWidth: 250,
+                minWidth: 200,
                 width: '40px',
                 pin: 'start',
                 pIndex: true,
+                wontBudge: true,
+              },
+              {
+                prop: 'team.totalScore',
+                id: 'teamScore',
+                label: 'Score',
+                minWidth: 50,
+                width: '30px',
+                pin: 'start',
                 wontBudge: true,
               },
               ...(scoreboard.services?.reduce((accumulator, service) => {
@@ -145,12 +173,32 @@ export class PageScoreboardComponent implements OnInit {
                 return accumulator;
               }, [] as any[]) || [])
             )
+            .headerGroup(
+              {
+                label: 'Team',
+                columnIds: ['team.rank', 'team', 'team.totalScore'],
+              },
+              ...(scoreboard.services?.reduce((accumulator, service) => {
+                let col = {
+                  label: service.serviceName,
+                  columnIds: ['service-' + service.serviceId],
+                };
+                accumulator.push(col);
+                return accumulator;
+              }, [] as any[]) || [])
+            )
             .build();
         }
 
         this.ref.markForCheck();
+        this.isLoading = false;
 
-        if (this.isCurrentRound) {
+        if (this.round <= previousRound && retryCount > 0) {
+          // we didn't receive a newer round, retrying again in 5 seconds
+          this.isLoading = true;
+          setTimeout(() => this.gotoCurrentRound(retryCount - 1), 5 * 1000);
+        } else if (this.isCurrentRound) {
+          // we received the current round, loading next round after the current round + 1.5 seconds
           setTimeout(() => this.gotoCurrentRound(), (1.5 + timeLeft) * 1000);
         }
       });
@@ -169,8 +217,8 @@ export class PageScoreboardComponent implements OnInit {
     this.loadRound(this.round + 1);
   }
 
-  public gotoCurrentRound(): void {
-    this.loadRound();
+  public gotoCurrentRound(retryCount: number = 2): void {
+    this.loadRound(null, retryCount);
   }
 
   public trackById: TrackByFunction<ScoreboardTeam> = (

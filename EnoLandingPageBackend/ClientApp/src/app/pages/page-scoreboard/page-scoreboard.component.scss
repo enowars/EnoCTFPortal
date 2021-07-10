@@ -18,6 +18,18 @@
   }
 }
 
+.loading-progress-bar {
+  visibility: hidden;
+
+  &.isLoading {
+    visibility: visible;
+  }
+}
+
+.flagstore-icon.exploited {
+  color: #c62828;
+}
+
 .team-cell {
   display: flex;
 
@@ -82,4 +94,3 @@
     grid-area: 3 / 3 / 4 / 4;
   }
 }
-

@@ -8,7 +8,11 @@
       None yet
     </mat-list-item>
     <mat-list-item *ngFor="let team of teams.confirmedTeams">
-      <img matListAvatar *ngIf="team.logoUrl" [src]="team.logoUrl" />
+      <img
+        matListAvatar
+        [src]="team.logoUrl || './assets/nologo.png'"
+        referrerpolicy="no-referrer"
+      />
       <a mat-line [href]="'https://ctftime.org/team/' + team.ctftimeId">{{
         team.name
       }}</a>

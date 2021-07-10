@@ -23,6 +23,12 @@
   </div>
 </div>
 
+<mat-progress-bar
+  mode="indeterminate"
+  class="loading-progress-bar"
+  [class]="isLoading ? 'isLoading' : ''"
+></mat-progress-bar>
+
 <div style="flex: 1 1 100%; display: flex; min-height: 0px; height: 100%">
   <pbl-ngrid
     class="pbl-ngrid-cell-ellipsis pbl-ngrid-header-cell-ellipsis"
@@ -45,20 +51,36 @@
 
     <div
       *pblNgridHeaderCellTypeDef="'service'; col as col"
-      class="pbl-ngrid-no-data"
+      ngridCellClass="flagstore-cell"
     >
-      {{ col.label }}
-      <div>Flagstores: {{ col.data.flagVariants }}</div>
+      Flagstores:
+      <div *ngFor="let flagstore of col.data.flagstores">
+        <i
+          class="flagstore-icon fas fa-tint"
+          [class]="flagstore.firstBlood ? 'exploited' : ''"
+        ></i
+        >&nbsp;
+        {{
+          flagstore.firstBlood ? flagstore.firstBlood.teamName : "unexploited"
+        }}
+        <!-- {{ flagstore.firstBlood | json }} -->
+      </div>
     </div>
 
-    <div *pblNgridNoDataRef class="pbl-ngrid-no-data">
+    <div *pblNgridNoDataRef class="no-data">
       <span>Seems like no round could be loaded.</span>
     </div>
 
-    <div *pblNgridCellDef="'team'; value as team" class="team-cell">
-      <div class="teamId">
-        {{ team.teamId }}
-      </div>
+    <div *pblNgridCellDef="'team.rank'; value as rank">
+      {{ rank }}
+    </div>
+
+    <div
+      *pblNgridCellDef="'team'; value as team"
+      class="team-cell"
+    ><!--ngridCellClass="team-cell {{
+        (teamInfo$ | async)?.id === team.teamId ? 'team-cell-highlight' : ''
+      }}"-->
       <img
         *ngIf="team.logoUrl"
         class="team-logo"
@@ -75,41 +97,47 @@
           [isoCountryCode]="team.countryCode"
         ></app-country-flag>
       </div>
-      <div class="score">{{ team.totalScore.toFixed(0) }} Points</div>
+      <!-- <div class="score">{{ team.totalScore.toFixed(0) }} Points</div> -->
+    </div>
+
+    <div *pblNgridCellDef="'team.totalScore'; value as score" class="team-cell">
+      <!--ngridCellClass="team-cell {{ (teamInfo$ | async)?.id === team.teamId ? 'team-cell-highlight' : '' }}"-->
+      <div class="score">{{ score.toFixed(0) }} Points</div>
     </div>
 
     <div
       *pblNgridCellTypeDef="'service'; value as service; row as row; col as col"
       [ngridCellClass]="service.serviceStatus"
       (click)="openInfo(row, service, col.data)"
+      [matTooltip]="
+        ['MUMBLE', 'RECOVERING', 'OFFLINE'].includes(service.serviceStatus)
+          ? 'Click for more information'
+          : ''
+      "
     >
       <div class="sla">
-        <div class="div1"><i class="fas fa-meteor"></i><!--⚔--></div>
+        <div class="div1">
+          <i class="fas fa-meteor"></i>
+        </div>
         <div class="div2">
-          {{ service.serviceLevelAgreementScore.toFixed(0) }}
-        </div>
-        <div class="div3">
-          (
-          {{ +0 }}
-          )
-        </div>
-        <div class="div4"><i class="fas fa-shield-alt"></i><!--🛡--></div>
-        <div class="div5">
           {{ service.attackScore.toFixed(0) }}
         </div>
-        <div class="div6">
-          (
-          {{ -0 }}
-          )
+        <div class="div3">(+{{ service.attackScoreDelta.toFixed(0) }})</div>
+        <div class="div4">
+          <i class="fas fa-shield-alt"></i>
         </div>
-        <div class="div7"><i class="fas fa-heartbeat"></i><!--⛨--></div>
-        <div class="div8">
+        <div class="div5">
           {{ service.defenseScore.toFixed(0) }}
         </div>
+        <div class="div6">(+{{ service.defenseScoreDelta.toFixed(0) }})</div>
+        <div class="div7">
+          <i class="fas fa-heartbeat"></i>
+        </div>
+        <div class="div8">
+          {{ service.serviceLevelAgreementScore.toFixed(0) }}
+        </div>
         <div class="div9">
-          (
-          {{ +0 }}
-          )
+          (+{{ service.serviceLevelAgreementScoreDelta.toFixed(0) }})
         </div>
       </div>
     </div>

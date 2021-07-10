@@ -15,6 +15,7 @@
     using System.Threading;
     using System.IO;
     using System.Text.Json;
+    using EnoLandingPageBackend.Models;
 
     /// <summary>
     /// Retrieve the scoreboard.
@@ -46,7 +47,7 @@
         /// <returns>The scoreboard of the current round.</returns>
         [HttpGet]
         [Route("scoreboard.json")]
-        public async Task<ActionResult<Scoreboard>> GetDefaultScoreboard(CancellationToken cancellationToken)
+        public async Task<ActionResult<OverrideScoreboard>> GetDefaultScoreboard(CancellationToken cancellationToken)
         {
             string scoreboard;
             scoreboard = this._cache.TryGetDefault();
@@ -73,7 +74,7 @@
         /// <returns>The scoreboard of the given roundId.</returns>
         [HttpGet]
         [Route("scoreboard{roundId}.json")]
-        public async Task<ActionResult<Scoreboard>> GetScoreboard(CancellationToken cancellationToken, int roundId = -1)
+        public async Task<ActionResult<OverrideScoreboard>> GetScoreboard(CancellationToken cancellationToken, int roundId = -1)
         {
             string scoreboard;
             try
@@ -119,11 +120,83 @@
                 return this.Unauthorized();
             }
 
+            Scoreboard? previousScoreboard = scoreboard;
+            // try
+            // {
+            // using (var reader = System.IO.File.OpenText(getScoreboardFilePath()))
+            // {
+            //     var text = await reader.ReadToEndAsync();
+            //     previousScoreboard = JsonSerializer.Deserialize(text);
+            // }
+            // }
+            // catch (Exception)
+            // {
+            //     // throw new ScoreboardNotFoundException();
+            // }
+
+            OverrideScoreboard? overrideScoreboard = null;
+            if (previousScoreboard != null && previousScoreboard.Teams != null)
+            {
+                logger.LogWarning($"Prev: {previousScoreboard.Teams.Count()} Current: {scoreboard.Teams.Count()}");
+                var bothScoreboardTeams = previousScoreboard.Teams.Zip(scoreboard.Teams, (n, w) => new { previous = n, current = w });
+                OverrideScoreboardTeam[] overrideTeams = bothScoreboardTeams.Select(bothTeams =>
+                {
+                    var bothServiceDetails = bothTeams.previous.ServiceDetails.Zip(bothTeams.current.ServiceDetails, (n, w) => new { previous = n, current = w });
+                    return new OverrideScoreboardTeam(
+                        bothTeams.current.TeamName,
+                        bothTeams.current.TeamId,
+                        bothTeams.current.LogoUrl,
+                        bothTeams.current.CountryCode,
+                        bothTeams.current.TotalScore,
+                        bothTeams.current.AttackScore,
+                        bothTeams.current.DefenseScore,
+                        bothTeams.current.ServiceLevelAgreementScore,
+                        bothServiceDetails.Select(bothServiceDetails =>
+                        {
+                            return new OverrideScoreboardTeamServiceDetails(
+                                bothServiceDetails.current.ServiceId,
+                                bothServiceDetails.current.AttackScore,
+                                bothServiceDetails.current.DefenseScore,
+                                bothServiceDetails.current.ServiceLevelAgreementScore,
+                                bothServiceDetails.current.ServiceStatus,
+                                bothServiceDetails.current.Message,
+                                bothServiceDetails.current.AttackScore - bothServiceDetails.previous.AttackScore,
+                                bothServiceDetails.current.DefenseScore - bothServiceDetails.previous.DefenseScore,
+                                bothServiceDetails.current.ServiceLevelAgreementScore - bothServiceDetails.previous.ServiceLevelAgreementScore
+                            );
+                        }
+                        ).ToArray(),
+                        bothTeams.current.TotalScore - bothTeams.previous.TotalScore,
+                        bothTeams.current.AttackScore - bothTeams.previous.AttackScore,
+                        bothTeams.current.DefenseScore - bothTeams.previous.DefenseScore,
+                        bothTeams.current.ServiceLevelAgreementScore - bothTeams.previous.DefenseScore
+                    );
+                }).ToArray();
+                overrideScoreboard = new OverrideScoreboard(
+                    scoreboard.CurrentRound,
+                    scoreboard.StartTimestamp,
+                    scoreboard.EndTimestamp,
+                    scoreboard.DnsSuffix,
+                    scoreboard.Services,
+                     overrideTeams
+
+                );
+            }
+
             using (var createStream = System.IO.File.Create(getScoreboardFilePath()))
             using (var scoreboardRoundFile = System.IO.File.Create(getScoreboardFilePath(scoreboard.CurrentRound)))
             {
-                await JsonSerializer.SerializeAsync(createStream, scoreboard, EnoCore.EnoCoreUtil.CamelCaseEnumConverterOptions);
-                await JsonSerializer.SerializeAsync(scoreboardRoundFile, scoreboard, EnoCore.EnoCoreUtil.CamelCaseEnumConverterOptions);
+                if (overrideScoreboard != null)
+                {
+                    await JsonSerializer.SerializeAsync(createStream, overrideScoreboard, EnoCore.EnoCoreUtil.CamelCaseEnumConverterOptions);
+                    await JsonSerializer.SerializeAsync(scoreboardRoundFile, overrideScoreboard, EnoCore.EnoCoreUtil.CamelCaseEnumConverterOptions);
+                }
+                else
+                {
+                    await JsonSerializer.SerializeAsync(createStream, scoreboard, EnoCore.EnoCoreUtil.CamelCaseEnumConverterOptions);
+                    await JsonSerializer.SerializeAsync(scoreboardRoundFile, scoreboard, EnoCore.EnoCoreUtil.CamelCaseEnumConverterOptions);
+                }
+
             }
             this._cache.InvalidateDefault();
             this.logger.LogDebug("New Scoreboard set.");
