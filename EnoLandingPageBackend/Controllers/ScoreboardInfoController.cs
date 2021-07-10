@@ -74,6 +74,7 @@
         /// <returns>The scoreboard of the given roundId.</returns>
         [HttpGet]
         [Route("scoreboard{roundId}.json")]
+        [ResponseCache(VaryByHeader = "User-Agent", Duration = 1800)]
         public async Task<ActionResult<OverrideScoreboard>> GetScoreboard(CancellationToken cancellationToken, int roundId = -1)
         {
             string scoreboard;
