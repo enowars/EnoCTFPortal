@@ -211,7 +211,7 @@
                     bothTeams.current.TotalScore - bothTeams.previous.TotalScore,
                     bothTeams.current.AttackScore - bothTeams.previous.AttackScore,
                     bothTeams.current.DefenseScore - bothTeams.previous.DefenseScore,
-                    bothTeams.current.ServiceLevelAgreementScore - bothTeams.previous.DefenseScore
+                    bothTeams.current.ServiceLevelAgreementScore - bothTeams.previous.ServiceLevelAgreementScore
                 );
             }).ToArray();
             OverrideScoreboard overrideScoreboard = new OverrideScoreboard(
