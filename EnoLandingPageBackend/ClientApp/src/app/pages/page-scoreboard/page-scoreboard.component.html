@@ -71,11 +71,19 @@
       <span>Seems like no round could be loaded.</span>
     </div>
 
-    <div *pblNgridCellDef="'team.rank'; value as team"class="team-cell" [class]="team.highlightclass">
+    <div
+      *pblNgridCellDef="'team.rank'; value as team"
+      class="team-cell"
+      [class]="team.highlightclass"
+    >
       {{ team.rank }}
     </div>
 
-    <div *pblNgridCellDef="'team'; value as team" class="team-cell team-cell-middle" [class]="team.highlightclass">
+    <div
+      *pblNgridCellDef="'team'; value as team"
+      class="team-cell team-cell-middle"
+      [class]="team.highlightclass"
+    >
       <img
         *ngIf="team.logoUrl"
         class="team-logo"
@@ -95,7 +103,11 @@
       <!-- <div class="score">{{ team.totalScore.toFixed(0) }} Points</div> -->
     </div>
 
-    <div *pblNgridCellDef="'team.totalScore'; value as team" class="team-cell" [class]="team.highlightclass">
+    <div
+      *pblNgridCellDef="'team.totalScore'; value as team"
+      class="team-cell"
+      [class]="team.highlightclass"
+    >
       <!--ngridCellClass="team-cell {{ (teamInfo$ | async)?.id === team.teamId ? 'team-cell-highlight' : '' }}"-->
       {{ team.totalScore.toFixed(0) }} Points
     </div>
@@ -117,14 +129,24 @@
         <div class="div2">
           {{ service.attackScore.toFixed(0) }}
         </div>
-        <div class="div3">(+{{ service.attackScoreDelta.toFixed(0) }})</div>
+        <div class="div3">
+          ({{
+            (service.attackScoreDelta > 0 ? "+" : "") +
+              service.attackScoreDelta.toFixed(0)
+          }})
+        </div>
         <div class="div4">
           <i class="fas fa-shield-alt"></i>
         </div>
         <div class="div5">
           {{ service.defenseScore.toFixed(0) }}
         </div>
-        <div class="div6">(-{{ service.defenseScoreDelta.toFixed(0) }})</div>
+        <div class="div6">
+          ({{
+            (service.defenseScoreDelta > 0 ? "+" : "") +
+              service.defenseScoreDelta.toFixed(0)
+          }})
+        </div>
         <div class="div7">
           <i class="fas fa-heartbeat"></i>
         </div>
