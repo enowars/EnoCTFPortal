@@ -221,7 +221,6 @@
                     scoreboard.DnsSuffix,
                     scoreboard.Services,
                     overrideTeams.OrderBy(team => team.TotalScore).ToArray()
-
                 );
 
             using (var createStream = System.IO.File.Create(getScoreboardFilePath()))
