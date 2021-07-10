@@ -45,6 +45,7 @@ import { ActivatedRoute } from '@angular/router';
 export class PageScoreboardComponent implements OnInit {
   @Select(AppState.teamInfo)
   public teamInfo$!: Observable<TeamDetailsMessage>;
+  public currentTeamId: number | undefined | null = null;
 
   public columns: PblNgridColumnSet = columnFactory().build();
   public ds: PblDataSource = createDS<any>()
@@ -81,12 +82,12 @@ export class PageScoreboardComponent implements OnInit {
         this.round = Number(params['roundId']);
       }
     });
+    this.teamInfo$.subscribe((teamInfo) => {
+      this.currentTeamId = teamInfo.id;
+    });
   }
   ngAfterViewInit() {
     this.loadRound(this.round);
-
-    // this.scoreboardInfoService.apiScoreboardInfoScoreboardJsonGet();
-    // this.scoreboardInfoService.apiScoreboardInfoScoreboardroundIdJsonGet(23);
   }
 
   public loadRound(round: number = -1, retryCount: number = 0): void {
@@ -128,6 +129,11 @@ export class PageScoreboardComponent implements OnInit {
 
         this.data =
           scoreboard.teams?.map((team) => {
+            /** @ts-ignore */
+            team['highlightclass'] =
+              this.currentTeamId && team.teamId === this.currentTeamId
+                ? 'team-cell-highlight'
+                : '';
             let row: any = {
               team: team,
             };
@@ -143,7 +149,8 @@ export class PageScoreboardComponent implements OnInit {
             .default({ minWidth: 200 })
             .table(
               {
-                prop: 'team.rank',
+                prop: 'team',
+                id: 'team.rank',
                 label: 'Rank',
                 minWidth: 40,
                 maxWidth: 40,
@@ -153,14 +160,15 @@ export class PageScoreboardComponent implements OnInit {
               {
                 prop: 'team',
                 label: 'Team',
-                minWidth: 140,
-                maxWidth: 140,
+                minWidth: 150,
+                maxWidth: 150,
                 pin: 'start',
                 pIndex: true,
                 wontBudge: true,
               },
               {
-                prop: 'team.totalScore',
+                prop: 'team',
+                id: 'team.totalScore',
                 label: 'Score',
                 minWidth: 100,
                 maxWidth: 100,

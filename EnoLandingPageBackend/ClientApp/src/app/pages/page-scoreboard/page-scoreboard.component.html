@@ -71,14 +71,11 @@
       <span>Seems like no round could be loaded.</span>
     </div>
 
-    <div *pblNgridCellDef="'team.rank'; value as rank">
-      {{ rank }}
+    <div *pblNgridCellDef="'team.rank'; value as team"class="team-cell" [class]="team.highlightclass">
+      {{ team.rank }}
     </div>
 
-    <div *pblNgridCellDef="'team'; value as team" class="team-cell">
-      <!--ngridCellClass="team-cell {{
-        (teamInfo$ | async)?.id === team.teamId ? 'team-cell-highlight' : ''
-      }}"-->
+    <div *pblNgridCellDef="'team'; value as team" class="team-cell team-cell-middle" [class]="team.highlightclass">
       <img
         *ngIf="team.logoUrl"
         class="team-logo"
@@ -98,9 +95,9 @@
       <!-- <div class="score">{{ team.totalScore.toFixed(0) }} Points</div> -->
     </div>
 
-    <div *pblNgridCellDef="'team.totalScore'; value as score" class="team-cell">
+    <div *pblNgridCellDef="'team.totalScore'; value as team" class="team-cell" [class]="team.highlightclass">
       <!--ngridCellClass="team-cell {{ (teamInfo$ | async)?.id === team.teamId ? 'team-cell-highlight' : '' }}"-->
-      {{ score.toFixed(0) }} Points
+      {{ team.totalScore.toFixed(0) }} Points
     </div>
 
     <div
