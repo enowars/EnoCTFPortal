@@ -175,6 +175,15 @@ export class PageScoreboardComponent implements OnInit {
                 pin: 'start',
                 wontBudge: true,
               },
+              {
+                prop: 'team',
+                id: 'team.Overview',
+                label: '',
+                minWidth: 150,
+                maxWidth: 150,
+                pin: 'start',
+                wontBudge: true,
+              },
               ...(scoreboard.services?.reduce((accumulator, service) => {
                 let col: PblColumnDefinition = {
                   prop: 'service-' + service.serviceId,
@@ -192,7 +201,12 @@ export class PageScoreboardComponent implements OnInit {
             .headerGroup(
               {
                 label: 'Team',
-                columnIds: ['team.rank', 'team', 'team.totalScore'],
+                columnIds: [
+                  'team.rank',
+                  'team',
+                  'team.totalScore',
+                  'team.Overview',
+                ],
               },
               ...(scoreboard.services?.reduce((accumulator, service) => {
                 let col = {

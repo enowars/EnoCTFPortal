@@ -4,6 +4,7 @@ import { DataService } from 'projects/backend-api/src/lib';
 import { AppState, AppStateModel, InitTheme } from './shared/states/App.state';
 import { filter } from 'rxjs/operators';
 import { Title } from '@angular/platform-browser';
+import { Fireworks } from 'fireworks-js';
 
 @Component({
   selector: 'app-root',
@@ -20,5 +21,18 @@ export class AppComponent {
   }
   ngOnInit() {
     this.store.dispatch(new InitTheme());
+    if (this.store.selectSnapshot(AppState.ctfIsOver)) {
+      let host = document.getElementById('firework')!;
+      const fireworks = new Fireworks(host, {
+        boundaries: {
+          top: 50,
+          bottom: host.clientHeight,
+          left: 50,
+          right: host.clientWidth,
+        },
+        mouse: { click: true, move: false, max: 3 },
+      });
+      fireworks.start();
+    }
   }
 }

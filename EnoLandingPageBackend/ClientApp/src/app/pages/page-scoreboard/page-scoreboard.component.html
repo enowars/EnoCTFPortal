@@ -93,7 +93,7 @@
       <div class="texts">
         <div class="team-name">
           {{ team.teamName }} <br />
-          (10.0.0.{{ team.teamId }})
+          (10.1.{{ team.teamId }}.1)
         </div>
         <app-country-flag
           *ngIf="team.countryCode"
@@ -110,6 +110,44 @@
     >
       <!--ngridCellClass="team-cell {{ (teamInfo$ | async)?.id === team.teamId ? 'team-cell-highlight' : '' }}"-->
       {{ team.totalScore.toFixed(0) }} Points
+    </div>
+
+    <div *pblNgridCellDef="'team.Overview'; value as team">
+      <div class="sla">
+        <div class="div1">
+          <i class="fas fa-meteor"></i>
+        </div>
+        <div class="div2">
+          {{ team.attackScore.toFixed(0) }}
+        </div>
+        <div class="div3">
+          ({{
+            (team.attackScoreDelta > 0 ? "+" : "") +
+              team.attackScoreDelta.toFixed(0)
+          }})
+        </div>
+        <div class="div4">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+        <div class="div5">
+          {{ team.defenseScore.toFixed(0) }}
+        </div>
+        <div class="div6">
+          ({{
+            (team.defenseScoreDelta > 0 ? "+" : "") +
+              team.defenseScoreDelta.toFixed(0)
+          }})
+        </div>
+        <div class="div7">
+          <i class="fas fa-heartbeat"></i>
+        </div>
+        <div class="div8">
+          {{ team.serviceLevelAgreementScore.toFixed(0) }}
+        </div>
+        <div class="div9">
+          (+{{ team.serviceLevelAgreementScoreDelta.toFixed(0) }})
+        </div>
+      </div>
     </div>
 
     <div
