@@ -176,11 +176,15 @@
                 >Check in now!</a
               >
             </ng-container>
+            <ng-container *ngIf="ctfIsOver$ | async">
+              The CTF is over. Thanks for playing!
+            </ng-container>
             <ng-container
               *ngIf="
                 !(ctfInProgress$ | async) &&
                 !(ctfCheckinOpen$ | async) &&
-                !(ctfRegistrationOpen$ | async)
+                !(ctfRegistrationOpen$ | async) &&
+                !(ctfIsOver$ | async)
               "
             >
               CTF starts in&nbsp;

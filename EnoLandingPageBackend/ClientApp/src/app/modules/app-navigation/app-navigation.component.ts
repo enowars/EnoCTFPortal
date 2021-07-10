@@ -55,6 +55,8 @@ export class AppNavigationComponent
 
   @Select(AppState.ctfRegistrationOpen)
   public ctfRegistrationOpen$!: Observable<boolean>;
+  @Select(AppState.ctfIsOver)
+  public ctfIsOver$!: Observable<boolean>;
 
   public countDownConfig = {
     leftTime: 60,
@@ -113,12 +115,14 @@ export class AppNavigationComponent
           format: 'dd:HH:mm:ss',
         };
       } else {
+        let leftTime =
+          (Date.parse(state.ctfInfo.ctfStartTime) - new Date().getTime()) /
+          1000;
         this.countDownConfig = {
           ...this.countDownConfig,
-          leftTime:
-            (Date.parse(state.ctfInfo.ctfStartTime) - new Date().getTime()) /
-            1000,
-          format: 'dd:HH:mm:ss',
+          leftTime: leftTime,
+          // If there are more than 24 hours display days
+          format: leftTime > 86400 ? 'dd:HH:mm:ss' : 'HH:mm:ss',
         };
       }
     }
