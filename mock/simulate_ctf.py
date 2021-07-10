@@ -80,7 +80,7 @@ def generateScoreboard(scoreboard, currentRound):
                 "serviceId": scoreboard["teams"][t]["serviceDetails"][s]["serviceId"],
                 "attackScore": scoreboard["teams"][t]["serviceDetails"][s]["attackScore"] + attack,
                 # "attackScoreDelta": attack,
-                "defenseScore": scoreboard["teams"][t]["serviceDetails"][s]["defenseScore"] + defense,
+                "defenseScore": scoreboard["teams"][t]["serviceDetails"][s]["defenseScore"] - defense,
                 # "defenseScoreDelta": defense,
                 "serviceLevelAgreementScore": scoreboard["teams"][t]["serviceDetails"][s]["serviceLevelAgreementScore"] + sla,
                 # "serviceLevelAgreementScoreDelta": sla,

@@ -16,6 +16,7 @@
     using System.IO;
     using System.Text.Json;
     using EnoLandingPageBackend.Models;
+    using System.Text.Json.Serialization;
 
     /// <summary>
     /// Retrieve the scoreboard.
@@ -56,7 +57,6 @@
                 using (var reader = System.IO.File.OpenText(this.getScoreboardFilePath()))
                 {
                     scoreboard = await reader.ReadToEndAsync();
-                    this.logger.LogInformation(scoreboard);
                     this._cache.CreateDefault(scoreboard);
                 }
             }
@@ -121,52 +121,59 @@
             }
 
             Scoreboard? previousScoreboard = null;
-            // try
-            // {
-            using (var reader = System.IO.File.OpenText(getScoreboardFilePath()))
+            try
             {
-                var text = await reader.ReadToEndAsync();
-                var board = JsonSerializer.Deserialize<OverrideScoreboard>(text);
-                previousScoreboard = new Scoreboard(
-                    board.CurrentRound,
-                    board.StartTimestamp,
-                    board.EndTimestamp,
-                    board.DnsSuffix,
-                    board.Services,
-                    board.Teams.Select(team =>
+                // TODO fix this Fuckery by including it in the engine
+                using (var reader = System.IO.File.OpenText(getScoreboardFilePath()))
+                {
+                    var text = await reader.ReadToEndAsync();
+                    var options = new JsonSerializerOptions
                     {
-                        return new ScoreboardTeam(
-                team.TeamName,
-                team.TeamId,
-                team.LogoUrl,
-                team.CountryCode,
-                team.TotalScore,
-                team.AttackScore,
-                team.DefenseScore,
-                team.ServiceLevelAgreementScore,
-                        team.ServiceDetails.Select(serviceDetail =>
-                        {
-                            return new ScoreboardTeamServiceDetails(
-                                serviceDetail.ServiceId,
-                                serviceDetail.AttackScore,
-                                serviceDetail.DefenseScore,
-                                serviceDetail.ServiceLevelAgreementScore,
-                                serviceDetail.ServiceStatus,
-                                serviceDetail.Message
-                            );
-                        }).ToArray()
-                        );
-                    }
-                 ).ToArray()
-                );
-            }
-            // }
-            // catch (Exception)
-            // {
-            //     throw new ScoreboardNotFoundException();
-            // }
+                        PropertyNameCaseInsensitive = true
+                    };
+                    options.Converters.Add(new JsonStringEnumConverter());
 
-            if (previousScoreboard != null)
+                    var board = JsonSerializer.Deserialize<OverrideScoreboard>(text,options);
+                    previousScoreboard = new Scoreboard(
+                        board.CurrentRound,
+                        board.StartTimestamp,
+                        board.EndTimestamp,
+                        board.DnsSuffix,
+                        board.Services,
+                        board.Teams.Select(team =>
+                        {
+                            return new ScoreboardTeam(
+                    team.TeamName,
+                    team.TeamId,
+                    team.LogoUrl,
+                    team.CountryCode,
+                    team.TotalScore,
+                    team.AttackScore,
+                    team.DefenseScore,
+                    team.ServiceLevelAgreementScore,
+                            team.ServiceDetails.Select(serviceDetail =>
+                            {
+                                return new ScoreboardTeamServiceDetails(
+                                    serviceDetail.ServiceId,
+                                    serviceDetail.AttackScore,
+                                    serviceDetail.DefenseScore,
+                                    serviceDetail.ServiceLevelAgreementScore,
+                                    serviceDetail.ServiceStatus,
+                                    serviceDetail.Message
+                                );
+                            }).ToArray()
+                            );
+                        }
+                     ).ToArray()
+                    );
+                }
+            }
+            catch (FileNotFoundException)
+            {
+                //throw new ScoreboardNotFoundException();
+            }
+
+            if (previousScoreboard == null)
             {
                 previousScoreboard = scoreboard;
             }

@@ -11,3 +11,5 @@ scenarios:
           url: "/api/scoreboardInfo/scoreboard.json"
       # - get:
       #     url: "/api/attackinfo"
+      # - get:
+      #     url: "/api/scoreboardInfo/scoreboard.json"

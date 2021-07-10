@@ -17,12 +17,12 @@ namespace EnoLandingPageBackend.Models
             this.Teams = teams;
         }
         [Required]
-        public long CurrentRound { get; init; }
-        public string? StartTimestamp { get; init; }
-        public string? EndTimestamp { get; init; }
-        public string? DnsSuffix { get; init; }
+        public long CurrentRound { get; set; }
+        public string? StartTimestamp { get; set; }
+        public string? EndTimestamp { get; set; }
+        public string? DnsSuffix { get; set; }
         [Required]
-        public ScoreboardService[] Services { get; init; }
+        public ScoreboardService[] Services { get; set; }
         [Required]
         public OverrideScoreboardTeam[] Teams { get; set; }
 

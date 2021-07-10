@@ -351,7 +351,7 @@ MigrationBackup/
 
 # EnoLandingPage
 /EnoLandingPageBackend/data
-/EnoLandingPageBackend/enginedata
+/EnoLandingPageBackend/enginedata/*.json
 /EnoLandingPageBackend/appsettings.Development.json
 /EnoLandingPageBackend/wwwroot
 /data
@@ -360,3 +360,4 @@ MigrationBackup/
 .env
 mock/*.json
 mock/*.info
+
