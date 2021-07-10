@@ -96,5 +96,11 @@
             dbTeam.Confirmed = true;
             await this.context.SaveChangesAsync(token);
         }
+
+        public async Task<bool> IsCheckedIn(long teamId, CancellationToken token)
+        {
+            var dbTeam = await this.context.Teams.Where(t => t.Id == teamId).SingleAsync(token);
+            return dbTeam.Confirmed;
+        }
     }
 }

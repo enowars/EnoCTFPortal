@@ -13,67 +13,66 @@
 @if (Model != null)
 {
     var orderedServices = Model.Services.OrderBy(t => t.ServiceId).ToArray();
-<table class="scoreboard">
-    <colgroup>
-        <col class="team-rank" style="width:40px;" />
-        <col class="team-name" style="width:15%;" />
-        <col class="team-score" style="width:80px;" />
-        @foreach (var service in orderedServices)
-        {
-            <col style="width: 1fr;" />
-        }
-    </colgroup>
-    <thead>
-        <tr>
-            <td colspan="3">
-                <div class="roundcontrol">
-                </div>
-            </td>
+    <table class="scoreboard">
+        <colgroup>
+            <col class="team-rank" style="width:40px;" />
+            <col class="team-name" style="width:15%;" />
+            <col class="team-score" style="width:80px;" />
             @foreach (var service in orderedServices)
             {
-                <td>@service.ServiceName</td>
+                <col style="width: 1fr;" />
             }
-        </tr>
-    </thead>
-    @foreach (var roundId in Scoreboards.Keys.OrderByDescending(k => k))
-    {
-        var round = Scoreboards[roundId];
-        (var rank, var team) = GetTeam(selectedTeamId, round);
-        <tr>
-            <td class="team-rank">@rank</td>
-            <td>
-                <div class="team-container">
-                    Round @(roundId)
-                </div>
-            </td>
-            <td class="team-score">@((int) team.TotalScore)</td>
-
-            @for (int s = 0; s < team.ServiceDetails.Length; s++)
-            {
-                var serviceDetails = team.ServiceDetails[s];
-                <td class="p-2 service-@(Enum.GetName(serviceDetails.ServiceStatus))">
-                    @if (serviceDetails.Message != null)
-                    {
-                        <div class="errormessage">@serviceDetails.Message</div>
-                    }
-                    <div class="service-stats">
-                        <i class="scoreboard-icon fas fa-meteor" />
-                        <div class="scoreboard-text">@((long) serviceDetails.AttackScore)</div>
-                        <div class="scoreboard-text"></div>
-
-                        <i class="scoreboard-icon fas fa-shield-alt" />
-                        <div class="scoreboard-text">@((long) serviceDetails.DefenseScore)</div>
-                        <div class="scoreboard-text"></div>
-
-                        <i class="scoreboard-icon fas fa-heartbeat" />
-                        <div class="scoreboard-text">@((long) serviceDetails.ServiceLevelAgreementScore)</div>
-                        <div class="scoreboard-text"></div>
+        </colgroup>
+        <thead>
+            <tr>
+                <td colspan="3">
+                    <div class="roundcontrol">
                     </div>
                 </td>
-            }
-        </tr>
-    }
-</table>
+                @foreach (var service in orderedServices)
+                {
+                    <td>@service.ServiceName</td>
+                }
+            </tr>
+        </thead>
+        @foreach (var round in Scoreboards)
+        {
+            (var rank, var team) = GetTeam(selectedTeamId, round);
+            <tr>
+                <td class="team-rank">@rank</td>
+                <td>
+                    <div class="team-container">
+                        Round @(round.CurrentRound)
+                    </div>
+                </td>
+                <td class="team-score">@((int) team.TotalScore)</td>
+
+                @for (int s = 0; s < team.ServiceDetails.Length; s++)
+                {
+                    var serviceDetails = team.ServiceDetails[s];
+                    <td class="p-2 service-@(Enum.GetName(serviceDetails.ServiceStatus))">
+                        @if (serviceDetails.Message != null)
+                        {
+                            <div class="errormessage">@serviceDetails.Message</div>
+                        }
+                        <div class="service-stats">
+                            <i class="scoreboard-icon fas fa-meteor" />
+                            <div class="scoreboard-text">@((long) serviceDetails.AttackScore)</div>
+                            <div class="scoreboard-text"></div>
+
+                            <i class="scoreboard-icon fas fa-shield-alt" />
+                            <div class="scoreboard-text">@((long) serviceDetails.DefenseScore)</div>
+                            <div class="scoreboard-text"></div>
+
+                            <i class="scoreboard-icon fas fa-heartbeat" />
+                            <div class="scoreboard-text">@((long) serviceDetails.ServiceLevelAgreementScore)</div>
+                            <div class="scoreboard-text"></div>
+                        </div>
+                    </td>
+                }
+            </tr>
+        }
+    </table>
 }
 else
 {
@@ -84,68 +83,69 @@ else
 @code {
     [Parameter]
     public long selectedTeamId { get; set; }
-    private Dictionary<long, Scoreboard> Scoreboards { get; set; } = new Dictionary<long, Scoreboard>();
+    private LinkedList<Scoreboard> Scoreboards { get; set; } = new LinkedList<Scoreboard>(); // first=current, last=0
     private Scoreboard? Model { get; set; }
 
     protected override Task OnInitializedAsync()
     {
         ScoreboardService.NewScoreboardEvent += HandleNewScoreboardEvent;
-        ScoreboardService.OldScoreboardEvent += HandleOldScoreboardEvent;
         return Task.CompletedTask;
     }
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
         logger.LogInformation($"OnParametersSet {Model}");
         Model = ScoreboardService.LatestScoreboard;
+        Scoreboards.Clear();
         if (ScoreboardService.LatestScoreboard != null)
         {
-            LoadMore(ScoreboardService.LatestScoreboard.CurrentRound);
+            Scoreboards.AddFirst(ScoreboardService.LatestScoreboard);
+            await LoadMore(ScoreboardService.LatestScoreboard.CurrentRound);
         }
     }
 
     public void Dispose()
     {
         ScoreboardService.NewScoreboardEvent -= HandleNewScoreboardEvent;
-        ScoreboardService.OldScoreboardEvent -= HandleOldScoreboardEvent;
     }
 
-    private void LoadMore(long topRoundId)
+    private async Task LoadMore(long topRoundId)
     {
         logger.LogInformation($"LoadMore {topRoundId}");
-        for (int i = 0; i < 20; i++)
+        var tasks = new Task<Scoreboard?>[20];
+        for (int i = 0; i < tasks.Length; i++)
         {
             long roundId = topRoundId - i;
             if (roundId >= 0)
             {
-                ScoreboardService.TryGetOrRequest(roundId, out var sb, true);
-                if (sb != null)
-                {
-                    Scoreboards.TryAdd(sb.CurrentRound, sb);
-                }
+                tasks[i] = ScoreboardService.TryGetOrRequest(roundId);
+            }
+        }
+        for (int i = 0; i < tasks.Length; i++)
+        {
+            var sb = await tasks[i];
+            if (sb != null && Scoreboards.Last().CurrentRound == sb.CurrentRound + 1)
+            {
+                Scoreboards.AddLast(sb);
             }
         }
     }
 
-    private void HandleOldScoreboardEvent(Scoreboard oldScoreboard)
-    {
-        logger.LogInformation($"HandleOldScoreboardEvent round {oldScoreboard.CurrentRound}");
-        if (Model == null)
-        {
-            Model = oldScoreboard;
-        }
-
-        Scoreboards[oldScoreboard.CurrentRound] = oldScoreboard;
-        StateHasChanged();
-    }
-
-    private void HandleNewScoreboardEvent(Scoreboard newScoreboard)
+    private async void HandleNewScoreboardEvent(Scoreboard newScoreboard)
     {
         logger.LogInformation($"HandleNewScoreboardEvent round {newScoreboard.CurrentRound}");
         Model = newScoreboard;
-        Scoreboards[newScoreboard.CurrentRound] = newScoreboard;
-        LoadMore(newScoreboard.CurrentRound);
-        StateHasChanged();
+        if (Scoreboards.Count == 0 || Scoreboards.First().CurrentRound + 1 == newScoreboard.CurrentRound)
+        {
+            Scoreboards.AddFirst(newScoreboard);
+            StateHasChanged();
+            await LoadMore(newScoreboard.CurrentRound);
+            StateHasChanged();
+        }
+        else
+        {
+            // TODO restore correct state
+        }
     }
 
     private (long rank, ScoreboardTeam) GetTeam(long teamId, Scoreboard scoreboard)

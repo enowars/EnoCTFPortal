@@ -104,7 +104,7 @@
         public async Task<ActionResult> VpnConfig()
         {
             var team = await this.db.GetTeamAndVulnbox(this.GetTeamId(), this.HttpContext.RequestAborted);
-            if (team.Vulnbox.ExternalAddress == null)
+            if (team.Vulnbox.ExternalAddress == null || !await this.db.IsCheckedIn(team.Id, this.HttpContext.RequestAborted))
             {
                 return this.NotFound();
             }

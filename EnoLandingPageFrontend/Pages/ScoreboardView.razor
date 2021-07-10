@@ -181,27 +181,23 @@
     protected override Task OnInitializedAsync()
     {
         ScoreboardService.NewScoreboardEvent += HandleNewScoreboardEvent;
-        ScoreboardService.OldScoreboardEvent += HandleOldScoreboardEvent;
         var t = HandleAuthProvider();
         return Task.CompletedTask;
     }
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
         if (selectedRoundId is long roundId)
         {
             // We are in "show old round" mode.
-            ScoreboardService.TryGetOrRequest(roundId, out currentScoreboard);
-            if (roundId > 0)
-            {
-                ScoreboardService.TryGetOrRequest(roundId - 1, out previousScoreboard);
-            }
+            currentScoreboard = await ScoreboardService.TryGetOrRequest(roundId);
+            previousScoreboard = await ScoreboardService.TryGetOrRequest(roundId - 1);
 
             // Also request the neighbouring rounds
-            ScoreboardService.TryGetOrRequest(roundId - 2, out _, true);
-            ScoreboardService.TryGetOrRequest(roundId + 1, out _, true);
-            ScoreboardService.TryGetOrRequest(roundId - 3, out _, true);
-            ScoreboardService.TryGetOrRequest(roundId + 2, out _, true);
+            var a = ScoreboardService.TryGetOrRequest(roundId - 2);
+            var b = ScoreboardService.TryGetOrRequest(roundId + 1);
+            var c = ScoreboardService.TryGetOrRequest(roundId - 3);
+            var d = ScoreboardService.TryGetOrRequest(roundId + 2);
         }
         else
         {
@@ -209,7 +205,7 @@
             currentScoreboard = ScoreboardService.LatestScoreboard;
             if (currentScoreboard?.CurrentRound > 1)
             {
-                ScoreboardService.TryGetOrRequest(currentScoreboard.CurrentRound - 1, out previousScoreboard);
+                previousScoreboard = await ScoreboardService.TryGetOrRequest(currentScoreboard.CurrentRound - 1);
             }
         }
     }
@@ -217,7 +213,6 @@
     public void Dispose()
     {
         ScoreboardService.NewScoreboardEvent -= HandleNewScoreboardEvent;
-        ScoreboardService.OldScoreboardEvent -= HandleOldScoreboardEvent;
     }
 
     private async Task HandleAuthProvider()
@@ -257,7 +252,7 @@
         StateHasChanged();
     }
 
-    private void HandleNewScoreboardEvent(Scoreboard newScoreboard)
+    private async void HandleNewScoreboardEvent(Scoreboard newScoreboard)
     {
         logger.LogInformation($"HandleNewScoreboardEvent round {newScoreboard.CurrentRound}");
         if (selectedRoundId == null) // We are in "show current round" mode.
@@ -265,7 +260,7 @@
             if (newScoreboard.CurrentRound > currentScoreboard?.CurrentRound)
             {
                 // A new round has finished.
-                ScoreboardService.TryGetOrRequest(newScoreboard.CurrentRound - 1, out previousScoreboard);
+                previousScoreboard = await ScoreboardService.TryGetOrRequest(newScoreboard.CurrentRound - 1);
                 currentScoreboard = newScoreboard;
             }
             else
@@ -273,7 +268,7 @@
                 // The CTF was restarted or we just started
                 previousScoreboard = null;
                 currentScoreboard = newScoreboard;
-                ScoreboardService.TryGetOrRequest(newScoreboard.CurrentRound - 1, out previousScoreboard);
+                previousScoreboard = await ScoreboardService.TryGetOrRequest(newScoreboard.CurrentRound - 1);
             }
             StateHasChanged();
         }
