@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Net.Http;
     using System.Threading.Tasks;
+    using EnoLandingPageBackend.Database;
     using EnoLandingPageBackend.Hetzner;
     using EnoLandingPageCore;
     using EnoLandingPageCore.Hetzner;
@@ -21,12 +22,14 @@
         private readonly ILogger<VulnboxController> logger;
         private readonly HetznerCloudApi hetznerApi;
         private readonly LandingPageSettings settings;
+        private readonly LandingPageDatabase db;
 
-        public VulnboxController(ILogger<VulnboxController> logger, HetznerCloudApi hetznerApi, LandingPageSettings settings)
+        public VulnboxController(ILogger<VulnboxController> logger, HetznerCloudApi hetznerApi, LandingPageSettings settings, LandingPageDatabase db)
         {
             this.logger = logger;
             this.hetznerApi = hetznerApi;
             this.settings = settings;
+            this.db = db;
         }
 
         [HttpPost]
@@ -37,6 +40,10 @@
             if (this.settings.StartTime.ToUniversalTime() > DateTime.UtcNow)
             {
                 return this.BadRequest("The CTF has not started.");
+            }
+            if (!await this.db.IsCheckedIn(this.GetTeamId(), this.HttpContext.RequestAborted))
+            {
+                return BadRequest("Checkin is already over.");
             }
 
             try
@@ -63,6 +70,10 @@
             if (this.settings.StartTime.ToUniversalTime() > DateTime.UtcNow)
             {
                 return this.BadRequest("The CTF has not started.");
+            }
+            if (!await this.db.IsCheckedIn(this.GetTeamId(), this.HttpContext.RequestAborted))
+            {
+                return BadRequest("Checkin is already over.");
             }
 
             await this.hetznerApi.Call(teamId, HetznerCloudApiCallType.Reset);
