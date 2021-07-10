@@ -77,13 +77,14 @@
         public async Task<ActionResult<OverrideScoreboard>> GetScoreboard(CancellationToken cancellationToken, int roundId = -1)
         {
             string scoreboard;
+            this.logger.LogCritical(roundId.ToString());
             try
             {
                 scoreboard = await this._cache.GetOrCreateAsync(roundId, async () =>
                 {
                     try
                     {
-                        using (var reader = System.IO.File.OpenText(getScoreboardFilePath()))
+                        using (var reader = System.IO.File.OpenText(getScoreboardFilePath(roundId)))
                         {
                             var scoreboard = await reader.ReadToEndAsync();
                             return scoreboard;
@@ -133,7 +134,7 @@
                     };
                     options.Converters.Add(new JsonStringEnumConverter());
 
-                    var board = JsonSerializer.Deserialize<OverrideScoreboard>(text,options);
+                    var board = JsonSerializer.Deserialize<OverrideScoreboard>(text, options);
                     previousScoreboard = new Scoreboard(
                         board.CurrentRound,
                         board.StartTimestamp,
