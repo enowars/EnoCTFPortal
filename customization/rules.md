@@ -32,6 +32,37 @@ You can download your wireguard config for the vulnbox and OpenVPN config for yo
 
 When the CTF starts, start your own vulnbox as you would when using a cloud-hosted vulnbox, copy the services from <code>/services/</code> to your own vulnbox. **Make sure to stop the wireguard client running on the vulnbox! Otherwise the cloud-hosted and self-hosted vulnbox will both try to connect to the server, leading to connection issues.**
 
+## Attack Info
+
+The endpoint https://5.enowars.com/api/attackinfo delivers a JSON that is updated at the start of every round and has the following format:
+
+```
+{
+	"availableTeams": [
+		"10.1.52.1"
+	],
+	"services": {
+		"service_1": {
+			"10.1.52.1": {
+				"7": [
+					[ "user73" ],
+					[ "user5" ]
+				],
+				"8": [
+					[ "user96" ],
+					[ "user314" ]
+				]
+			}
+		}
+	}
+}
+```
+
+The `availableTeams` field contains a list of team IPs that were at least partially up in the previous round.
+
+The `services` field will, for some services, provide you with additional information that may be helpful or necessary to exploit a given service. This is typically something like the username of the account containing the flag, but the exact format depends on the service. These are grouped by service, team IP, round, and type of flag.
+
+
 ## Scoring
 
 We are currently using the scoring formula by [Faust CTF](https://2019.faustctf.net/information/rules/).
