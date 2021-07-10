@@ -317,6 +317,7 @@ $big-breakpoint: 1024px;
   height: 100vh;
   position: fixed;
   z-index: 99999;
+  pointer-events: none;
 }
 
 /**
