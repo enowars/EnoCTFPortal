@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Select } from '@ngxs/store';
+import { Select, Store } from '@ngxs/store';
 import {
   AccountService,
   CtfInfoMessage,
@@ -9,7 +9,7 @@ import {
 } from 'projects/backend-api/src/lib';
 import { TeamDetailsMessage } from 'projects/backend-api/src/lib/model/teamDetailsMessage';
 import { Observable } from 'rxjs';
-import { AppState } from 'src/app/shared/states/App.state';
+import { AppState, RefreshTeamInfo } from 'src/app/shared/states/App.state';
 
 @Component({
   selector: 'app-page-profile',
@@ -31,7 +31,8 @@ export class PageProfileComponent implements OnInit {
   constructor(
     private accountService: AccountService,
     private vulnboxService: VulnboxService,
-    private _snackBar: MatSnackBar
+    private _snackBar: MatSnackBar,
+    private store: Store
   ) {}
 
   ngOnInit(): void {}
@@ -40,6 +41,7 @@ export class PageProfileComponent implements OnInit {
     this.accountService.apiAccountCheckInPost().subscribe(
       (success) => {
         this._snackBar.open('You are checked in!');
+        this.store.dispatch(new RefreshTeamInfo());
       },
       (error) => {
         this._snackBar.open('Something went wrong!');
@@ -51,9 +53,11 @@ export class PageProfileComponent implements OnInit {
     this.vulnboxService.apiVulnboxStartVulnboxPost().subscribe(
       (success) => {
         this._snackBar.open('Your machine was started!');
+        this.store.dispatch(new RefreshTeamInfo());
       },
       (error) => {
         this._snackBar.open('Something went wrong!');
+        this.store.dispatch(new RefreshTeamInfo());
       }
     );
   }
@@ -62,6 +66,7 @@ export class PageProfileComponent implements OnInit {
     this.vulnboxService.apiVulnboxResetVulnboxPost().subscribe(
       (success) => {
         this._snackBar.open('Your machine will be forcefully rebooted!');
+        this.store.dispatch(new RefreshTeamInfo());
       },
       (error) => {
         this._snackBar.open('Something went wrong!');

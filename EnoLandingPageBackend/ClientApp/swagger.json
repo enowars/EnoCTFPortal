@@ -82,6 +82,16 @@
         }
       }
     },
+    "/api/Account/WireguardConfig": {
+      "get": {
+        "tags": ["Account"],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
     "/api/Account/CheckIn": {
       "post": {
         "tags": ["Account"],
@@ -131,6 +141,63 @@
             }
           }
         ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/AttackInfo": {
+      "get": {
+        "tags": ["AttackInfo"],
+        "summary": "Gets the current AttackInfo.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AttackInfo"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["AttackInfo"],
+        "summary": "Sets the Attack Info.",
+        "parameters": [
+          {
+            "name": "adminSecret",
+            "in": "query",
+            "description": "The admin secret for authenticating the request.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "The body of the request.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AttackInfo"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AttackInfo"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AttackInfo"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Success"
@@ -213,17 +280,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Scoreboard"
+                  "$ref": "#/components/schemas/OverrideScoreboard"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Scoreboard"
+                  "$ref": "#/components/schemas/OverrideScoreboard"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Scoreboard"
+                  "$ref": "#/components/schemas/OverrideScoreboard"
                 }
               }
             }
@@ -254,17 +321,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/Scoreboard"
+                  "$ref": "#/components/schemas/OverrideScoreboard"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Scoreboard"
+                  "$ref": "#/components/schemas/OverrideScoreboard"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Scoreboard"
+                  "$ref": "#/components/schemas/OverrideScoreboard"
                 }
               }
             }
@@ -335,6 +402,38 @@
   },
   "components": {
     "schemas": {
+      "AttackInfo": {
+        "type": "object",
+        "properties": {
+          "availableTeams": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          },
+          "services": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CtfInfoMessage": {
         "required": [
           "checkInBeginTime",
@@ -382,6 +481,157 @@
       "LandingPageVulnboxStatus": {
         "enum": ["None", "Creating", "Created"],
         "type": "string"
+      },
+      "OverrideScoreboard": {
+        "required": ["currentRound", "services", "teams"],
+        "type": "object",
+        "properties": {
+          "currentRound": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "startTimestamp": {
+            "type": "string",
+            "nullable": true
+          },
+          "endTimestamp": {
+            "type": "string",
+            "nullable": true
+          },
+          "dnsSuffix": {
+            "type": "string",
+            "nullable": true
+          },
+          "services": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScoreboardService"
+            }
+          },
+          "teams": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OverrideScoreboardTeam"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "OverrideScoreboardTeam": {
+        "required": [
+          "attackScore",
+          "defenseScore",
+          "serviceLevelAgreementScore",
+          "teamId",
+          "teamName",
+          "totalScore"
+        ],
+        "type": "object",
+        "properties": {
+          "teamName": {
+            "type": "string"
+          },
+          "teamId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "logoUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "countryCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "totalScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "attackScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "defenseScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "serviceLevelAgreementScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "serviceDetails": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OverrideScoreboardTeamServiceDetails"
+            },
+            "nullable": true
+          },
+          "totalScoreDelta": {
+            "type": "number",
+            "format": "double"
+          },
+          "attackScoreDelta": {
+            "type": "number",
+            "format": "double"
+          },
+          "defenseScoreDelta": {
+            "type": "number",
+            "format": "double"
+          },
+          "serviceLevelAgreementScoreDelta": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OverrideScoreboardTeamServiceDetails": {
+        "required": [
+          "attackScore",
+          "defenseScore",
+          "serviceId",
+          "serviceLevelAgreementScore",
+          "serviceStatus"
+        ],
+        "type": "object",
+        "properties": {
+          "serviceId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "attackScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "defenseScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "serviceLevelAgreementScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "serviceStatus": {
+            "$ref": "#/components/schemas/ServiceStatus"
+          },
+          "message": {
+            "type": "string",
+            "nullable": true
+          },
+          "attackScoreDelta": {
+            "type": "number",
+            "format": "double"
+          },
+          "defenseScoreDelta": {
+            "type": "number",
+            "format": "double"
+          },
+          "serviceLevelAgreementScoreDelta": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
       },
       "Scoreboard": {
         "required": ["currentRound", "services", "teams"],

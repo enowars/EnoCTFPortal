@@ -26,7 +26,14 @@ import {
   PblDataSource,
   PblNgridColumnSet,
   PblColumnDefinition,
+  PblColumnGroupDefinition,
 } from '@pebula/ngrid';
+import { ScoreboardOverrideService } from 'src/app/scoreboard-override.service';
+import { TeamDetailsMessage } from 'projects/backend-api/src/lib/model/teamDetailsMessage';
+import { Observable } from 'rxjs';
+import { AppState } from 'src/app/shared/states/App.state';
+import { Select } from '@ngxs/store';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-page-scoreboard',
@@ -36,15 +43,21 @@ import {
   host: { class: 'page-expand' },
 })
 export class PageScoreboardComponent implements OnInit {
+  @Select(AppState.teamInfo)
+  public teamInfo$!: Observable<TeamDetailsMessage>;
+
   public columns: PblNgridColumnSet = columnFactory().build();
   public ds: PblDataSource = createDS<any>()
     .onTrigger(() => this.data)
     .create();
-  public round: number = 0;
+  public round: number = -1;
   public roundLength: number = 60;
   public isCurrentRound: boolean = false;
+  public isLoading: boolean = false;
   public services: ScoreboardService[] | undefined;
   private data: any[] = [];
+  public reloadTimer: NodeJS.Timeout | null = null;
+  public isViewingPastRounds = false;
 
   public countDownConfig = {
     leftTime: 60,
@@ -57,27 +70,37 @@ export class PageScoreboardComponent implements OnInit {
     public dialog: MatDialog,
     private _httpClient: HttpClient,
     private scoreboardInfoService: ScoreboardInfoService,
-    private ref: ChangeDetectorRef
+    private scoreboardOverrideService: ScoreboardOverrideService,
+    private ref: ChangeDetectorRef,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    // this.ref.detach();
+    this.route.params.subscribe((params) => {
+      if (params['roundId'] && !isNaN(params['roundId'])) {
+        this.round = Number(params['roundId']);
+      }
+    });
   }
   ngAfterViewInit() {
-    this.loadRound();
+    this.loadRound(this.round);
 
     // this.scoreboardInfoService.apiScoreboardInfoScoreboardJsonGet();
     // this.scoreboardInfoService.apiScoreboardInfoScoreboardroundIdJsonGet(23);
   }
 
-  public loadRound(round: number | null = null): void {
-    let suffix: any = '';
-    if (round !== null) {
+  public loadRound(round: number = -1, retryCount: number = 0): void {
+    let suffix: number = -1;
+    if (round >= 0) {
       suffix = Math.max(round, 0);
     }
 
-    this._httpClient
-      .get<Scoreboard>('/api/scoreboardinfo/scoreboard' + suffix + '.json')
+    let previousRound = this.round;
+    this.isLoading = true;
+    this.ref.markForCheck();
+
+    this.scoreboardOverrideService
+      .getScoreboard(suffix)
       .subscribe((scoreboard) => {
         let startTime = new Date(scoreboard.startTimestamp!);
         let endTime = new Date(scoreboard.endTimestamp!);
@@ -88,8 +111,6 @@ export class PageScoreboardComponent implements OnInit {
         this.services =
           scoreboard.services?.sort((a, b) => a.serviceId! - b.serviceId!) ||
           [];
-
-        console.log(this.services);
 
         let currentTime = new Date();
         const timeLeft =
@@ -122,13 +143,28 @@ export class PageScoreboardComponent implements OnInit {
             .default({ minWidth: 200 })
             .table(
               {
+                prop: 'team.rank',
+                label: 'Rank',
+                minWidth: 40,
+                maxWidth: 40,
+                pin: 'start',
+                wontBudge: true,
+              },
+              {
                 prop: 'team',
-                // id: 'id',
                 label: 'Team',
-                minWidth: 250,
-                width: '40px',
+                minWidth: 140,
+                maxWidth: 140,
                 pin: 'start',
                 pIndex: true,
+                wontBudge: true,
+              },
+              {
+                prop: 'team.totalScore',
+                label: 'Score',
+                minWidth: 100,
+                maxWidth: 100,
+                pin: 'start',
                 wontBudge: true,
               },
               ...(scoreboard.services?.reduce((accumulator, service) => {
@@ -145,32 +181,69 @@ export class PageScoreboardComponent implements OnInit {
                 return accumulator;
               }, [] as any[]) || [])
             )
+            .headerGroup(
+              {
+                label: 'Team',
+                columnIds: ['team.rank', 'team', 'team.totalScore'],
+              },
+              ...(scoreboard.services?.reduce((accumulator, service) => {
+                let col = {
+                  label: service.serviceName,
+                  columnIds: ['service-' + service.serviceId],
+                };
+                accumulator.push(col);
+                return accumulator;
+              }, [] as any[]) || [])
+            )
             .build();
         }
 
         this.ref.markForCheck();
+        this.isLoading = false;
 
-        if (this.isCurrentRound) {
-          setTimeout(() => this.gotoCurrentRound(), (1.5 + timeLeft) * 1000);
+        if (!this.isViewingPastRounds) {
+          // Only schedule a reload if the user is not vieweing past rounds
+          if (this.round <= previousRound && retryCount > 0) {
+            // we didn't receive a newer round, retrying again in 5 seconds
+            this.isLoading = true;
+            this.reloadTimer = setTimeout(
+              () => this.gotoCurrentRound(retryCount - 1),
+              5 * 1000
+            );
+          } else if (this.isCurrentRound) {
+            // we received the current round, loading next round after the current round + 1.5 seconds
+            this.reloadTimer = setTimeout(
+              () => this.gotoCurrentRound(),
+              (1.5 + timeLeft) * 1000
+            );
+          }
+        } else {
+          if (this.reloadTimer) {
+            clearTimeout(this.reloadTimer);
+          }
         }
       });
   }
 
   public gotoFirstRound(): void {
+    this.isViewingPastRounds = true;
     this.loadRound(0);
   }
 
   public gotoPreviousRound(): void {
+    this.isViewingPastRounds = true;
     this.loadRound(this.round - 1);
   }
 
   public gotoNextRound(): void {
     // TODO: check if round exists somehow ???
+    this.isViewingPastRounds = true;
     this.loadRound(this.round + 1);
   }
 
-  public gotoCurrentRound(): void {
-    this.loadRound();
+  public gotoCurrentRound(retryCount: number = 2): void {
+    this.isViewingPastRounds = false;
+    this.loadRound(-1, retryCount);
   }
 
   public trackById: TrackByFunction<ScoreboardTeam> = (
@@ -193,5 +266,11 @@ export class PageScoreboardComponent implements OnInit {
     this.dialog.open(DialogInfoComponent, {
       data: data,
     });
+  }
+
+  public ngOnDestroy() {
+    if (this.reloadTimer) {
+      clearTimeout(this.reloadTimer);
+    }
   }
 }

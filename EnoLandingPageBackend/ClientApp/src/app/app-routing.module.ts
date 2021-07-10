@@ -24,6 +24,10 @@ const routes: Routes = [
     component: PageScoreboardComponent,
   },
   {
+    path: APP_ROUTES.scoreboard + '/:roundId',
+    component: PageScoreboardComponent,
+  },
+  {
     path: APP_ROUTES.teams,
     component: PageTeamsComponent,
   },

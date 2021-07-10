@@ -10,6 +10,8 @@ services:
       - ./sessions:/root/.aspnet/DataProtection-Keys
       # For the Database
       - ./data:/app/data
+      # For the Scoreboard (just at the moment)
+      - ./enginedata:/app/enginedata
       # For Scoreboard and AttackInfo (if they are not supplied via the HTTP Endpoint)
       - ./scoreboard:/app/wwwroot/scoreboard
     # volumes:
@@ -20,7 +22,7 @@ services:
       - "traefik.http.routers.whoami.entrypoints=websecure"
       - "traefik.http.routers.whoami.tls.certresolver=myresolver"
     ports:
-      - 80:80
+      - 5002:80
 #   traefik:
 #     image: 'traefik:v2.4'
 #     container_name: 'traefik'

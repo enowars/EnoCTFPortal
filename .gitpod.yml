@@ -12,7 +12,7 @@ tasks:
   - name: Run Mock
     before: | 
       cd mock
-      python3 generate_scoreboard.py
+      python3 simulate_ctf.py
   - name: Frontend
     env:
       NG_CLI_ANALYTICS: ci
