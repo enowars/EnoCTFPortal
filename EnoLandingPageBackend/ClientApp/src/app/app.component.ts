@@ -21,18 +21,21 @@ export class AppComponent {
   }
   ngOnInit() {
     this.store.dispatch(new InitTheme());
-    if (this.store.selectSnapshot(AppState.ctfIsOver)) {
-      let host = document.getElementById('firework')!;
-      const fireworks = new Fireworks(host, {
-        boundaries: {
-          top: 50,
-          bottom: host.clientHeight,
-          left: 50,
-          right: host.clientWidth,
-        },
-        mouse: { click: true, move: false, max: 3 },
-      });
-      fireworks.start();
-    }
+    setTimeout(() => {
+      console.log(this.store.selectSnapshot(AppState.ctfIsOver));
+      if (this.store.selectSnapshot(AppState.ctfIsOver)) {
+        let host = document.getElementById('firework')!;
+        const fireworks = new Fireworks(host, {
+          boundaries: {
+            top: 50,
+            bottom: host.clientHeight,
+            left: 50,
+            right: host.clientWidth,
+          },
+          mouse: { click: true, move: false, max: 3 },
+        });
+        fireworks.start();
+      }
+    }, 2000);
   }
 }
