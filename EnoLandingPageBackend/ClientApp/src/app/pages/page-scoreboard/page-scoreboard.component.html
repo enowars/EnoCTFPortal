@@ -51,7 +51,7 @@
 
     <div
       *pblNgridHeaderCellTypeDef="'service'; col as col"
-      ngridCellClass="flagstore-cell"
+      class="flagstore-cell"
     >
       Flagstores:
       <div *ngFor="let flagstore of col.data.flagstores">
@@ -75,10 +75,8 @@
       {{ rank }}
     </div>
 
-    <div
-      *pblNgridCellDef="'team'; value as team"
-      class="team-cell"
-    ><!--ngridCellClass="team-cell {{
+    <div *pblNgridCellDef="'team'; value as team" class="team-cell">
+      <!--ngridCellClass="team-cell {{
         (teamInfo$ | async)?.id === team.teamId ? 'team-cell-highlight' : ''
       }}"-->
       <img
@@ -102,7 +100,7 @@
 
     <div *pblNgridCellDef="'team.totalScore'; value as score" class="team-cell">
       <!--ngridCellClass="team-cell {{ (teamInfo$ | async)?.id === team.teamId ? 'team-cell-highlight' : '' }}"-->
-      <div class="score">{{ score.toFixed(0) }} Points</div>
+      {{ score.toFixed(0) }} Points
     </div>
 
     <div

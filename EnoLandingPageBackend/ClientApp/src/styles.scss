@@ -179,7 +179,12 @@ app-root {
   min-height: 70px !important;
 }
 
+.pbl-ngrid-header-row-main {
+  min-height: 90px !important;
+}
+
 .flagstore-cell {
+  margin-top: 2px;
   align-self: start;
 }
 
