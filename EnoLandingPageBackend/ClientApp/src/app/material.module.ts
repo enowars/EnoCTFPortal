@@ -26,6 +26,7 @@ import { MatTreeModule } from '@angular/material/tree';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatInputModule } from '@angular/material/input';
 import { ClipboardModule } from '@angular/cdk/clipboard';
+import {MatProgressBarModule} from '@angular/material/progress-bar'; 
 @NgModule({
   imports: [
     MatButtonModule,
@@ -54,6 +55,7 @@ import { ClipboardModule } from '@angular/cdk/clipboard';
     MatStepperModule,
     ClipboardModule,
     MatInputModule,
+    MatProgressBarModule,
   ],
   providers: [],
   exports: [
@@ -83,6 +85,7 @@ import { ClipboardModule } from '@angular/cdk/clipboard';
     MatStepperModule,
     ClipboardModule,
     MatInputModule,
+    MatProgressBarModule,
   ],
 })
 export class MaterialModule {}

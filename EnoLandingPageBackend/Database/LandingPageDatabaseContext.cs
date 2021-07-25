@@ -24,8 +24,6 @@
 
         public DbSet<LandingPageTeam> Teams { get; set; }
 
-        public DbSet<DatabaseScoreboard> Scoreboards { get; set; }
-
         public DbSet<LandingPageTeamVulnbox> Vulnboxes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

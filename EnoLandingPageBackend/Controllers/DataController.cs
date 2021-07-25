@@ -48,8 +48,8 @@
             var teams = await this.db.GetTeams(this.HttpContext.RequestAborted);
             return this.Json(
                 new TeamsMessage(
-                    teams.Where(t => t.Confirmed).Select(t => new TeamMessage(t.Name, t.CtftimeId, t.LogoUrl, t.CountryCode)).ToList(),
-                    teams.Where(t => !t.Confirmed).Select(t => new TeamMessage(t.Name, t.CtftimeId, t.LogoUrl, t.CountryCode)).ToList()));
+                    teams.Where(t => t.Confirmed).Select(t => new TeamMessage(t.Id, t.Name, t.CtftimeId, t.LogoUrl, t.CountryCode)).ToList(),
+                    teams.Where(t => !t.Confirmed).Select(t => new TeamMessage(t.Id, t.Name, t.CtftimeId, t.LogoUrl, t.CountryCode)).ToList()));
         }
 
         [HttpGet]
@@ -57,7 +57,7 @@
         {
             var teams = (await this.db.GetTeams(this.HttpContext.RequestAborted))
                     .Where(t => t.Confirmed)
-                    .Select(t => $"10.0.0.{t.Id}");
+                    .Select(t => Utils.VulnboxIpAddressForId(t.Id));
 
             // Not good? 
             // https://stackoverflow.com/questions/10615797/utility-of-http-header-content-type-application-force-download-for-mobile

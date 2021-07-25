@@ -64,12 +64,12 @@
                         3,
                         180,
                         ".bambi.ovh",
-                        16,
+                        Utils.TeamSubnetBytesLength,
                         "flagsigningkey",
                         FlagEncoding.Legacy,
                         (await this.db.GetTeams(this.HttpContext.RequestAborted))
                             .Where(t => t.Confirmed)
-                            .Select(t => new JsonConfigurationTeam(t.Id, t.Name, $"10.0.0.{t.Id}", $"::ffff:10.0.0.{t.Id}", t.LogoUrl, t.CountryCode))
+                            .Select(t => new JsonConfigurationTeam(t.Id, t.Name, Utils.VulnboxIpAddressForId(t.Id), Utils.TeamSubnetForId(t.Id), t.LogoUrl, t.CountryCode))
                             .ToList(),
                         new List<JsonConfigurationService>()),
                     this.serializerOptions),

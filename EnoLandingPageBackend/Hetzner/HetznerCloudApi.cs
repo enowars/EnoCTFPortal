@@ -179,6 +179,9 @@
                 createVmRequest.ssh_keys = new JArray(this.landingPageSettings.HetznerVulnboxPubkey);
                 createVmRequest.location = this.landingPageSettings.HetznerVulnboxLocation;
                 createVmRequest.user_data = user_data;
+                dynamic labels = new JObject();
+                labels.type = "vulnbox";
+                createVmRequest.labels = labels;
                 var jsonContent = JsonConvert.SerializeObject(createVmRequest);
                 this.logger.LogDebug($"{nameof(this.DoCreateServer)} for team {teamId}: {jsonContent}");
 

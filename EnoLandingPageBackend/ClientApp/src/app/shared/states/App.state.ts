@@ -15,6 +15,7 @@ import {
 import { TeamDetailsMessage } from 'projects/backend-api/src/lib/model/teamDetailsMessage';
 import { ThemeService } from 'src/app/services/theme.service';
 import { Theme } from 'src/app/shared/models/enumberables/theme';
+import { environment } from 'src/environments/environment';
 
 export class ServiceWorkerNotificationDisplayed {
   public static readonly type: string =
@@ -44,6 +45,10 @@ export class Login {
   public static readonly type: string = '[App State] Login';
 }
 
+export class RefreshTeamInfo {
+  public static readonly type: string = '[App State] Refresh Team Info';
+}
+
 export interface AppStateModel {
   serviceWorkerNotificationDisplayed: boolean;
   version: string;
@@ -69,18 +74,11 @@ export class AppState implements NgxsOnInit {
   constructor(
     private themeService: ThemeService,
     private accountService: AccountService,
-    private dataService: DataService
+    private dataService: DataService,
+    private store: Store
   ) {}
   ngxsOnInit(ctx: StateContext<AppStateModel>) {
-    this.accountService.apiAccountInfoGet().subscribe(
-      (accountInfo) => {
-        let state = ctx.getState();
-        ctx.setState({ ...state, authenticated: true, teamInfo: accountInfo });
-      },
-      (error) => {
-        // Do nothing the use is simply not authenticated
-      }
-    );
+    this.store.dispatch(new RefreshTeamInfo());
     this.dataService.apiDataCtfInfoGet().subscribe(
       (ctfInfo) => {
         let state = ctx.getState();
@@ -90,6 +88,23 @@ export class AppState implements NgxsOnInit {
         // Do nothing for now
       }
     );
+    if (!environment.production) {
+      let state = ctx.getState();
+      ctx.setState({
+        ...state,
+        authenticated: true,
+        teamInfo: {
+          id: 10,
+          confirmed: true,
+          teamName: '',
+          vpnConfigAvailable: true,
+          rootPassword: '',
+          externalIpAddress: '',
+          internalIpAddress: '',
+          vulnboxStatus: 'None',
+        },
+      });
+    }
   }
 
   @Selector()
@@ -154,6 +169,15 @@ export class AppState implements NgxsOnInit {
     return false;
   }
 
+  @Selector()
+  public static ctfIsOver(state: AppStateModel): boolean {
+    let now = new Date().getTime();
+    if (Date.parse(state.ctfInfo?.ctfEndTime!) <= now) {
+      return true;
+    }
+    return false;
+  }
+
   @Action(ServiceWorkerNotificationDisplayed)
   public serviceWorkerNotificationDisplayed(ctx: StateContext<AppStateModel>) {
     const state = ctx.getState();
@@ -186,5 +210,18 @@ export class AppState implements NgxsOnInit {
   public initTheme(ctx: StateContext<AppStateModel>) {
     const state = ctx.getState();
     this.themeService.setTheme(state.activeTheme);
+  }
+
+  @Action(RefreshTeamInfo)
+  public refreshTeamInfo(ctx: StateContext<AppStateModel>) {
+    this.accountService.apiAccountInfoGet().subscribe(
+      (accountInfo) => {
+        let state = ctx.getState();
+        ctx.setState({ ...state, authenticated: true, teamInfo: accountInfo });
+      },
+      (error) => {
+        // Do nothing the use is simply not authenticated
+      }
+    );
   }
 }

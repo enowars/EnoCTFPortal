@@ -179,12 +179,30 @@ app-root {
   min-height: 70px !important;
 }
 
+.pbl-ngrid-header-row-main {
+  min-height: 90px !important;
+}
+
+.flagstore-cell {
+  margin-top: 2px;
+  align-self: start;
+}
+
+.team-cell-highlight {
+  font-weight: bold;
+}
+
+.team-cell-middle.team-cell-highlight {
+  // background-color: cornflowerblue;
+  // width: 100%;
+}
+
 .OK {
   background-color: #9ccc65;
 }
 
 .MUMBLE {
-  background-color: #ffee58;
+  background-color: #fdd835;
 }
 
 .INTERNAL_ERROR {
@@ -196,6 +214,23 @@ app-root {
 
 .OFFLINE {
   background-color: #ef5350;
+}
+
+.pbl-ngrid-column-type-service {
+  &.MUMBLE,
+  &.RECOVERING,
+  &.OFFLINE {
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      position: relative;
+      box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.3);
+      border-radius: 3px;
+      transform: scale(1.05);
+      z-index: 9999;
+    }
+  }
 }
 
 $small-breakpoint: 468px;
@@ -273,6 +308,16 @@ $big-breakpoint: 1024px;
   .pb-hide-below-big {
     display: none;
   }
+}
+
+#firework {
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  z-index: 99999;
+  pointer-events: none;
 }
 
 /**

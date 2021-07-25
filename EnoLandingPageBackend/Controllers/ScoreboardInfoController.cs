@@ -13,6 +13,10 @@
     using EnoLandingPageBackend.Cache;
     using EnoLandingPageBackend.Database;
     using System.Threading;
+    using System.IO;
+    using System.Text.Json;
+    using EnoLandingPageBackend.Models;
+    using System.Text.Json.Serialization;
 
     /// <summary>
     /// Retrieve the scoreboard.
@@ -24,7 +28,6 @@
     {
         private readonly ILogger<ScoreboardInfoController> logger;
         private readonly LandingPageSettings settings;
-        private readonly LandingPageDatabase database;
         private ScoreboardCache _cache;
 
         /// <summary>
@@ -32,11 +35,10 @@
         /// </summary>
         /// <param name="logger"></param>
         /// <param name="settings"></param>
-        public ScoreboardInfoController(ILogger<ScoreboardInfoController> logger, LandingPageSettings settings, LandingPageDatabase db, ScoreboardCache cache)
+        public ScoreboardInfoController(ILogger<ScoreboardInfoController> logger, LandingPageSettings settings, ScoreboardCache cache)
         {
             this.logger = logger;
             this.settings = settings;
-            this.database = db;
             this._cache = cache;
         }
 
@@ -46,20 +48,23 @@
         /// <returns>The scoreboard of the current round.</returns>
         [HttpGet]
         [Route("scoreboard.json")]
-        public async Task<ActionResult<Scoreboard>> GetDefaultScoreboard(CancellationToken cancellationToken)
+        public async Task<ActionResult<OverrideScoreboard>> GetDefaultScoreboard(CancellationToken cancellationToken)
         {
-            Scoreboard scoreboard;
+            string scoreboard;
             scoreboard = this._cache.TryGetDefault();
             if (scoreboard == null)
             {
-                scoreboard = await this.database.GetCurrentScoreboard(cancellationToken);
-                this._cache.CreateDefault(scoreboard);
+                using (var reader = System.IO.File.OpenText(this.getScoreboardFilePath()))
+                {
+                    scoreboard = await reader.ReadToEndAsync();
+                    this._cache.CreateDefault(scoreboard);
+                }
             }
             if (scoreboard == null)
             {
                 return NotFound();
             }
-            return this.Ok(scoreboard);
+            return Content(scoreboard);
         }
 
         /// <summary>
@@ -69,26 +74,35 @@
         /// <returns>The scoreboard of the given roundId.</returns>
         [HttpGet]
         [Route("scoreboard{roundId}.json")]
-        public async Task<ActionResult<Scoreboard>> GetScoreboard(CancellationToken cancellationToken, int roundId = -1)
+        [ResponseCache(VaryByHeader = "User-Agent", Duration = 1800)]
+        public async Task<ActionResult<OverrideScoreboard>> GetScoreboard(CancellationToken cancellationToken, int roundId = -1)
         {
-            Scoreboard scoreboard;
+            string scoreboard;
+            this.logger.LogCritical(roundId.ToString());
             try
             {
                 scoreboard = await this._cache.GetOrCreateAsync(roundId, async () =>
                 {
-                    var scoreboard = await this.database.GetScoreboard(roundId, cancellationToken);
-                    if (scoreboard == null)
+                    try
+                    {
+                        using (var reader = System.IO.File.OpenText(getScoreboardFilePath(roundId)))
+                        {
+                            var scoreboard = await reader.ReadToEndAsync();
+                            return scoreboard;
+                        }
+                    }
+                    catch (FileNotFoundException)
                     {
                         throw new ScoreboardNotFoundException();
                     }
-                    return scoreboard;
                 });
             }
-            catch (ScoreboardNotFoundException)
+            catch (Exception e)
             {
+                logger.LogError(e.Message);
                 return NotFound();
             }
-            return this.Ok(scoreboard);
+            return Content(scoreboard);
         }
 
         /// <summary>
@@ -107,10 +121,123 @@
                 this.logger.LogInformation("Somebody unauthorized tried to update the Scoreboard.");
                 return this.Unauthorized();
             }
-            await this.database.SaveScoreboard(scoreboard, cancellationToken);
+
+            Scoreboard? previousScoreboard = null;
+            try
+            {
+                // TODO fix this Fuckery by including it in the engine
+                using (var reader = System.IO.File.OpenText(getScoreboardFilePath()))
+                {
+                    var text = await reader.ReadToEndAsync();
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    };
+                    options.Converters.Add(new JsonStringEnumConverter());
+
+                    var board = JsonSerializer.Deserialize<OverrideScoreboard>(text, options);
+                    previousScoreboard = new Scoreboard(
+                        board.CurrentRound,
+                        board.StartTimestamp,
+                        board.EndTimestamp,
+                        board.DnsSuffix,
+                        board.Services,
+                        board.Teams.Select(team =>
+                        {
+                            return new ScoreboardTeam(
+                    team.TeamName,
+                    team.TeamId,
+                    team.LogoUrl,
+                    team.CountryCode,
+                    team.TotalScore,
+                    team.AttackScore,
+                    team.DefenseScore,
+                    team.ServiceLevelAgreementScore,
+                            team.ServiceDetails.Select(serviceDetail =>
+                            {
+                                return new ScoreboardTeamServiceDetails(
+                                    serviceDetail.ServiceId,
+                                    serviceDetail.AttackScore,
+                                    serviceDetail.DefenseScore,
+                                    serviceDetail.ServiceLevelAgreementScore,
+                                    serviceDetail.ServiceStatus,
+                                    serviceDetail.Message
+                                );
+                            }).ToArray()
+                            );
+                        }
+                     ).ToArray()
+                    );
+                }
+            }
+            catch (FileNotFoundException)
+            {
+                //throw new ScoreboardNotFoundException();
+            }
+
+            if (previousScoreboard == null)
+            {
+                previousScoreboard = scoreboard;
+            }
+            logger.LogWarning($"Prev: {previousScoreboard.Teams.Count()} Current: {scoreboard.Teams.Count()}");
+            var bothScoreboardTeams = previousScoreboard.Teams.OrderBy(team => team.TeamId).Zip(scoreboard.Teams.OrderBy(team => team.TeamId), (n, w) => new { previous = n, current = w });
+            OverrideScoreboardTeam[] overrideTeams = bothScoreboardTeams.Select(bothTeams =>
+            {
+                var bothServiceDetails = bothTeams.previous.ServiceDetails.Zip(bothTeams.current.ServiceDetails, (n, w) => new { previous = n, current = w });
+                return new OverrideScoreboardTeam(
+                    bothTeams.current.TeamName,
+                    bothTeams.current.TeamId,
+                    bothTeams.current.LogoUrl,
+                    bothTeams.current.CountryCode,
+                    bothTeams.current.TotalScore,
+                    bothTeams.current.AttackScore,
+                    bothTeams.current.DefenseScore,
+                    bothTeams.current.ServiceLevelAgreementScore,
+                    bothServiceDetails.Select(bothServiceDetails =>
+                    {
+                        return new OverrideScoreboardTeamServiceDetails(
+                            bothServiceDetails.current.ServiceId,
+                            bothServiceDetails.current.AttackScore,
+                            bothServiceDetails.current.DefenseScore,
+                            bothServiceDetails.current.ServiceLevelAgreementScore,
+                            bothServiceDetails.current.ServiceStatus,
+                            bothServiceDetails.current.Message,
+                            bothServiceDetails.current.AttackScore - bothServiceDetails.previous.AttackScore,
+                            bothServiceDetails.current.DefenseScore - bothServiceDetails.previous.DefenseScore,
+                            bothServiceDetails.current.ServiceLevelAgreementScore - bothServiceDetails.previous.ServiceLevelAgreementScore
+                        );
+                    }
+                    ).ToArray(),
+                    bothTeams.current.TotalScore - bothTeams.previous.TotalScore,
+                    bothTeams.current.AttackScore - bothTeams.previous.AttackScore,
+                    bothTeams.current.DefenseScore - bothTeams.previous.DefenseScore,
+                    bothTeams.current.ServiceLevelAgreementScore - bothTeams.previous.ServiceLevelAgreementScore
+                );
+            }).ToArray();
+            OverrideScoreboard overrideScoreboard = new OverrideScoreboard(
+                    scoreboard.CurrentRound,
+                    scoreboard.StartTimestamp,
+                    scoreboard.EndTimestamp,
+                    scoreboard.DnsSuffix,
+                    scoreboard.Services,
+                    overrideTeams.OrderByDescending(team => team.TotalScore).ToArray()
+                );
+
+            using (var createStream = System.IO.File.Create(getScoreboardFilePath()))
+            using (var scoreboardRoundFile = System.IO.File.Create(getScoreboardFilePath(scoreboard.CurrentRound)))
+            {
+                await JsonSerializer.SerializeAsync(createStream, overrideScoreboard, EnoCore.EnoCoreUtil.CamelCaseEnumConverterOptions);
+                await JsonSerializer.SerializeAsync(scoreboardRoundFile, overrideScoreboard, EnoCore.EnoCoreUtil.CamelCaseEnumConverterOptions);
+
+            }
             this._cache.InvalidateDefault();
             this.logger.LogDebug("New Scoreboard set.");
             return Ok();
+        }
+
+        private string getScoreboardFilePath(long roundId = -1)
+        {
+            return Path.Combine(Utils.path, "scoreboard" + (roundId < 0 ? "" : roundId) + ".json");
         }
     }
 

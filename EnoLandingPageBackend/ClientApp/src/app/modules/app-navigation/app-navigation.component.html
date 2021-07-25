@@ -37,7 +37,7 @@
         </mat-list-item>
         <a
           mat-list-item
-          href="https://github.com/enowars/docs"
+          href="https://enowars.github.io/docs/play/general.html"
           target="_blank"
           (click)="sidenav.close()"
         >
@@ -96,7 +96,7 @@
             <div class="pb-center-element-orthogonal pb-hide-below-med">
               <a
                 mat-button
-                href="https://github.com/enowars/docs"
+                href="https://enowars.github.io/docs/play/general.html"
                 target="_blank"
                 >Documentation
                 <mat-icon inline="true">open_in_new</mat-icon>
@@ -162,24 +162,29 @@
           </mat-toolbar-row>
           <mat-toolbar-row class="banner" *ngIf="ctfInfo$ | async as ctfInfo">
             <ng-container *ngIf="ctfRegistrationOpen$ | async">
-              CTF Starting in&nbsp;
+              CTF Registration closing in&nbsp;
               <ng-container *ngTemplateOutlet="countdown"></ng-container>&nbsp;
-              <a
-                *ngIf="!(authenticated$ | async)"
-                [href]="'/api/account/login?redirectUri=' + currentUrl"
+              <a [href]="'/api/account/login?redirectUri=' + currentUrl"
                 >Register Now!</a
               >
             </ng-container>
             <ng-container *ngIf="ctfCheckinOpen$ | async">
-              CTF Starting in&nbsp;
+              CTF CheckIn closing in&nbsp;
               <ng-container *ngTemplateOutlet="countdown"></ng-container>
-              .&nbsp; Check in now!
+              .&nbsp;
+              <a [href]="'/api/account/login?redirectUri=' + currentUrl"
+                >Check in now!</a
+              >
+            </ng-container>
+            <ng-container *ngIf="ctfIsOver$ | async">
+              The CTF is over. Thanks for playing!
             </ng-container>
             <ng-container
               *ngIf="
                 !(ctfInProgress$ | async) &&
                 !(ctfCheckinOpen$ | async) &&
-                !(ctfRegistrationOpen$ | async)
+                !(ctfRegistrationOpen$ | async) &&
+                !(ctfIsOver$ | async)
               "
             >
               CTF starts in&nbsp;

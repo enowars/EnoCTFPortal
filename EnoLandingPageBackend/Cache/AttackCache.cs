@@ -1,15 +1,14 @@
-using System;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Options;
 
 namespace EnoLandingPageBackend.Cache
 {
-    public class ScoreboardCache
+    using System;
+    using System.Threading.Tasks;
+    using Microsoft.Extensions.Caching.Memory;
+    public class CustomMemoryCache<T>
     {
         private readonly string defaultKey = "default";
         private MemoryCache _cache { get; set; }
-        public ScoreboardCache()
+        public CustomMemoryCache()
         {
             _cache = new MemoryCache(new MemoryCacheOptions
             {
@@ -17,9 +16,9 @@ namespace EnoLandingPageBackend.Cache
             });
         }
 
-        public string TryGetDefault()
+        public T TryGetDefault()
         {
-            string cacheEntry;
+            T cacheEntry;
             this._cache.TryGetValue(defaultKey, out cacheEntry);
             return cacheEntry;
         }
@@ -28,16 +27,16 @@ namespace EnoLandingPageBackend.Cache
             this._cache.Remove(defaultKey);
         }
 
-        public void CreateDefault(string scoreboard)
+        public void CreateDefault(T attackInfo)
         {
             var cacheEntryOptions = new MemoryCacheEntryOptions()
                 .SetSize(1);
-            _cache.Set(this.defaultKey, scoreboard, cacheEntryOptions);
+            _cache.Set(this.defaultKey, attackInfo, cacheEntryOptions);
         }
 
-        public string GetOrCreate(object key, Func<string> createItem)
+        public T GetOrCreate(object key, Func<T> createItem)
         {
-            string cacheEntry;
+            T cacheEntry;
             if (!_cache.TryGetValue(key, out cacheEntry))// Look for cache key.
             {
                 cacheEntry = createItem();
@@ -51,7 +50,7 @@ namespace EnoLandingPageBackend.Cache
             return cacheEntry;
         }
 
-        public async Task<string> GetOrCreateAsync(object key, Func<Task<string>> createItem)
+        public async Task<T> GetOrCreateAsync(object key, Func<Task<T>> createItem)
         {
             var func = await createItem();
             return this.GetOrCreate(key, () =>

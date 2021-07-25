@@ -1,12 +1,18 @@
 <div>
   <!-- TODO: Use mat-action-list as soon as there is a team site -->
   <mat-list *ngIf="teams != null">
-    <div mat-subheader>Confirmed Teams</div>
+    <div mat-subheader>
+      Confirmed Teams ({{ teams.confirmedTeams!.length }})
+    </div>
     <mat-list-item *ngIf="teams.confirmedTeams!.length == 0">
       None yet
     </mat-list-item>
     <mat-list-item *ngFor="let team of teams.confirmedTeams">
-      <img matListAvatar *ngIf="team.logoUrl" [src]="team.logoUrl" />
+      <img
+        matListAvatar
+        [src]="team.logoUrl || './assets/nologo.png'"
+        referrerpolicy="no-referrer"
+      />
       <a mat-line [href]="'https://ctftime.org/team/' + team.ctftimeId">{{
         team.name
       }}</a>
@@ -16,13 +22,19 @@
       ></app-country-flag>
     </mat-list-item>
     <mat-divider></mat-divider>
-    <div mat-subheader>Registered Teams</div>
+    <div mat-subheader>
+      Registered Teams ({{ teams.registeredTeams!.length }})
+    </div>
     <mat-list-item *ngIf="teams.registeredTeams!.length == 0">
       None yet :(
     </mat-list-item>
 
     <mat-list-item *ngFor="let team of teams.registeredTeams">
-      <img matListAvatar [src]="team.logoUrl" referrerpolicy="no-referrer" />
+      <img
+        matListAvatar
+        [src]="team.logoUrl || './assets/nologo.png'"
+        referrerpolicy="no-referrer"
+      />
       <h3 mat-line>
         {{ team.name }}
         <!-- <a [href]="'https://ctftime.org/team/' + team.ctftimeId"></a> -->
