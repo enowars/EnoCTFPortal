@@ -1,0 +1,233 @@
+<mat-card>
+  <ng-container *ngIf="(teamInfo$ | async) == null">
+    You should have been logged in.
+  </ng-container>
+  <ng-container *ngIf="(teamInfo$ | async) != null">
+    <mat-card-title
+      >Team Info: {{ (teamInfo$ | async)!.teamName }}</mat-card-title
+    >
+
+    <ng-container *ngIf="(teamInfo$ | async)!.confirmed">
+      <div class="alert alert-success" role="alert">
+        Your participation has been confirmed! Check back here when the CTF
+        starts to start your Vulnbox.
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="!(teamInfo$ | async)!.confirmed">
+      <!-- Team has not yet checked in -->
+      <div class="alert alert-success" role="alert">
+        Your participation hasn't been confirmed yet! Please check in
+        <ng-container
+          *ngIf="!(ctfCheckinOpen$ | async) && !(ctfInProgress$ | async)"
+        >
+          <!-- Checkin has not started yet -->
+          after
+          {{ (ctfInfo$ | async)!.checkInBeginTime | date: "full" }}
+          .
+        </ng-container>
+        <ng-container *ngIf="ctfCheckinOpen$ | async">
+          before
+          {{ (ctfInfo$ | async)!.checkInEndTime | date: "full" }}.
+        </ng-container>
+      </div>
+    </ng-container>
+
+    <ng-container
+      *ngIf="!(teamInfo$ | async)!.confirmed && (ctfInProgress$ | async)"
+    >
+      You did not confirm your participation before
+      {{ (ctfInfo$ | async)!.checkInEndTime | date: "full" }}. The Checkin is
+      over.
+    </ng-container>
+
+    <button
+      mat-raised-button
+      *ngIf="!(teamInfo$ | async)!.confirmed"
+      [disabled]="!(ctfCheckinOpen$ | async)"
+      color="primary"
+      (click)="checkin()"
+    >
+      Check In!
+    </button>
+  </ng-container>
+</mat-card>
+
+<mat-card *ngIf="(teamInfo$ | async) != null">
+  <mat-card-title>Your Vulnbox</mat-card-title>
+  <mat-card-content>
+    <div class="one-line">
+      <mat-form-field appearance="outline">
+        <mat-label>Vulnbox Status</mat-label>
+        <input
+          matInput
+          type="text"
+          [value]="(teamInfo$ | async)!.vulnboxStatus || 'coming soon'"
+          disabled
+        />
+        <button
+          mat-icon-button
+          matSuffix
+          [cdkCopyToClipboard]="
+            (teamInfo$ | async)!.internalIpAddress || 'coming soon'
+          "
+          (click)="copiedToast()"
+          attr.aria-label="Copy"
+        >
+          <mat-icon>content_copy</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <button
+        mat-raised-button
+        *ngIf="
+          (ctfInProgress$ | async) &&
+          (teamInfo$ | async)!.vulnboxStatus == vulnboxStatus.None
+        "
+        (click)="start()"
+      >
+        Create VM
+      </button>
+
+      <button
+        mat-raised-button
+        *ngIf="(teamInfo$ | async)!.vulnboxStatus == vulnboxStatus.Created"
+        (click)="forceReboot()"
+        color="warn"
+      >
+        Force Reboot VM
+      </button>
+    </div>
+
+    <div class="one-line">
+      <mat-form-field appearance="outline">
+        <mat-label>External IP Address</mat-label>
+        <input
+          matInput
+          type="text"
+          [value]="(teamInfo$ | async)!.externalIpAddress || 'coming soon'"
+          disabled
+        />
+        <button
+          mat-icon-button
+          matSuffix
+          [cdkCopyToClipboard]="
+            (teamInfo$ | async)!.externalIpAddress || 'coming soon'
+          "
+          (click)="copiedToast()"
+          attr.aria-label="Copy"
+        >
+          <mat-icon>content_copy</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+    <div class="one-line">
+      <mat-form-field appearance="outline">
+        <mat-label>Root Password</mat-label>
+        <input
+          matInput
+          type="text"
+          [value]="(teamInfo$ | async)!.rootPassword || 'coming soon'"
+          disabled
+        />
+        <button
+          mat-icon-button
+          matSuffix
+          [cdkCopyToClipboard]="
+            (teamInfo$ | async)!.rootPassword || 'coming soon'
+          "
+          (click)="copiedToast()"
+          attr.aria-label="Copy"
+        >
+          <mat-icon>content_copy</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+    <div class="one-line">
+      <mat-form-field appearance="outline">
+        <mat-label>Internal IP Address</mat-label>
+        <input
+          matInput
+          type="text"
+          [value]="(teamInfo$ | async)!.internalIpAddress || 'coming soon'"
+          disabled
+        />
+        <button
+          mat-icon-button
+          matSuffix
+          [cdkCopyToClipboard]="
+            (teamInfo$ | async)!.internalIpAddress || 'coming soon'
+          "
+          (click)="copiedToast()"
+          attr.aria-label="Copy"
+        >
+          <mat-icon>content_copy</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+
+    <div class="one-line">
+      <a mat-raised-button href="/api/account/vpnconfig" target="_blank">
+        Download OpenVpn Configuration
+      </a>
+      <a mat-raised-button href="/api/account/wireguardconfig" target="_blank">
+        Download WireGuard Configuration
+      </a>
+      <a mat-raised-button href="/api/attackinfo" target="_blank">
+        Attackinfo
+      </a>
+    </div>
+    <div class="one-line">
+      <p style="color: red">
+        Only use the WireGuard configuration if you are self-hosting! Connecting
+        via WireGuard when using cloud-hosted vulnboxes WILL break stuff!
+      </p>
+    </div>
+  </mat-card-content>
+  <!-- TODO: Add AttackInfo -->
+</mat-card>
+<!-- <mat-vertical-stepper [linear]="true" #stepper>
+  <mat-step>
+    <form>
+      <ng-template matStepLabel>Fill out your name</ng-template>
+      <mat-form-field>
+        <mat-label>Name</mat-label>
+        <input
+          matInput
+          placeholder="Last name, First name"
+          formControlName="firstCtrl"
+          required
+        />
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step>
+    <form>
+      <ng-template matStepLabel>Fill out your address</ng-template>
+      <mat-form-field>
+        <mat-label>Address</mat-label>
+        <input
+          matInput
+          formControlName="secondCtrl"
+          placeholder="Ex. 1 Main St, New York, NY"
+          required
+        />
+      </mat-form-field>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button matStepperNext>Next</button>
+      </div>
+    </form>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel>Done</ng-template>
+    <p>You are now done.</p>
+    <div>
+      <button mat-button matStepperPrevious>Back</button>
+      <button mat-button (click)="stepper.reset()">Reset</button>
+    </div>
+  </mat-step>
+</mat-vertical-stepper> -->

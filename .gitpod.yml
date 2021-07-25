@@ -1,0 +1,60 @@
+
+image:
+  file: .gitpod.Dockerfile
+
+# List the start up tasks. Learn more https://www.gitpod.io/docs/config-start-tasks/
+tasks:
+  - name: Setup
+    before: | 
+      dotnet tool install --global dotnet-ef
+      export PATH="$PATH:$HOME/.dotnet/tools/"
+      cp example.env .env
+  - name: Run Mock
+    before: | 
+      cd mock
+      python3 simulate_ctf.py
+  - name: Frontend
+    env:
+      NG_CLI_ANALYTICS: ci
+    before: |
+      cd EnoLandingPageBackend/ClientApp
+      npm install
+      npm run build
+    command: |
+      cd EnoLandingPageBackend/ClientApp
+      npm start
+  - name: Backend
+    before: |
+      mkdir EnoLandingPageBackend/data
+      cp EnoLandingPageBackend/appsettings.example.json EnoLandingPageBackend/appsettings.Development.json
+    command: |
+      cd EnoLandingPageBackend
+      dotnet watch run
+    openMode: split-right
+
+# List the ports to expose. Learn more https://www.gitpod.io/docs/config-ports/
+ports:
+  - port: 5000
+    onOpen: notify
+  - port: 5001
+    onOpen: ignore
+  - port: 4200
+    onOpen: ignore
+
+vscode:
+  extensions:
+    - ms-azuretools.vscode-docker
+    - angular.ng-template
+    - esbenp.prettier-vscode
+    - k--kato.docomment
+    - https://github.com/OmniSharp/omnisharp-vscode/releases/download/v1.23.12/csharp-1.23.12.vsix
+
+github:
+  prebuilds:
+    master: true
+    branches: true
+    pullRequests: true
+    pullRequestsFromForks: true
+    addCheck: false
+    addComment: false
+    addBadge: true

@@ -1,0 +1,89 @@
+#scoreboard-title {
+  margin: 10px 0;
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
+  vertical-align: middle;
+
+  .middle {
+    align-self: center;
+
+    h2 {
+      margin: 0;
+    }
+  }
+
+  .chevrons {
+    align-self: center;
+  }
+}
+
+.loading-progress-bar {
+  visibility: hidden;
+
+  &.isLoading {
+    visibility: visible;
+  }
+}
+
+.flagstore-icon.exploited {
+  color: #c62828;
+}
+
+.team-cell {
+  display: flex;
+
+  .teamId {
+    align-self: center;
+    margin: 2px 8px 2px 5px;
+    text-align: right;
+  }
+
+  .team-logo {
+    max-width: 64px;
+    max-height: 64px;
+    // Fix minor height problem
+    font: unset;
+  }
+
+  .texts {
+    padding: 2px 8px;
+  }
+}
+
+.sla {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  grid-column-gap: 0px;
+  grid-row-gap: 0px;
+  text-align: center;
+
+  .div1 {
+    grid-area: 1 / 1 / 2 / 2;
+  }
+  .div2 {
+    grid-area: 1 / 2 / 2 / 3;
+  }
+  .div3 {
+    grid-area: 1 / 3 / 2 / 4;
+  }
+  .div4 {
+    grid-area: 2 / 1 / 3 / 2;
+  }
+  .div5 {
+    grid-area: 2 / 2 / 3 / 3;
+  }
+  .div6 {
+    grid-area: 2 / 3 / 3 / 4;
+  }
+  .div7 {
+    grid-area: 3 / 1 / 4 / 2;
+  }
+  .div8 {
+    grid-area: 3 / 2 / 4 / 3;
+  }
+  .div9 {
+    grid-area: 3 / 3 / 4 / 4;
+  }
+}

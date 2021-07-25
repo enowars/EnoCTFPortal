@@ -1,8 +1,9 @@
 .dockerignore
 Dockerfile
 docker-compose.yml
-bin/
-obj/
+**/bin/
+**/obj/
+**/node_modules/**/*
 .vs
 .vs-code
 .git
@@ -17,6 +18,4 @@ obj/
 /EnoLandingPageFrontend/bin
 /EnoLandingPageFrontend/obj
 /data
-/scoreboard
 /sessions
-

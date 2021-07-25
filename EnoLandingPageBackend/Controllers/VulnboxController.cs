@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Net.Http;
     using System.Threading.Tasks;
+    using EnoLandingPageBackend.Database;
     using EnoLandingPageBackend.Hetzner;
     using EnoLandingPageCore;
     using EnoLandingPageCore.Hetzner;
@@ -12,6 +13,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
 
+    // TODO: Move to Account Controller
     [Authorize]
     [ApiController]
     [Route("/api/[controller]/[action]")]
@@ -20,12 +22,14 @@
         private readonly ILogger<VulnboxController> logger;
         private readonly HetznerCloudApi hetznerApi;
         private readonly LandingPageSettings settings;
+        private readonly LandingPageDatabase db;
 
-        public VulnboxController(ILogger<VulnboxController> logger, HetznerCloudApi hetznerApi, LandingPageSettings settings)
+        public VulnboxController(ILogger<VulnboxController> logger, HetznerCloudApi hetznerApi, LandingPageSettings settings, LandingPageDatabase db)
         {
             this.logger = logger;
             this.hetznerApi = hetznerApi;
             this.settings = settings;
+            this.db = db;
         }
 
         [HttpPost]
@@ -35,7 +39,11 @@
             this.logger.LogInformation($"StartVulnbox {teamId}");
             if (this.settings.StartTime.ToUniversalTime() > DateTime.UtcNow)
             {
-                return this.Forbid();
+                return this.BadRequest("The CTF has not started.");
+            }
+            if (!await this.db.IsCheckedIn(this.GetTeamId(), this.HttpContext.RequestAborted))
+            {
+                return BadRequest("Checkin is already over.");
             }
 
             try
@@ -51,7 +59,7 @@
                 return this.UnprocessableEntity($"{nameof(OtherRequestRunningException)}");
             }
 
-            return this.NoContent();
+            return this.Ok();
         }
 
         [HttpPost]
@@ -61,11 +69,15 @@
             this.logger.LogInformation($"ResetVulnbox {teamId}");
             if (this.settings.StartTime.ToUniversalTime() > DateTime.UtcNow)
             {
-                return this.Forbid();
+                return this.BadRequest("The CTF has not started.");
+            }
+            if (!await this.db.IsCheckedIn(this.GetTeamId(), this.HttpContext.RequestAborted))
+            {
+                return BadRequest("Checkin is already over.");
             }
 
             await this.hetznerApi.Call(teamId, HetznerCloudApiCallType.Reset);
-            return this.NoContent();
+            return this.Ok();
         }
     }
 }

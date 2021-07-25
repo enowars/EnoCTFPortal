@@ -83,6 +83,21 @@ namespace EnoLandingPageBackend.Migrations
                     b.ToTable("Vulnboxes");
                 });
 
+            modelBuilder.Entity("EnoLandingPageCore.Models.DatabaseScoreboard", b =>
+                {
+                    b.Property<long>("roundId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("scoreboardString")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("roundId");
+
+                    b.ToTable("Scoreboards");
+                });
+
             modelBuilder.Entity("EnoLandingPageCore.Database.LandingPageTeamVulnbox", b =>
                 {
                     b.HasOne("EnoLandingPageCore.Database.LandingPageTeam", "LandingPageTeam")

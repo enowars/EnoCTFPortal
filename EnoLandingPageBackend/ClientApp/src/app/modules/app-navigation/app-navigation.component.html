@@ -1,0 +1,217 @@
+<!-- Navigation -->
+<mat-sidenav-container>
+  <mat-sidenav #sidenav [mode]="'push'" [position]="'end'">
+    <nav id="pb-nav-mobile">
+      <mat-nav-list>
+        <mat-list-item
+          [routerLink]="[routes.scoreboard]"
+          routerLinkActive="mat-elevation-z4"
+          (click)="sidenav.close()"
+          *ngIf="(ctfInProgress$ | async) || staticHosting"
+        >
+          <mat-icon mat-list-icon>score</mat-icon>
+          Scoreboard
+        </mat-list-item>
+        <mat-list-item
+          [routerLink]="[routes.information]"
+          routerLinkActive="mat-elevation-z4"
+          (click)="sidenav.close()"
+        >
+          <mat-icon mat-list-icon>gavel</mat-icon>
+          Information
+        </mat-list-item>
+        <mat-list-item
+          [routerLink]="[routes.teams]"
+          routerLinkActive="mat-elevation-z4"
+          (click)="sidenav.close()"
+          *ngIf="!(ctfInProgress$ | async) && !staticHosting"
+        >
+          <mat-icon mat-list-icon>groups</mat-icon>
+          Teams
+        </mat-list-item>
+        <mat-list-item
+          [routerLink]="[routes.contact]"
+          routerLinkActive="mat-elevation-z4"
+          (click)="sidenav.close()"
+        >
+          <mat-icon mat-list-icon>contact_support</mat-icon>
+          Contact
+        </mat-list-item>
+        <a
+          mat-list-item
+          href="https://enowars.github.io/docs/play/general.html"
+          target="_blank"
+          (click)="sidenav.close()"
+        >
+          <mat-icon mat-list-icon>open_in_new</mat-icon>
+          Documentation
+        </a>
+        <mat-divider></mat-divider>
+        <ng-container *ngIf="!(authenticated$ | async)">
+          <a
+            mat-list-item
+            [href]="'/api/account/login?redirectUri=' + currentUrl"
+            (click)="sidenav.close()"
+            *ngIf="!(authenticated$ | async) && !staticHosting"
+          >
+            <mat-icon mat-list-icon>login</mat-icon>
+            Login
+          </a>
+        </ng-container>
+        <ng-container *ngIf="authenticated$ | async">
+          <button
+            mat-list-item
+            [routerLink]="[routes.profile]"
+            routerLinkActive="mat-elevation-z4"
+            (click)="sidenav.close()"
+          >
+            <mat-icon mat-list-icon>group</mat-icon>
+            <ng-container *ngIf="info$ | async as info">
+              {{ info.teamName || "My Team" }}
+            </ng-container>
+          </button>
+        </ng-container>
+      </mat-nav-list>
+    </nav>
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <div class="navigation mat-elevation-z5">
+      <nav>
+        <mat-toolbar>
+          <mat-toolbar-row class="mat-elevation-z6">
+            <div class="left app-title">
+              <button mat-icon-button (click)="toggleTheme()">
+                <mat-icon>{{ getThemeIcon() }}</mat-icon>
+              </button>
+              <button mat-button [routerLink]="['/']">
+                <span class="mat-display-1" id="title">
+                  <ng-container *ngIf="ctfInfo$ | async as ctfInfo">{{
+                    ctfInfo.title
+                  }}</ng-container>
+                  <ng-container *ngIf="!(ctfInfo$ | async)"
+                    >ENOWARS</ng-container
+                  >
+                </span>
+              </button>
+            </div>
+
+            <div class="pb-spacer"></div>
+            <div class="pb-center-element-orthogonal pb-hide-below-med">
+              <a
+                mat-button
+                href="https://enowars.github.io/docs/play/general.html"
+                target="_blank"
+                >Documentation
+                <mat-icon inline="true">open_in_new</mat-icon>
+              </a>
+              <button
+                mat-button
+                [routerLink]="[routes.scoreboard]"
+                routerLinkActive="mat-stroked-button"
+                *ngIf="(ctfInProgress$ | async) || staticHosting"
+              >
+                Scoreboard
+              </button>
+              <button
+                mat-button
+                [routerLink]="[routes.teams]"
+                routerLinkActive="mat-stroked-button"
+                *ngIf="!(ctfInProgress$ | async) && !staticHosting"
+              >
+                Teams
+              </button>
+              <button
+                mat-button
+                [routerLink]="[routes.information]"
+                routerLinkActive="mat-stroked-button"
+                *ngIf="!staticHosting"
+              >
+                Information
+              </button>
+              <button
+                mat-button
+                [routerLink]="[routes.contact]"
+                routerLinkActive="mat-stroked-button"
+              >
+                Contact
+              </button>
+              <ng-container *ngIf="!(authenticated$ | async) && !staticHosting">
+                <a
+                  mat-button
+                  [href]="'/api/account/login?redirectUri=' + currentUrl"
+                >
+                  <mat-icon inline="true">login</mat-icon>
+                  Login
+                </a>
+              </ng-container>
+              <ng-container *ngIf="(authenticated$ | async) && !staticHosting">
+                <button
+                  mat-button
+                  [routerLink]="[routes.profile]"
+                  routerLinkActive="mat-stroked-button"
+                >
+                  <!-- [matMenuTriggerFor]="personalmenu" -->
+                  <mat-icon inline="true">group</mat-icon>
+                  <ng-container *ngIf="info$ | async as info">
+                    {{ info.teamName || "My Team" }}
+                  </ng-container>
+                </button>
+              </ng-container>
+            </div>
+            <div class="pb-hide-on-med-and-up">
+              <button mat-icon-button (click)="sidenav.toggle()">
+                <mat-icon>menu</mat-icon>
+              </button>
+            </div>
+          </mat-toolbar-row>
+          <mat-toolbar-row class="banner" *ngIf="ctfInfo$ | async as ctfInfo">
+            <ng-container *ngIf="ctfRegistrationOpen$ | async">
+              CTF Registration closing in&nbsp;
+              <ng-container *ngTemplateOutlet="countdown"></ng-container>&nbsp;
+              <a [href]="'/api/account/login?redirectUri=' + currentUrl"
+                >Register Now!</a
+              >
+            </ng-container>
+            <ng-container *ngIf="ctfCheckinOpen$ | async">
+              CTF CheckIn closing in&nbsp;
+              <ng-container *ngTemplateOutlet="countdown"></ng-container>
+              .&nbsp;
+              <a [href]="'/api/account/login?redirectUri=' + currentUrl"
+                >Check in now!</a
+              >
+            </ng-container>
+            <ng-container *ngIf="ctfIsOver$ | async">
+              The CTF is over. Thanks for playing!
+            </ng-container>
+            <ng-container
+              *ngIf="
+                !(ctfInProgress$ | async) &&
+                !(ctfCheckinOpen$ | async) &&
+                !(ctfRegistrationOpen$ | async) &&
+                !(ctfIsOver$ | async)
+              "
+            >
+              CTF starts in&nbsp;
+              <ng-container *ngTemplateOutlet="countdown"></ng-container>
+            </ng-container>
+            <ng-container *ngIf="ctfInProgress$ | async">
+              CTF ends in&nbsp;
+              <ng-container *ngTemplateOutlet="countdown"></ng-container>
+            </ng-container>
+          </mat-toolbar-row>
+        </mat-toolbar>
+      </nav>
+    </div>
+
+    <ng-content>
+      <!-- Here goes the content -->
+    </ng-content>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+
+<ng-template #countdown>
+  <countdown
+    [config]="countDownConfig"
+    (event)="countdownend($event)"
+  ></countdown>
+</ng-template>

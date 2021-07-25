@@ -3,9 +3,11 @@ namespace EnoLandingPageBackend
     using System;
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
+    using System.IO;
     using System.Linq;
     using System.Net.Http;
     using System.Net.Http.Headers;
+    using System.Reflection;
     using System.Security.Claims;
     using System.Text.Json;
     using System.Threading.Tasks;
@@ -30,6 +32,9 @@ namespace EnoLandingPageBackend
     using Microsoft.Extensions.Hosting;
     using Microsoft.Extensions.Logging;
     using Microsoft.OpenApi.Models;
+    using Microsoft.AspNetCore.SpaServices.AngularCli;
+    using System.Text.Json.Serialization;
+    using EnoLandingPageBackend.Cache;
 
     public class Startup
     {
@@ -43,10 +48,13 @@ namespace EnoLandingPageBackend
 
         public IWebHostEnvironment Environment { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        /// <summary>
+        ///  This method gets called by the runtime. Use this method to add services to the container.
+        /// </summary>
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<LandingPageSettings>(this.Configuration.GetSection("EnoLandingPage"));
+            // TODO: Validation should be done earlier?
             var enoLandingPageSettings = this.Configuration
                 .GetSection("EnoLandingPage")
                 .Get<LandingPageSettings>();
@@ -124,14 +132,33 @@ namespace EnoLandingPageBackend
                     };
                 });
             services.AddAuthorization();
-            services.AddControllers();
+            services.AddControllers().AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                options.JsonSerializerOptions.IgnoreNullValues = true;
+            });
             services.AddDbContextPool<LandingPageDatabaseContext>(options => options.UseSqlite(LandingPageDatabaseContext.CONNECTIONSTRING));
             services.AddScoped<LandingPageDatabase>();
+            // Register Swagger services 
+            // TODO: Add examples
+            //services.AddSwaggerExamplesFromAssembyOf<ExampleClasses>()
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "EnoLandingPage", Version = "v1" });
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+                c.EnableAnnotations();
+                // c.SchemaFilter<EnumSchemaFilter>();
             });
             services.AddSingleton<HetznerCloudApi>();
+            services.AddSingleton<ScoreboardCache>();
+            services.AddSingleton<CustomMemoryCache<string>>();
+
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "ClientApp/dist/ClientApp";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -143,13 +170,24 @@ namespace EnoLandingPageBackend
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "EnoLandingPageBackend v1"));
+                app.UseSwaggerUI(c =>
+                {
+                    c.DisplayOperationId();
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "EnoLandingPageBackend v1");
+                });
             }
             else
             {
                 app.UseHttpsRedirection();
             }
 
+            app.UseStaticFiles();
+            if (!env.IsDevelopment())
+            {
+                app.UseSpaStaticFiles();
+            }
+
+            db.Migrate();
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
@@ -157,16 +195,28 @@ namespace EnoLandingPageBackend
             {
                 endpoints.MapControllers();
             });
-            db.Migrate();
-            var rewrite = new RewriteOptions()
-                .AddRewrite("^$", "/index.html", true)
-                .AddRewrite(@"^[\w\/]*$", "/index.html", true);
-            app.UseRewriter(rewrite);
-            app.UseStaticFiles(new StaticFileOptions()
+
+            //var rewrite = new RewriteOptions()
+            //    .AddRewrite("^$", "/index.html", true)
+            //    .AddRewrite(@"^[\w\/]*$", "/index.html", true);
+            //app.UseRewriter(rewrite);
+            //app.UseStaticFiles(new StaticFileOptions()
+            //{
+            //    ServeUnknownFileTypes = true,
+            //    HttpsCompression = HttpsCompressionMode.Compress,
+            //    DefaultContentType = "application/octet-stream",
+            //});
+
+            app.UseSpa(spa =>
             {
-                ServeUnknownFileTypes = true,
-                HttpsCompression = HttpsCompressionMode.Compress,
-                DefaultContentType = "application/octet-stream",
+                // To learn more about options for serving an Angular SPA from ASP.NET Core,
+                // see https://go.microsoft.com/fwlink/?linkid=864501
+                spa.Options.SourcePath = "ClientApp";
+
+                if (env.IsDevelopment())
+                {
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
+                }
             });
         }
     }

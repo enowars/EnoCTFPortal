@@ -1,0 +1,22 @@
+name: docker-compose build
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  schedule:
+    - cron: "0 0 * * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: add .env file
+        run: touch .env
+      - name: run docker-compose build
+        run: docker-compose build

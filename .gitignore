@@ -351,9 +351,13 @@ MigrationBackup/
 
 # EnoLandingPage
 /EnoLandingPageBackend/data
+/EnoLandingPageBackend/enginedata/*.json
 /EnoLandingPageBackend/appsettings.Development.json
 /EnoLandingPageBackend/wwwroot
 /data
 /scoreboard
 /sessions
-docker-compose.yml
+.env
+mock/*.json
+mock/*.info
+

@@ -1,0 +1,26 @@
+<mat-card>
+  <mat-card-content>
+    <h2>Timing</h2>
+    <li>
+      The game will start on
+      {{ (ctfInfo$ | async)!.ctfStartTime | date: "full" }}.
+    </li>
+    <li>
+      You must register before
+      {{ (ctfInfo$ | async)!.registrationCloseTime | date: "full" }}.
+    </li>
+    <li>
+      You must <a href="/profile">check in</a> between
+      {{ (ctfInfo$ | async)!.checkInBeginTime | date: "full" }} and
+      {{ (ctfInfo$ | async)!.checkInEndTime | date: "full" }}
+      .
+    </li>
+    <li>
+      You must <a href="/profile">start your vulnbox</a> once the game starts.
+    </li>
+  </mat-card-content>
+</mat-card>
+
+<mat-card>
+  <markdown [src]="'/assets/customization/rules.md'"></markdown>
+</mat-card>

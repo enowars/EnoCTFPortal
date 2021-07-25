@@ -35,6 +35,11 @@
             this.settings = settings;
         }
 
+        /// <summary>
+        /// Login to the Portal.
+        /// </summary>
+        /// <param name="redirectUri">The URL the User will be redirected after succesfull login.</param>
+        /// <returns></returns>
         [HttpGet]
         public ActionResult Login(string redirectUri) // TODO 404 foo makes ReturnUrl out of this
         {
@@ -57,7 +62,7 @@
                 throw new Exception($"OAuth2 failed: ctftimeid={ctftimeIdClaim} teamname={teamname} claims={this.HttpContext.User.Claims.Count()}");
             }
 
-            if (DateTime.UtcNow > this.settings.StartTime.AddHours(-this.settings.RegistrationCloseOffset).ToUniversalTime() &&
+            if (DateTime.UtcNow > this.settings.GetRegistrationCloseTime() &&
                 !await this.db.CtftimeTeamExists(ctftimeId, this.HttpContext.RequestAborted))
             {
                 return this.Redirect("/registrationclosed");
@@ -85,7 +90,7 @@
 
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult> Info()
+        public async Task<ActionResult<TeamDetailsMessage>> Info()
         {
             var team = await this.db.GetTeamAndVulnbox(this.GetTeamId(), this.HttpContext.RequestAborted);
             return this.Ok(new TeamDetailsMessage(
@@ -103,15 +108,28 @@
         [Authorize]
         public async Task<ActionResult> VpnConfig()
         {
-            var team = await this.db.GetTeamAndVulnbox(this.GetTeamId(), this.HttpContext.RequestAborted);
-            if (team.Vulnbox.ExternalAddress == null)
+            if (!await this.db.IsCheckedIn(this.GetTeamId(), this.HttpContext.RequestAborted))
             {
-                return this.NotFound();
+                return BadRequest("Checkin is already over.");
             }
-
+            var team = await this.db.GetTeamAndVulnbox(this.GetTeamId(), this.HttpContext.RequestAborted);
             var config = System.IO.File.ReadAllText($"{LandingPageBackendUtil.TeamDataDirectory}{Path.DirectorySeparatorChar}teamdata{Path.DirectorySeparatorChar}team{team.Id}{Path.DirectorySeparatorChar}client.conf");
             var contentType = "application/force-download";
-            return this.File(Encoding.ASCII.GetBytes(config.Replace("REMOTE_IP_PLACEHOLDER", team.Vulnbox.ExternalAddress)), contentType, "client.conf");
+            return this.File(Encoding.ASCII.GetBytes(config), contentType, "client.conf");
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult> WireguardConfig()
+        {
+            if (!await this.db.IsCheckedIn(this.GetTeamId(), this.HttpContext.RequestAborted))
+            {
+                return BadRequest("Checkin is already over.");
+            }
+            var team = await this.db.GetTeamAndVulnbox(this.GetTeamId(), this.HttpContext.RequestAborted);
+            var config = System.IO.File.ReadAllText($"{LandingPageBackendUtil.TeamDataDirectory}{Path.DirectorySeparatorChar}teamdata{Path.DirectorySeparatorChar}team{team.Id}{Path.DirectorySeparatorChar}wireguard.conf");
+            var contentType = "application/force-download";
+            return this.File(Encoding.ASCII.GetBytes(config), contentType, "wireguard.conf");
         }
 
         [HttpPost]
@@ -119,14 +137,17 @@
         public async Task<ActionResult> CheckIn()
         {
             long teamId = this.GetTeamId();
-            if (DateTime.UtcNow > this.settings.StartTime.AddHours(-this.settings.CheckInEndOffset).ToUniversalTime() ||
-                this.settings.StartTime.AddHours(-this.settings.CheckInBeginOffset).ToUniversalTime() > DateTime.UtcNow)
+            if (DateTime.UtcNow > this.settings.GetCheckInCloseTime())
             {
-                return this.Forbid();
+                return this.BadRequest("Checkin is already over.");
+            }
+            if (this.settings.GetCheckInBeginTime() > DateTime.UtcNow)
+            {
+                return this.BadRequest("Checkin has not yet begun.");
             }
 
             await this.db.CheckIn(teamId, this.HttpContext.RequestAborted);
-            return this.NoContent();
+            return this.Ok();
         }
     }
 }

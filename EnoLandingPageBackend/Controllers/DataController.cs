@@ -27,23 +27,29 @@
         }
 
         [HttpGet]
-        public IActionResult CtfInfo()
+        public ActionResult<CtfInfoMessage> CtfInfo()
         {
             return this.Ok(new CtfInfoMessage(
+                this.settings.Title,
                 this.settings.StartTime.ToUniversalTime(),
-                this.settings.RegistrationCloseOffset,
-                this.settings.CheckInBeginOffset,
-                this.settings.CheckInEndOffset));
+                this.settings.GetCtfEndTime(),
+                this.settings.GetRegistrationCloseTime(),
+                this.settings.GetCheckInBeginTime(),
+                this.settings.GetCheckInCloseTime()));
         }
 
+        /// <summary>
+        /// Get all Teams.
+        /// </summary>
+        /// <returns>A Message of Teams participating and not participating.</returns>
         [HttpGet]
-        public async Task<IActionResult> Teams()
+        public async Task<ActionResult<TeamsMessage>> Teams()
         {
             var teams = await this.db.GetTeams(this.HttpContext.RequestAborted);
             return this.Json(
                 new TeamsMessage(
-                    teams.Where(t => t.Confirmed).Select(t => new TeamMessage(t.Name, t.CtftimeId, t.LogoUrl, t.CountryCode)).ToList(),
-                    teams.Where(t => !t.Confirmed).Select(t => new TeamMessage(t.Name, t.CtftimeId, t.LogoUrl, t.CountryCode)).ToList()));
+                    teams.Where(t => t.Confirmed).Select(t => new TeamMessage(t.Id, t.Name, t.CtftimeId, t.LogoUrl, t.CountryCode)).ToList(),
+                    teams.Where(t => !t.Confirmed).Select(t => new TeamMessage(t.Id, t.Name, t.CtftimeId, t.LogoUrl, t.CountryCode)).ToList()));
         }
 
         [HttpGet]
@@ -53,6 +59,8 @@
                     .Where(t => t.Confirmed)
                     .Select(t => Utils.VulnboxIpAddressForId(t.Id));
 
+            // Not good? 
+            // https://stackoverflow.com/questions/10615797/utility-of-http-header-content-type-application-force-download-for-mobile
             return this.File(
                 Encoding.ASCII.GetBytes(string.Join("\n", teams)),
                 "application/force-download",
