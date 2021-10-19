@@ -1,0 +1,110 @@
+﻿@page "/setup"
+
+@using EnoLandingPageFrontend.Services
+@using EnoLandingPageCore.Messages
+@using System.Globalization
+@inject LandingPageDataApiService DataService
+
+<div class="container p-3">
+    <h1>Setup</h1>
+    <hr />
+    <div>
+        <h3>Summary</h3>
+        <ul>
+            <li>
+                Vulnboxes and VPN servers are provided by us, you don't have to provide or take care of anything.
+            </li>
+            <li>
+                The game will start on @ctfInfo?.StartTime.ToString() UTC.
+            </li>
+            <li>
+                You must register before @ctfInfo?.StartTime.AddHours(-ctfInfo.RegistrationCloseOffset).ToString() UTC.
+            </li>
+            <li>
+                You must <a href="/profile">check in</a> between @ctfInfo?.StartTime.AddHours(-ctfInfo.CheckInBeginOffset).ToString() UTC and @ctfInfo?.StartTime.AddHours(-ctfInfo.CheckInEndOffset).ToString() UTC.
+            </li>
+            <li>
+                You must <a href="/profile">start your vulnbox</a> once the game starts.
+            </li>
+            <li>
+                A round lasts 60 seconds, flags are valid for several rounds.
+            </li>
+            <li>
+                Flag format: <code>ENO[A-Za-z0-9+\/=]{48}</code>
+            </li>
+            <li>
+                Flag submission: <code>nc 10.0.13.37 1337</code>
+            </li>
+            <li>
+                You will find an <a href="https://github.com/arkime/arkime" target="_blank">Arkime</a> installation on your vulnbox. Arkime is a traffic analysis tool, not a vulnerable service.
+            </li>
+        </ul>
+
+        <h3>Setup Details</h3>
+        <p>
+            We will be providing hosted vulnboxes for all teams. You can start your vulnbox through the registration page after the start of the CTF.
+            Note that you must check in before the start of the CTF, otherwise you will not be able to start your vulnbox!
+        </p>
+        <p>
+            You can download an OpenVPN configuration file which allows you to access your vulnbox as well as the rest of the competition network.
+            You will be able to access your vulnbox immediately after the start, whereas the rest of the competition network will only be reachable after the network has opened.
+        </p>
+        <p>
+            The vulnbox has the IP address 10.1.teamID.1, your team network will be assigned IP addresses from the IP range 10.1.teamID.130 to 10.1.teamID.254.
+            While we are blocking direct access to your team VPN from other teams, your device will be reachable from the vulnbox and thus might be targetable by teams who get remote code execution on your vulnbox.
+            Please take measures to protect your device used to access the network, e.g. by setting up a firewall!
+        </p>
+        <center><img src="/images/network.png" /></center>
+        <p>
+            For security reasons, the access to Arkime/Moloch is blocked over the network and it is only accessible from localhost.
+            You can use SSH port forwarding to access your Arkime/Moloch by running <code>ssh -L 8005:localhost:8005 root@@</code>.
+            Then you will be able to access it on your local machine by opening http://localhost:8005 and logging in with username and password moloch.
+        </p>
+
+        <h3>Attack Info</h3>
+        <p>
+            The endpoint <code>https://bambi6.enoflag.de/api/attackinfo</code> delivers a JSON that is updated at the start of every round and has the following format:
+            <code>
+                {
+                "availableTeams": [
+                "10.1.52.1"
+                ],
+                "services": {
+                "service_1": {
+                "10.1.52.1": {
+                "7": [
+                [ "user73" ],
+                [ "user5" ]
+                ],
+                "8": [
+                [ "user96" ],
+                [ "user314" ]
+                ]
+                }
+                }
+                }
+                }
+            </code>
+            The <code>availableTeams</code> field contains a list of team addresses that were at least partially up in the previous round.
+            The <code>services</code> field will, for some services, provide you with additional information that may be helpful or necessary to exploit a given service.
+            This is typically something like the usernaem of the account containing the flag, but the exact format depends on the service.
+            These are grouped by service, team address, and type of flag.
+        </p>
+
+        <h3>Scoring</h3>
+        <p>We are currently using the scoring formula by <a href="https://2019.faustctf.net/information/rules/">Faust CTF</a>.</p>
+
+        <h3>Social Conduct</h3>
+        <p>The vulnerable services of your opponents are your only valid targets. Do not engage anything else!</p>
+        <p>Do not attempt to exhaust resources on your opponents' vulnboxes, for example by sending excessive amounts of requests or exploiting vulnerabilities leading to a denial of service.</p>
+    </div>
+</div>
+
+@code {
+    private CtfInfoMessage? ctfInfo;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ctfInfo = await DataService.GetCtfInfo();
+    }
+}
