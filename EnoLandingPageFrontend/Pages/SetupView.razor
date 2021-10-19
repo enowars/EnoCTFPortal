@@ -64,26 +64,8 @@
         <h3>Attack Info</h3>
         <p>
             The endpoint <code>https://bambi6.enoflag.de/api/attackinfo</code> delivers a JSON that is updated at the start of every round and has the following format:
-            <code>
-                {
-                "availableTeams": [
-                "10.1.52.1"
-                ],
-                "services": {
-                "service_1": {
-                "10.1.52.1": {
-                "7": [
-                [ "user73" ],
-                [ "user5" ]
-                ],
-                "8": [
-                [ "user96" ],
-                [ "user314" ]
-                ]
-                }
-                }
-                }
-                }
+            <code style="display:block; white-space:pre-wrap">
+                @sampleAttackInfo
             </code>
             The <code>availableTeams</code> field contains a list of team addresses that were at least partially up in the previous round.
             The <code>services</code> field will, for some services, provide you with additional information that may be helpful or necessary to exploit a given service.
@@ -101,7 +83,26 @@
 </div>
 
 @code {
-    private CtfInfoMessage? ctfInfo;
+            private CtfInfoMessage? ctfInfo;
+            private string sampleAttackInfo = @"{
+    ""availableTeams"": [
+        ""10.1.52.1""
+    ],
+    ""services"": {
+        ""service_1"": {
+            ""10.1.52.1"": {
+                ""7"": [
+                    [ ""user73"" ],
+                    [ ""user5"" ]
+                ],
+                ""8"": [
+                    [ ""user96"" ],
+                    [ ""user314"" ]
+                ]
+            }
+        }
+    }
+}";
 
     protected override async Task OnInitializedAsync()
     {
