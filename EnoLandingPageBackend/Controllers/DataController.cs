@@ -51,7 +51,7 @@
         {
             var teams = (await this.db.GetTeams(this.HttpContext.RequestAborted))
                     .Where(t => t.Confirmed)
-                    .Select(t => $"10.0.0.{t.Id}");
+                    .Select(t => Utils.VulnboxIpAddressForId(t.Id));
 
             return this.File(
                 Encoding.ASCII.GetBytes(string.Join("\n", teams)),
