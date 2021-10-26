@@ -63,7 +63,7 @@
 
         <h3>Attack Info</h3>
         <p>
-            The endpoint <code>https://bambi6.enoflag.de/scoreboard/attack.json</code> delivers a JSON that is updated at the start of every round and has the following format:
+            <a href="/scoreboard/attack.json">This endpoint</a> delivers a JSON that is updated at the start of every round and has the following format:
             <code style="display:block; white-space:pre-wrap">
                 @sampleAttackInfo
             </code>
@@ -71,6 +71,11 @@
             The <code>services</code> field will, for some services, provide you with additional information that may be helpful or necessary to exploit a given service.
             This is typically something like the username of the account containing the flag, but the exact format depends on the service.
             These are grouped by service, team address, and type of flag.
+        </p>
+
+        <h3>Opponent IP List</h3>
+        <p>
+            For the services that do not have attack infos available, you can get a list of IP addresses <a href="/api/data/ips">here</a>.
         </p>
 
         <h3>Scoring</h3>
