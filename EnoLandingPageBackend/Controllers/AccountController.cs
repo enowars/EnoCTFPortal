@@ -114,6 +114,11 @@
         public async Task<ActionResult> WireguardConfig()
         {
             var team = await this.db.GetTeamAndVulnbox(this.GetTeamId(), this.HttpContext.RequestAborted);
+            if (this.settings.StartTime.ToUniversalTime() > DateTime.UtcNow || !await this.db.IsCheckedIn(team.Id, this.HttpContext.RequestAborted))
+            {
+                return this.Forbid();
+            }
+
             var config = System.IO.File.ReadAllText($"{LandingPageBackendUtil.TeamDataDirectory}{Path.DirectorySeparatorChar}teamdata{Path.DirectorySeparatorChar}team{team.Id}{Path.DirectorySeparatorChar}wireguard.conf");
             var contentType = "application/force-download";
             return this.File(Encoding.ASCII.GetBytes(config), contentType, "wireguard.conf");
