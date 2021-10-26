@@ -2,6 +2,7 @@
 using EnoCore.Scoreboard;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -14,10 +15,9 @@ namespace EnoLandingPageFrontend.Services
         public delegate void NewScoreboardEventHandler(Scoreboard sb);
         public delegate void OldScoreboardEventHandler(Scoreboard oldScoreboard);
         public event NewScoreboardEventHandler? NewScoreboardEvent;
-        public event OldScoreboardEventHandler? OldScoreboardEvent;
 
         private readonly ILogger<LandingPageScoreboardApiService> logger;
-        private readonly Dictionary<long, Scoreboard?> Scoreboards = new();
+        private readonly ConcurrentDictionary<long, Scoreboard?> Scoreboards = new();
         private readonly HttpClient httpClient;
 
         public LandingPageScoreboardApiService(ILogger<LandingPageScoreboardApiService> logger, HttpClient httpClient)
@@ -30,17 +30,19 @@ namespace EnoLandingPageFrontend.Services
 
         public Scoreboard? LatestScoreboard { get; set; }
 
-        public bool TryGetOrRequest(long roundId, out Scoreboard? sb, bool ignoreFails = false)
+        public async Task<Scoreboard?> TryGetOrRequest(long roundId, bool ignoreFails = false)
         {
-            if (!this.Scoreboards.TryGetValue(roundId, out sb))
+            if (this.Scoreboards.TryGetValue(roundId, out var sb))
             {
-                var _ = RequestScoreboard(roundId, ignoreFails);
-                return false;
+                return sb;
             }
-            return true;
+            else
+            {
+                return await RequestScoreboard(roundId, ignoreFails);
+            }
         }
 
-        private async Task RequestScoreboard(long roundId, bool ignoreFails)
+        private async Task<Scoreboard?> RequestScoreboard(long roundId, bool ignoreFails)
         {
             try
             {
@@ -48,7 +50,7 @@ namespace EnoLandingPageFrontend.Services
                 if (scoreboard != null)
                 {
                     Scoreboards[roundId] = scoreboard;
-                    OldScoreboardEvent?.Invoke(scoreboard);
+                    return scoreboard;
                 }
             }
             catch (Exception e)
@@ -58,6 +60,7 @@ namespace EnoLandingPageFrontend.Services
                     logger.LogError($"{e.ToFancyString()}");
                 }
             }
+            return null;
         }
 
         private async Task PollTask()
@@ -69,11 +72,6 @@ namespace EnoLandingPageFrontend.Services
                     var scoreboard = await this.httpClient.GetFromJsonAsync<Scoreboard>("/scoreboard/scoreboard.json", EnoCoreUtil.CamelCaseEnumConverterOptions);
                     if (scoreboard != null && LatestScoreboard?.CurrentRound != scoreboard.CurrentRound)
                     {
-                        if (scoreboard.CurrentRound > 1)
-                        {
-                            TryGetOrRequest(scoreboard.CurrentRound - 1, out var _);
-                        }
-
                         Scoreboards[scoreboard.CurrentRound] = scoreboard;
                         LatestScoreboard = scoreboard;
                         NewScoreboardEvent?.Invoke(scoreboard);

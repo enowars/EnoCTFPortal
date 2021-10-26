@@ -5,6 +5,7 @@
     using System.Linq;
     using System.Net.Http;
     using System.Threading.Tasks;
+    using EnoLandingPageBackend.Database;
     using EnoLandingPageBackend.Hetzner;
     using EnoLandingPageCore;
     using EnoLandingPageCore.Hetzner;
@@ -20,12 +21,14 @@
         private readonly ILogger<VulnboxController> logger;
         private readonly HetznerCloudApi hetznerApi;
         private readonly LandingPageSettings settings;
+        private readonly LandingPageDatabase db;
 
-        public VulnboxController(ILogger<VulnboxController> logger, HetznerCloudApi hetznerApi, LandingPageSettings settings)
+        public VulnboxController(ILogger<VulnboxController> logger, HetznerCloudApi hetznerApi, LandingPageSettings settings, LandingPageDatabase db)
         {
             this.logger = logger;
             this.hetznerApi = hetznerApi;
             this.settings = settings;
+            this.db = db;
         }
 
         [HttpPost]
@@ -33,7 +36,7 @@
         {
             long teamId = this.GetTeamId();
             this.logger.LogInformation($"StartVulnbox {teamId}");
-            if (this.settings.StartTime.ToUniversalTime() > DateTime.UtcNow)
+            if (this.settings.StartTime.ToUniversalTime() > DateTime.UtcNow || !await this.db.IsCheckedIn(teamId, this.HttpContext.RequestAborted))
             {
                 return this.Forbid();
             }
@@ -59,7 +62,7 @@
         {
             long teamId = this.GetTeamId();
             this.logger.LogInformation($"ResetVulnbox {teamId}");
-            if (this.settings.StartTime.ToUniversalTime() > DateTime.UtcNow)
+            if (this.settings.StartTime.ToUniversalTime() > DateTime.UtcNow || !await this.db.IsCheckedIn(teamId, this.HttpContext.RequestAborted))
             {
                 return this.Forbid();
             }
