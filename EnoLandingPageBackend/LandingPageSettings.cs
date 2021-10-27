@@ -17,6 +17,9 @@
         public DateTime StartTime { get; set; }
 
         [Required]
+        public DateTime EndTime { get; set; }
+
+        [Required]
         public long RegistrationCloseOffset { get; set; }
 
         [Required]

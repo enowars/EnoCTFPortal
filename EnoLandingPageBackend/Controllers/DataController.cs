@@ -31,6 +31,7 @@
         {
             return this.Ok(new CtfInfoMessage(
                 this.settings.StartTime.ToUniversalTime(),
+                this.settings.EndTime.ToUniversalTime(),
                 this.settings.RegistrationCloseOffset,
                 this.settings.CheckInBeginOffset,
                 this.settings.CheckInEndOffset));

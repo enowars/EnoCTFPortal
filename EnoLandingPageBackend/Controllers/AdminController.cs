@@ -62,7 +62,7 @@
                         this.settings.Title,
                         10,
                         3,
-                        180,
+                        60,
                         ".bambi.ovh",
                         Utils.TeamSubnetBytesLength,
                         "flagsigningkey",
