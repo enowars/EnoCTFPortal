@@ -129,13 +129,12 @@
         public async Task<ActionResult> CheckIn()
         {
             long teamId = this.GetTeamId();
-            if (DateTime.UtcNow > this.settings.StartTime.AddHours(-this.settings.CheckInEndOffset).ToUniversalTime() ||
-                this.settings.StartTime.AddHours(-this.settings.CheckInBeginOffset).ToUniversalTime() > DateTime.UtcNow)
+            if (DateTime.UtcNow > this.settings.StartTime.AddHours(-this.settings.CheckInEndOffset).ToUniversalTime())
             {
                 return this.BadRequest("Checkin is already over.");
             }
 
-            if (this.settings.StartTime.AddHours(-this.settings.CheckInEndOffset).ToUniversalTime() > DateTime.UtcNow)
+            if (this.settings.StartTime.AddHours(-this.settings.CheckInBeginOffset).ToUniversalTime() < DateTime.UtcNow)
             {
                 return this.BadRequest("Checkin has not yet begun.");
             }
