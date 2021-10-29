@@ -43,6 +43,7 @@
             IServiceProvider serviceProvider,
             LandingPageSettings landingPageSettings)
         {
+            logger.LogDebug("HetznerCloudApi()");
             this.logger = logger;
             this.serviceProvider = serviceProvider;
             this.httpClient = new HttpClient();
@@ -63,6 +64,7 @@
         /// <returns>Task representing the api call.</returns>
         public Task Call(long teamId, HetznerCloudApiCallType call)
         {
+            this.logger.LogDebug($"Call({teamId}, {call})");
             var tcs = new TaskCompletionSource();
             if (Tasks.TryAdd(teamId, new HetznerCloudApiScheduledCall(call, tcs)))
             {
@@ -159,6 +161,8 @@
         {
             try
             {
+                this.logger.LogDebug($"DoCreateServer({teamId}, {call}");
+
                 // Set the status to "Creating".
                 await LandingPageDatabase.UpdateTeamVulnbox(
                     this.serviceProvider,
@@ -300,6 +304,7 @@
                         {
                             // This task is the only task that reads and writes this value, so we should not need explicit synchronization.
                             scheduledApiCall.IsRunning = true;
+                            this.logger.LogDebug($"HetznerWorker scheduling API call {teamId}, {scheduledApiCall}");
                             var vulnbox = await LandingPageDatabase.GetTeamVulnbox(this.serviceProvider, teamId, token);
                             if (scheduledApiCall.CallType == HetznerCloudApiCallType.Create)
                             {
