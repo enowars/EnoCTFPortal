@@ -135,7 +135,7 @@
                 return this.BadRequest("Checkin is already over.");
             }
 
-            if (this.settings.StartTime.AddHours(this.settings.CheckInEndOffset) > DateTime.UtcNow)
+            if (this.settings.StartTime.AddHours(-this.settings.CheckInEndOffset).ToUniversalTime() > DateTime.UtcNow)
             {
                 return this.BadRequest("Checkin has not yet begun.");
             }
