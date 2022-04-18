@@ -15,7 +15,6 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
 
-    [Authorize]
     [Route("api/[controller]/[action]")]
     [ApiController]
     public class AdminController : Controller
