@@ -20,8 +20,8 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
 
-    [Route("api/[controller]/[action]")]
-    [ApiController]
+    // [Route("api/[controller]/[action]")]
+    // [ApiController]
     public class AccountController : ControllerBase
     {
         private readonly ILogger<AccountController> logger;

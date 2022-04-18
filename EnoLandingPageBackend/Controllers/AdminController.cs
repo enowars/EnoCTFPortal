@@ -77,5 +77,17 @@
                 "application/force-download",
                 "ctf.json");
         }
+
+        [HttpGet]
+        public async Task<ActionResult> AddTeam(string adminSecret, long? ctftimeId, string name, string? logoUrl, string? universityAffiliation, string? countryCode)
+        {
+            if (adminSecret != this.settings.AdminSecret)
+            {
+                return this.Unauthorized();
+            }
+
+            await this.db.GetOrUpdateLandingPageTeam(ctftimeId, name, logoUrl, universityAffiliation, countryCode, this.HttpContext.RequestAborted);
+            return this.NoContent();
+        }
     }
 }
