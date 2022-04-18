@@ -85,7 +85,19 @@
                 return this.Unauthorized();
             }
 
-            await this.db.GetOrUpdateLandingPageTeam(ctftimeId, name, logoUrl, universityAffiliation, countryCode, this.HttpContext.RequestAborted);
+            await this.db.InsertOrUpdateLandingPageTeam(ctftimeId, name, logoUrl, universityAffiliation, countryCode, this.HttpContext.RequestAborted, true);
+            return this.NoContent();
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> CheckInTeam(string adminSecret, long id)
+        {
+            if (adminSecret != this.settings.AdminSecret)
+            {
+                return this.Unauthorized();
+            }
+
+            await this.db.CheckIn(id, this.HttpContext.RequestAborted);
             return this.NoContent();
         }
     }

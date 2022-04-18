@@ -59,7 +59,7 @@
                 .AnyAsync(t => t.CtftimeId == ctftimeId, token);
         }
 
-        public async Task<LandingPageTeam> GetOrUpdateLandingPageTeam(long? ctftimeId, string name, string? logoUrl, string? universityAffiliation, string? countryCode, CancellationToken token)
+        public async Task<LandingPageTeam> InsertOrUpdateLandingPageTeam(long? ctftimeId, string name, string? logoUrl, string? universityAffiliation, string? countryCode, CancellationToken token, bool confirmed = false)
         {
             var dbTeam = await this.context.Teams.Where(t => t.CtftimeId == ctftimeId).SingleOrDefaultAsync(token);
             if (dbTeam == null)
@@ -67,7 +67,7 @@
                 dbTeam = new LandingPageTeam()
                 {
                     CtftimeId = ctftimeId,
-                    Confirmed = false,
+                    Confirmed = confirmed,
                     Name = name,
                     LogoUrl = logoUrl,
                     UniversityAffiliation = universityAffiliation,
@@ -80,6 +80,7 @@
             {
                 dbTeam.Name = name;
                 dbTeam.CtftimeId = ctftimeId;
+                dbTeam.Confirmed = confirmed;
                 dbTeam.Name = name;
                 dbTeam.LogoUrl = logoUrl;
                 dbTeam.UniversityAffiliation = universityAffiliation;
