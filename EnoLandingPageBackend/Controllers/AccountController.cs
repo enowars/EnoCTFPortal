@@ -73,7 +73,7 @@
                 this.logger.LogError($"CTFtime failed to deliver info for ctftime id {ctftimeId}\n{e.StackTrace}");
             }
 
-            var team = await this.db.GetOrUpdateLandingPageTeam(ctftimeId, teamname, info?.Logo, null, info?.Country, this.HttpContext.RequestAborted);
+            var team = await this.db.InsertOrUpdateLandingPageTeam(ctftimeId, teamname, info?.Logo, null, info?.Country, this.HttpContext.RequestAborted);
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, $"{team.Id}"),
