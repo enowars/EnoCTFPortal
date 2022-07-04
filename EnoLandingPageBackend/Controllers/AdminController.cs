@@ -8,6 +8,7 @@
     using EnoCore;
     using EnoCore.Configuration;
     using EnoCore.Models;
+    using EnoCore.Models.JsonConfiguration;
     using EnoLandingPageBackend.Database;
     using EnoLandingPageBackend.Hetzner;
     using EnoLandingPageCore;
