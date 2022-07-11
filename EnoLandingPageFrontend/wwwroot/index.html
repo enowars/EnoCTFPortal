@@ -24,6 +24,106 @@
     <script src="_framework/blazor.webassembly.js" autostart="false"></script>
     <script type="module">
         import { BrotliDecode } from './decode.min.js';
+
+        function addBg(elm){
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+    
+            const {width, height} = elm.getBoundingClientRect();
+    
+            canvas.width = width;
+            canvas.height = height;
+    
+            function randn_bm(min, max, skew) {
+                let u = 0, v = 0;
+                while(u === 0) u = Math.random() //Converting [0,1) to (0,1)
+                while(v === 0) v = Math.random()
+                let num = Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v )
+                
+                num = num / 10.0 + 0.5 // Translate to 0 -> 1
+                if (num > 1 || num < 0) 
+                    num = randn_bm(min, max, skew) // resample between 0 and 1 if out of range
+                
+                else{
+                    num = Math.pow(num, skew) // Skew
+                    num *= max - min // Stretch to fill range
+                    num += min // offset to min
+                }
+                return num
+            }
+    
+            function clamp(min, max, val){
+                return Math.max(min, Math.min(max, val));
+            }
+    
+    
+            class Particle{
+                constructor(){
+                    this._constructor();
+                }
+                
+                _constructor(){
+                    this.radius = Math.random() * 8 + 1;
+                    this.x = Math.random() * width;
+                    this.y = clamp(0, height, randn_bm(0, height*1.25, 0.5));
+                    this.r = randn_bm(0, 255, 0.0625);
+                    this.g = randn_bm(0, 255, 0.0625);
+                    this.b = randn_bm(0, 255, 5);
+        
+                    this.velocity = randn_bm(0, 7, 1.125);
+                    this.xvelocity = Math.random() - 0.5//Math.random() * 0.125 - 0.0625;
+                }
+        
+                draw(ctx){
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = `rgba(${this.r}, ${this.g}, ${this.b}, 128)`;
+                    ctx.fillStyle = `rgb(${this.r}, ${this.g}, ${this.b})`;
+                    // draw a filled circle
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+                    ctx.fill();
+                }
+    
+                update(){
+                    this.y -= this.velocity;
+        
+                    this.x = (this.x + this.xvelocity) % width;
+        
+                    if(this.y < 0){
+                        this.y = height;
+                        this._constructor();
+                    }
+                    if(this.y < height / 1.9 && this.b < 128 && Math.random()**1.25 < 0.0625){
+                        this.r = randn_bm(0, 255, 5);
+                        this.g = randn_bm(0, 255, 5);
+                        this.b = randn_bm(0, 255, 0.0625);
+                    }
+                }
+            }
+    
+            const particles = [];
+            const particleCount = 1000;
+            for(let i = 0; i < particleCount; i++){
+                particles.push(new Particle());
+            }
+
+            function render(){
+
+                ctx.fillStyle = '#202124';
+                ctx.fillRect(0, 0, width, height);
+        
+                for(const particle of particles){
+                    particle.update();
+                    
+                    particle.draw(ctx);
+                }
+        
+                requestAnimationFrame(render);
+            }
+    
+            render();
+        }
+
         Blazor.start({
             loadBootResource: function (type, name, defaultUri, integrity) {
                 if (type !== 'dotnetjs') {
@@ -41,6 +141,11 @@
                             { headers: { 'content-type': contentType } });
                     })();
                 }
+            }
+        }).then(()=>{
+            const bg = [...document.getElementsByClassName('bg')][0];
+            if(bg){
+                addBg(bg);
             }
         });
     </script>

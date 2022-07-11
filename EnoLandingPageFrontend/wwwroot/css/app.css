@@ -47,8 +47,18 @@ a, .btn-link {
     top: 0.5rem;
 }
 
+#canvas{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    object-fit: cover;
+    z-index: -1;
+    top: 0px;
+}
+
 .bg {
     /* background-image: url('/images/deers-88991.jpg'); */
+    position: relative;
     height: 50%;
     background-position: center;
     background-repeat: no-repeat;
@@ -56,18 +66,19 @@ a, .btn-link {
     padding-top: 200px;
     padding-bottom: 200px;
 }
-    .bg div {
-        background-color: rgba(211, 211, 211, 0.8);
-    }
+.bg div {
+    padding: 10px;
+    background-color: rgba(211, 211, 211, 0.8);
+}
 
-    .bg div h1 {
-        font-size: 80px;
-        font-weight: bolder;
-        text-align: center;
-    }
+.bg div h1 {
+    font-size: 80px;
+    font-weight: bolder;
+    text-align: center;
+}
 
-    .bg div h2 {
-        font-size: 50px;
-        font-weight: bold;
-        text-align: center;
-    }
+.bg div h2 {
+    font-size: 50px;
+    font-weight: bold;
+    text-align: center;
+}
