@@ -339,6 +339,8 @@
                                 var t = Task.Run(async () => await this.DoGetServer(teamId, scheduledApiCall, token), token);
                                 await Task.Delay(HetznerApiCallDelay, this.cancellationSource.Token);
                             }
+
+                            this.logger.LogDebug($"HetznerWorker scheduling API call {teamId}, {scheduledApiCall} finished");
                         }
                     }
                 }

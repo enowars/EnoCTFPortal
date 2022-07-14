@@ -44,7 +44,7 @@
                 return this.Unauthorized();
             }
 
-            this.logger.LogDebug($"BootVm({teamId}");
+            this.logger.LogDebug($"BootVm({teamId})");
             await this.hetznerApi.Call(teamId, HetznerCloudApiCallType.Create);
             return this.NoContent();
         }
