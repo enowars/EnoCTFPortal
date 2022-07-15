@@ -195,7 +195,7 @@
                 if (responseString.Contains("uniqueness_error"))
                 {
                     // Hetzner says the name already exists.
-                    throw new ServerExistsException();
+                    throw new ServerExistsException("responseString contained uniqueness_error");
                 }
 
                 if (!response.IsSuccessStatusCode)
