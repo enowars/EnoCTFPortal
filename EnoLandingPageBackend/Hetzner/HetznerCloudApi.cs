@@ -310,7 +310,7 @@
                             {
                                 if (vulnbox.VulnboxStatus == LandingPageVulnboxStatus.Created)
                                 {
-                                    scheduledApiCall.Tcs.SetException(new ServerExistsException("VulnboxStatus is LandingPageVulnboxStatus.Created"));
+                                    scheduledApiCall.Tcs.SetException(new ServerExistsException($"VulnboxStatus (team {teamId}) is LandingPageVulnboxStatus.Created"));
                                     Tasks.TryRemove(teamId, out var _);
                                 }
                                 else
