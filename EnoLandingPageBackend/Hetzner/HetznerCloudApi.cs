@@ -93,7 +93,8 @@
         {
             try
             {
-                var rootPassword = string.Empty; // File.ReadAllText($"{LandingPageBackendUtil.TeamDataDirectory}{Path.DirectorySeparatorChar}{teamId}{Path.DirectorySeparatorChar}root.pw");
+                // TODO refactor this into always reading the file?
+                var rootPassword = File.ReadAllText($"{LandingPageBackendUtil.TeamDataDirectory}{Path.DirectorySeparatorChar}teamdata{Path.DirectorySeparatorChar}team{teamId}{Path.DirectorySeparatorChar}root.pw");
 
                 // Call "Get Servers" endpoint.
                 this.logger.LogInformation($"{nameof(this.DoGetServer)} for team {teamId}");
