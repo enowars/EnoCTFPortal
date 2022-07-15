@@ -25,7 +25,7 @@
             return await db.GetTeamVulnbox(teamId, token);
         }
 
-        private async Task UpdateTeamVulnbox(long teamId, long? hetznerServerId, string? ipv4, string? rootPassword, LandingPageVulnboxStatus status, CancellationToken token)
+        public async Task UpdateTeamVulnbox(long teamId, long? hetznerServerId, string? ipv4, string? rootPassword, LandingPageVulnboxStatus status, CancellationToken token)
         {
             var dbTeam = await this.context.Vulnboxes
                 .Where(t => t.LandingPageTeamId == teamId)
