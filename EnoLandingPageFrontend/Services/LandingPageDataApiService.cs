@@ -67,7 +67,7 @@ namespace EnoLandingPageFrontend.Services
                 if (content == nameof(ServerExistsException))
                 {
                     logger.LogError("StartVm throwing ServerNameInUseException");
-                    throw new ServerExistsException();
+                    throw new ServerExistsException("");
                 }
                 else if (content == nameof(OtherRequestRunningException))
                 {

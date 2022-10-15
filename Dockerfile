@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:5.0-focal AS build
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 
 # Fetch deps
@@ -18,7 +18,7 @@ COPY stylecop.json stylecop.json
 RUN dotnet publish -c Release -o /app
 
 # Copy to runtime container
-FROM mcr.microsoft.com/dotnet/aspnet:5.0
+FROM mcr.microsoft.com/dotnet/aspnet:6.0
 WORKDIR /app
 EXPOSE 80
 COPY --from=build /app .

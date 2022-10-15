@@ -8,9 +8,11 @@
     using EnoCore;
     using EnoCore.Configuration;
     using EnoCore.Models;
+    using EnoCore.Models.JsonConfiguration;
     using EnoLandingPageBackend.Database;
     using EnoLandingPageBackend.Hetzner;
     using EnoLandingPageCore;
+    using EnoLandingPageCore.Database;
     using Microsoft.AspNetCore.Authorization;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
@@ -43,8 +45,27 @@
                 return this.Unauthorized();
             }
 
-            this.logger.LogDebug($"BootVm({teamId}");
+            this.logger.LogDebug($"BootVm({teamId})");
             await this.hetznerApi.Call(teamId, HetznerCloudApiCallType.Create);
+            return this.NoContent();
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> ForgetVm(string adminSecret, long teamId)
+        {
+            if (adminSecret != this.settings.AdminSecret)
+            {
+                return this.Unauthorized();
+            }
+
+            this.logger.LogDebug($"ForgetVm({teamId})");
+            await this.db.UpdateTeamVulnbox(
+                    teamId,
+                    null,
+                    null,
+                    null,
+                    LandingPageVulnboxStatus.None,
+                    this.HttpContext.RequestAborted);
             return this.NoContent();
         }
 

@@ -1,5 +1,5 @@
 ﻿using EnoCore;
-using EnoCore.Scoreboard;
+using EnoCore.Models.Scoreboard;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;

@@ -1,4 +1,4 @@
-﻿@page "/adforbeginners"
+﻿@page "/howto"
 <div class="container p-3">
     <h1>Attack/Defense CTF for Beginners</h1>
     <p>A typical attack/defense CTF consists of three components.</p>
@@ -14,7 +14,7 @@
     <p>The Vulnbox is your running instance of the virtual machine image given to you by the organizers. It contains and runs all the services of the competition and should be reachable at all times. The Gameserver stores its flags here and uses the communication with this machine to decide if your services are working as intended or not. This machine is accessible to everyone on the network, and is the target for all the exploits from other teams.</p>
     <p>Protecting the flags on this machine is what determines your defense points!</p>
     <p>You normally have one hour from getting access to your Vulnbox until the network between teams is opened and everyone can attack each other. Use this time to get the VM running, then start analyzing what's running on it. It has happened that services with vulnerabilities that are easy to find have been exploited as soon as the actual competition starts.</p>
-    <p>For the Bambi CTF, we will be providing hosted vulnboxes which are accessible via SSH.</p>
+    <p>For the Bambi CTF and ENOWARS, we will be providing hosted vulnboxes which are accessible via SSH.</p>
 
     <h2>The other teams</h2>
     <p>All the other registered teams are connected to the same VPN as you. Their Vulnboxes have known IP addresses, all other machines are off-limits! The other teams will run exploits from their own machines, but the VPN infrastructure will use NAT to obfuscate whether a packet came from the Gameserver or another team.</p>

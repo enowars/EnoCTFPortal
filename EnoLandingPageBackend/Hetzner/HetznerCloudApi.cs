@@ -93,7 +93,8 @@
         {
             try
             {
-                var rootPassword = string.Empty; // File.ReadAllText($"{LandingPageBackendUtil.TeamDataDirectory}{Path.DirectorySeparatorChar}{teamId}{Path.DirectorySeparatorChar}root.pw");
+                // TODO refactor this into always reading the file?
+                var rootPassword = File.ReadAllText($"{LandingPageBackendUtil.TeamDataDirectory}{Path.DirectorySeparatorChar}teamdata{Path.DirectorySeparatorChar}team{teamId}{Path.DirectorySeparatorChar}root.pw");
 
                 // Call "Get Servers" endpoint.
                 this.logger.LogInformation($"{nameof(this.DoGetServer)} for team {teamId}");
@@ -195,7 +196,7 @@
                 if (responseString.Contains("uniqueness_error"))
                 {
                     // Hetzner says the name already exists.
-                    throw new ServerExistsException();
+                    throw new ServerExistsException("responseString contained uniqueness_error");
                 }
 
                 if (!response.IsSuccessStatusCode)
@@ -310,7 +311,7 @@
                             {
                                 if (vulnbox.VulnboxStatus == LandingPageVulnboxStatus.Created)
                                 {
-                                    scheduledApiCall.Tcs.SetException(new ServerExistsException());
+                                    scheduledApiCall.Tcs.SetException(new ServerExistsException($"VulnboxStatus (team {teamId}) is LandingPageVulnboxStatus.Created"));
                                     Tasks.TryRemove(teamId, out var _);
                                 }
                                 else
@@ -339,6 +340,8 @@
                                 var t = Task.Run(async () => await this.DoGetServer(teamId, scheduledApiCall, token), token);
                                 await Task.Delay(HetznerApiCallDelay, this.cancellationSource.Token);
                             }
+
+                            this.logger.LogDebug($"HetznerWorker scheduling API call {teamId}, {scheduledApiCall} finished");
                         }
                     }
                 }

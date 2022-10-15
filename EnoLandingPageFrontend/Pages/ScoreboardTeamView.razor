@@ -1,7 +1,7 @@
 ﻿@page "/scoreboard/team/{selectedTeamId:long}"
 
+@using EnoCore.Models.Scoreboard
 @using Microsoft.Extensions.Logging
-@using EnoCore.Scoreboard
 @using EnoCore
 @using EnoLandingPageFrontend.Services
 @using System.Security.Claims
@@ -38,6 +38,7 @@
         @foreach (var round in Scoreboards)
         {
             (var rank, var team) = GetTeam(selectedTeamId, round);
+            var orderedServiceDetails = team.ServiceDetails.OrderBy(t => t.ServiceId).ToList();
             <tr>
                 <td class="team-rank">@rank</td>
                 <td>
@@ -49,8 +50,8 @@
 
                 @for (int s = 0; s < team.ServiceDetails.Length; s++)
                 {
-                    var serviceDetails = team.ServiceDetails[s];
-                    <td class="p-2 service-@(Enum.GetName(serviceDetails.ServiceStatus))">
+                    var serviceDetails = orderedServiceDetails[s];
+                    <td class="p-2 service-@(Enum.GetName(serviceDetails.ServiceStatus))" eno-service-id="@(serviceDetails.ServiceId)">
                         @if (serviceDetails.Message != null)
                         {
                             <div class="errormessage">@serviceDetails.Message</div>

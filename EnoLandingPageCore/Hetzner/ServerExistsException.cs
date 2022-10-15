@@ -8,5 +8,9 @@
 
     public class ServerExistsException : HetznerException
     {
+        public ServerExistsException(string message)
+            : base(message)
+        {
+        }
     }
 }
