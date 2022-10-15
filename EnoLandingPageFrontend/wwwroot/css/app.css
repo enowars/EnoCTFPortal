@@ -48,7 +48,7 @@ a, .btn-link {
 }
 
 .bg {
-    /* background-image: url('/images/deers-88991.jpg'); */
+    background-image: url('/images/deers-88991.jpg');
     height: 50%;
     background-position: center;
     background-repeat: no-repeat;
