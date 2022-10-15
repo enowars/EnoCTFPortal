@@ -5,6 +5,7 @@
 @using EnoCore
 @using EnoLandingPageFrontend.Services
 @using System.Security.Claims
+@using System.Globalization
 
 @inject LandingPageScoreboardApiService ScoreboardService
 @inject AuthenticationStateProvider authenticationStateProvider
@@ -46,7 +47,7 @@
                         Round @(round.CurrentRound)
                     </div>
                 </td>
-                <td class="team-score">@((int) team.TotalScore)</td>
+                <td class="team-score">@(team.TotalScore.ToString("0.00", CultureInfo.InvariantCulture))</td>
 
                 @for (int s = 0; s < team.ServiceDetails.Length; s++)
                 {
@@ -58,15 +59,15 @@
                         }
                         <div class="service-stats">
                             <i class="scoreboard-icon fas fa-meteor" />
-                            <div class="scoreboard-text">@((long) serviceDetails.AttackScore)</div>
+                            <div class="scoreboard-text">@(serviceDetails.AttackScore.ToString("+0.00;-0.00", CultureInfo.InvariantCulture))</div>
                             <div class="scoreboard-text"></div>
 
                             <i class="scoreboard-icon fas fa-shield-alt" />
-                            <div class="scoreboard-text">@((long) serviceDetails.DefenseScore)</div>
+                            <div class="scoreboard-text">@(serviceDetails.DefenseScore.ToString("+0.00;-0.00", CultureInfo.InvariantCulture))</div>
                             <div class="scoreboard-text"></div>
 
                             <i class="scoreboard-icon fas fa-heartbeat" />
-                            <div class="scoreboard-text">@((long) serviceDetails.ServiceLevelAgreementScore)</div>
+                            <div class="scoreboard-text">@(serviceDetails.ServiceLevelAgreementScore.ToString("+0.00;-0.00", CultureInfo.InvariantCulture))</div>
                             <div class="scoreboard-text"></div>
                         </div>
                     </td>
