@@ -118,7 +118,7 @@
                 return this.Unauthorized();
             }
 
-            await this.db.CheckIn(id, this.HttpContext.RequestAborted);
+            await this.db.CheckInCtftimeid(id, this.HttpContext.RequestAborted);
             return this.NoContent();
         }
     }

@@ -6,6 +6,7 @@
 @using EnoCore
 @using EnoLandingPageFrontend.Services
 @using System.Security.Claims
+@using System.Globalization
 
 @inject LandingPageScoreboardApiService ScoreboardService
 @inject AuthenticationStateProvider authenticationStateProvider
@@ -103,12 +104,12 @@
                 </td>
                 @if (previousRoundTeam != null)
                 {
-                    long totalDiff = (long)(team.TotalScore - previousRoundTeam.TotalScore);
-                    <td class="team-score">@((int) team.TotalScore) (@(totalDiff.ToString("+#;-#;+0")))</td>
+                    double totalDiff = team.TotalScore - previousRoundTeam.TotalScore;
+                    <td class="team-score">@(team.TotalScore.ToString("0.00", CultureInfo.InvariantCulture)) (@(totalDiff.ToString("+0.00;-0.00", CultureInfo.InvariantCulture)))</td>
                 }
                 else
                 {
-                    <td class="team-score">@((int) team.TotalScore)</td>
+                    <td class="team-score">@(team.TotalScore.ToString("+0.00;-0.00", CultureInfo.InvariantCulture))</td>
                 }
 
                 @for (int s = 0; s < team.ServiceDetails.Length; s++)
@@ -123,15 +124,15 @@
                             }
                             <div class="service-stats">
                                 <i class="scoreboard-icon fas fa-meteor" />
-                                <div class="scoreboard-text">@((long) serviceDetails.AttackScore)</div>
+                                <div class="scoreboard-text">@(serviceDetails.AttackScore.ToString("0.00", CultureInfo.InvariantCulture))</div>
                                 <div class="scoreboard-text"></div>
 
                                 <i class="scoreboard-icon fas fa-shield-alt" />
-                                <div class="scoreboard-text">@((long) serviceDetails.DefenseScore)</div>
+                                <div class="scoreboard-text">@(serviceDetails.DefenseScore.ToString("0.00", CultureInfo.InvariantCulture))</div>
                                 <div class="scoreboard-text"></div>
 
                                 <i class="scoreboard-icon fas fa-heartbeat" />
-                                <div class="scoreboard-text">@((long) serviceDetails.ServiceLevelAgreementScore)</div>
+                                <div class="scoreboard-text">@(serviceDetails.ServiceLevelAgreementScore.ToString("0.00", CultureInfo.InvariantCulture))</div>
                                 <div class="scoreboard-text"></div>
                             </div>
                         </td>
@@ -139,9 +140,9 @@
                     else
                     {
                         var orderedOldServices = previousRoundTeam.ServiceDetails.OrderBy(s => s.ServiceId).ToArray();
-                        long slaDiff = (long)(serviceDetails.ServiceLevelAgreementScore - orderedOldServices[s].ServiceLevelAgreementScore);
-                        long attackDiff = (long)(serviceDetails.AttackScore - orderedOldServices[s].AttackScore);
-                        long defenseDiff = (long)(serviceDetails.DefenseScore - orderedOldServices[s].DefenseScore);
+                        double slaDiff = (serviceDetails.ServiceLevelAgreementScore - orderedOldServices[s].ServiceLevelAgreementScore);
+                        double attackDiff = (serviceDetails.AttackScore - orderedOldServices[s].AttackScore);
+                        double defenseDiff = (serviceDetails.DefenseScore - orderedOldServices[s].DefenseScore);
                         <td class="p-2 service-block service-@(Enum.GetName(serviceDetails.ServiceStatus))">
                             @if (serviceDetails.Message != null)
                             {
@@ -149,18 +150,18 @@
                             }
                             <div class="service-stats">
                                 <i class="scoreboard-icon fas fa-meteor" />
-                                <div class="scoreboard-text">@((long) serviceDetails.AttackScore)</div>
-                                <div class="scoreboard-text">(@(attackDiff.ToString("+#;-#;+0")))</div>
+                                <div class="scoreboard-text">@(serviceDetails.AttackScore.ToString("0.00", CultureInfo.InvariantCulture))</div>
+                                <div class="scoreboard-text">(@(attackDiff.ToString("+0.00;-0.00", CultureInfo.InvariantCulture)))</div>
 
 
                                 <i class="scoreboard-icon fas fa-shield-alt" />
-                                <div class="scoreboard-text">@((long) serviceDetails.DefenseScore)</div>
-                                <div class="scoreboard-text">(@(defenseDiff.ToString("+#;-#;-0")))</div>
+                                <div class="scoreboard-text">@(serviceDetails.DefenseScore.ToString("0.00", CultureInfo.InvariantCulture))</div>
+                                <div class="scoreboard-text">(@(defenseDiff.ToString("+0.00;-0.00", CultureInfo.InvariantCulture)))</div>
 
 
                                 <i class="scoreboard-icon fas fa-heartbeat" />
-                                <div class="scoreboard-text">@((long) serviceDetails.ServiceLevelAgreementScore)</div>
-                                <div class="scoreboard-text">(@(slaDiff.ToString("+#;-#;+0")))</div>
+                                <div class="scoreboard-text">@(serviceDetails.ServiceLevelAgreementScore.ToString("0.00", CultureInfo.InvariantCulture))</div>
+                                <div class="scoreboard-text">(@(slaDiff.ToString("+0.00;-0.00", CultureInfo.InvariantCulture)))</div>
                             </div>
                         </td>
                     }
