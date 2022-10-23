@@ -90,7 +90,44 @@
         </p>
 
         <h3>Scoring</h3>
-        <p>We are currently using the scoring formula by <a href="https://2019.faustctf.net/information/rules/">Faust CTF</a>.</p>
+        <pre>
+SLA = 100.0
+ATTACK = 400.0
+DEF = -50.0
+
+servicesWeightFactor = 0.0
+for service in services:
+    servicesWeightFactor += service.weightFactor
+
+def sla(service, team) -> float:
+    sla = 0.0
+    for state in team.states:
+        if state == OK:
+            service_sla += SLA
+                * service.weightFactor / servicesWeightFactor
+        if state == RECOVERING:
+            service_sla += 0.5 * SLA
+                * service.weightFactor / servicesWeightFactor
+    return sla
+
+def attack(service, team) -> float:
+    attack = 0.0
+    for captured_flag in captured_flags(service, team):
+        attack += ATTACK
+            * service.weightFactor / servicesWeightFactor
+            / service.flagsPerRound
+            / total_captures_of(captured_flag)
+    return attack
+
+def def(service, team) -> float:
+    def = 0.0
+    for flag in own_flags(service, team):
+        if flag.lost:
+            def += DEF
+                * service.weightFactor / servicesWeightFactor
+                / service.flagsPerRound
+    return def
+</pre>
 
         <h3>Social Conduct</h3>
         <p>TL;DR: Be good! It's a game. Attack the services, not the players. Be sure that we can contact you.</p>
