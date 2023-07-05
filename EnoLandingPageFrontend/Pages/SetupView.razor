@@ -4,12 +4,11 @@
 @using EnoLandingPageCore.Messages
 @using System.Globalization
 @inject LandingPageDataApiService DataService
-
 <div class="container p-3">
-    <h1>Setup</h1>
+    <h1 class="heading">Setup</h1>
     <hr />
     <div>
-        <h3>Summary</h3>
+        <h3 class="heading">Summary</h3>
         <ul>
             <li style="color: red;">
                 Some services may require additional information to exploit them, so don't forget to have a look at the corresponding <a href="/scoreboard/attack.json">attack info</a>.
@@ -51,7 +50,7 @@
             </li>
         </ul>
 
-        <h3>Setup Details</h3>
+        <h3 class="heading">Setup Details</h3>
         <p>
             We will be providing hosted vulnboxes for all teams. You can start your vulnbox through the registration page after the start of the CTF.
             Note that you must check in before the start of the CTF, otherwise you will not be able to start your vulnbox!
@@ -72,7 +71,7 @@
             Then you will be able to access it on your local machine by opening http://localhost:8005 and logging in with username and password moloch.
         </p>
 
-        <h3>Attack Info</h3>
+        <h3 class="heading">Attack Info</h3>
         <p>
             <a href="/scoreboard/attack.json">This endpoint</a> delivers a JSON that is updated at the start of every round and has the following format:
             <code style="display:block; white-space:pre-wrap">
@@ -84,15 +83,15 @@
             These are grouped by service, team address, and type of flag.
         </p>
 
-        <h3>Opponent IP List</h3>
+        <h3 class="heading">Opponent IP List</h3>
         <p>
             For the services that do not have attack infos available, you can get a list of IP addresses <a href="/api/data/ips">here</a>.
         </p>
 
-        <h3>Scoring</h3>
+        <h3 class="heading">Scoring</h3>
         <p>We are currently using the scoring formula by <a href="https://2019.faustctf.net/information/rules/">Faust CTF</a>.</p>
 
-        <h3>Social Conduct</h3>
+        <h3 class="heading">Social Conduct</h3>
         <p>TL;DR: Be good! It's a game. Attack the services, not the players. Be sure that we can contact you.</p>
         <p>The goal of this CTF is to allow people to practice their skills and have fun. We ask you to avoid spoiling other's fun unnecessarily.</p>
         <p>We want the competition to be a pleasant experience for all participants, regardless of their gender, sexual orientation, race, religion, skill level, personal background or any other criteria. Therefore, we do not tolerate harassment in any form.</p>
@@ -106,7 +105,6 @@
         <p>Rules are borrowed from <a href="https://2022.faustctf.net/information/rules/">Faust CTF</a>.</p>
     </div>
 </div>
-
 @code {
             private CtfInfoMessage? ctfInfo;
             private string sampleAttackInfo = @"{
