@@ -71,3 +71,100 @@ a, .btn-link {
         font-weight: bold;
         text-align: center;
     }
+
+
+
+
+
+
+
+
+.page .navbar{
+    background-color: orange !important;
+    font-weight: bold;
+}
+.page .navbar .navbar-brand{
+    background-color: black;
+    color: aqua;
+    font-weight: bold;
+    padding-left:3px;
+    padding-right: 3px;
+}
+.nav-item{
+    background-color:black;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+html{
+    background-color: grey;
+    height: 100%;
+}
+.landing-page,.page{
+    background-color:grey;
+    font-family: "Comic Sans MS", "Comic Sans", cursive;
+    height: 100%;
+}
+.title {
+    padding-left:48px;
+    -webkit-text-stroke: 1px;
+    margin-bottom:50px;
+    text-align: center;
+    font-family: sans-serif;
+    font-size: 6rem;
+    letter-spacing: 0.15rem;
+    color: violet;
+    text-shadow: -6px 6px indigo,
+    -12px 12px blue,
+    -18px 18px green,
+    -24px 24px yellow,
+    -30px 30px orange,
+    -36px 36px red
+}
+.sub-title {
+    background-image: linear-gradient(to left, violet, indigo, blue, green, yellow, orange, red);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+.heading{
+    background:yellow;
+    border: 2px solid black;
+}
+div.block{
+    padding-left: 10px;
+}
+.navbar-nav{
+    margin-left: auto !important;
+}
+h5.theme{
+    margin-top:10px;
+    margin-bottom:30px;
+}
+center.title-bg{
+    height: 50%;
+    padding-top:200px;
+    padding-bottom: 200px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.nav-link{
+    font-weight: bold;
+}
+.page .navbar .navbar-nav .nav-item:nth-child(1) a{
+    color: hotpink;
+}
+.page .navbar .navbar-nav .nav-item:nth-child(2) a{
+    color: yellow;
+}
+.page .navbar .navbar-nav .nav-item:nth-child(3) a{
+    color: red;
+}
+.page .navbar .navbar-nav .nav-item:nth-child(4) a{
+    color: darkgreen;
+}
+.page .navbar .navbar-nav .nav-item:nth-child(5) a{
+    color: goldenrod;
+}
+.page .navbar .navbar-nav .nav-item:nth-child(6) a{
+    color: teal;
+}
