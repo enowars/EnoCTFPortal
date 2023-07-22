@@ -75,18 +75,8 @@
 
             try
             {
-                string? coutry = info?.Country.toLower();
-                if (this.settings.AllowedCountries != null && this.settings.AllowedCountries.Length != 0) {
-                    // Filter by allowed countries!
-                    if(!this.settings.AllowedCountries.Contains(country)) {
-                        throw new Exception($"Country {country} not found in AllowedCountries!");
-                    }
-                }
-                if(this.settings.DisallowedCountries != null && this.settings.DisallowedCountries.Length != 0) {
-                    // Filter disallowed countries
-                    if(this.settings.DisallowedCountries.Contains(country)) {
-                        throw new Exception($"Country {country} found in DisallowedCountries!");
-                    }
+                if(!Utils.CanRegisterWithCountry(this.settings.AllowedCountries, this.settings.DisallowedCountries, country)) {
+                    throw new Exception($"Country {country} is not allowed");
                 }
             }catch(Exception e) 
             {
@@ -108,7 +98,7 @@
         [Authorize]
         public async Task<ActionResult> Info()
         {
-            var team = await this.db.GetTeamAndVulnbox(this.GetTeamId(), this.HttpContext.RequestAborted);
+            var team = await this.db.GetTeamAndVulnbox(this.GetTeamId(), this.HttpContext.RequestAborted).Where(t => Utils.CanRegisterWithCountry(this.settings.AllowedCountries, this.settings.DisallowedCountries, t.CountryCode));
             return this.Ok(new TeamDetailsMessage(
                 team.Id,
                 team.Confirmed,
@@ -124,7 +114,7 @@
         [Authorize]
         public async Task<ActionResult> VpnConfig()
         {
-            var team = await this.db.GetTeamAndVulnbox(this.GetTeamId(), this.HttpContext.RequestAborted);
+            var team = await this.db.GetTeamAndVulnbox(this.GetTeamId(), this.HttpContext.RequestAborted).Where(t => Utils.CanRegisterWithCountry(this.settings.AllowedCountries, this.settings.DisallowedCountries, t.CountryCode));
             var config = System.IO.File.ReadAllText($"{LandingPageBackendUtil.TeamDataDirectory}{Path.DirectorySeparatorChar}teamdata{Path.DirectorySeparatorChar}team{team.Id}{Path.DirectorySeparatorChar}client.conf");
             var contentType = "application/force-download";
             return this.File(Encoding.ASCII.GetBytes(config), contentType, "client.ovpn");
@@ -134,7 +124,7 @@
         [Authorize]
         public async Task<ActionResult> WireguardConfig()
         {
-            var team = await this.db.GetTeamAndVulnbox(this.GetTeamId(), this.HttpContext.RequestAborted);
+            var team = await this.db.GetTeamAndVulnbox(this.GetTeamId(), this.HttpContext.RequestAborted).Where(t => Utils.CanRegisterWithCountry(this.settings.AllowedCountries, this.settings.DisallowedCountries, t.CountryCode));
             if (this.settings.StartTime.ToUniversalTime() > DateTime.UtcNow || !await this.db.IsCheckedIn(team.Id, this.HttpContext.RequestAborted))
             {
                 return this.Forbid();

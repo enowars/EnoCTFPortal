@@ -90,6 +90,7 @@
                         FlagEncoding.Legacy,
                         (await this.db.GetTeams(this.HttpContext.RequestAborted))
                             .Where(t => t.Confirmed)
+                            .Where(t => Utils.CanRegisterWithCountry(this.settings.AllowedCountries, this.settings.DisallowedCountries, t.CountryCode))
                             .Select(t => new JsonConfigurationTeam(t.Id, t.Name, Utils.VulnboxIpAddressForId(t.Id), Utils.TeamSubnetForId(t.Id), t.LogoUrl, t.CountryCode))
                             .ToList(),
                         new List<JsonConfigurationService>()),
