@@ -73,6 +73,27 @@
                 this.logger.LogError($"CTFtime failed to deliver info for ctftime id {ctftimeId}\n{e.StackTrace}");
             }
 
+            try
+            {
+                string? coutry = info?.Country.toLower();
+                if (this.settings.AllowedCountries != null && this.settings.AllowedCountries.Length != 0) {
+                    // Filter by allowed countries!
+                    if(!this.settings.AllowedCountries.Contains(country)) {
+                        throw new Exception($"Country {country} not found in AllowedCountries!");
+                    }
+                }
+                if(this.settings.DisallowedCountries != null && this.settings.DisallowedCountries.Length != 0) {
+                    // Filter disallowed countries
+                    if(this.settings.DisallowedCountries.Contains(country)) {
+                        throw new Exception($"Country {country} found in DisallowedCountries!");
+                    }
+                }
+            }catch(Exception e) 
+            {
+                this.logger.LogError($"Country is not allowed: {ctftimeId}\n{e.StackTrace}");
+                return this.Redirect("/registrationprohibited");             
+            }
+
             var team = await this.db.InsertOrUpdateLandingPageTeam(ctftimeId, teamname, info?.Logo, null, info?.Country, this.HttpContext.RequestAborted, null);
             var claims = new List<Claim>
             {
