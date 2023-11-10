@@ -3,6 +3,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Security.Cryptography;
     using System.Text.Json;
     using System.Threading.Tasks;
     using EnoCore;
@@ -86,7 +87,7 @@
                         60,
                         ".bambi.ovh",
                         Utils.TeamSubnetBytesLength,
-                        "flagsigningkey",
+                        Convert.ToBase64String(RandomNumberGenerator.GetBytes(32)),
                         FlagEncoding.Legacy,
                         (await this.db.GetTeams(this.HttpContext.RequestAborted))
                             .Where(t => t.Confirmed)
