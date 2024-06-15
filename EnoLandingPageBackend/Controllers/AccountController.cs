@@ -88,13 +88,14 @@
         public async Task<ActionResult> Info()
         {
             var team = await this.db.GetTeamAndVulnbox(this.GetTeamId(), this.HttpContext.RequestAborted);
+            bool gameHasStarted = Utils.GameHasStarted(this.settings);
             return this.Ok(new TeamDetailsMessage(
                 team.Id,
                 team.Confirmed,
                 team.Name,
                 System.IO.File.Exists($"{LandingPageBackendUtil.TeamDataDirectory}{Path.DirectorySeparatorChar}teamdata{Path.DirectorySeparatorChar}team{team.Id}{Path.DirectorySeparatorChar}client.conf"),
-                team.Vulnbox.RootPassword,
-                team.Vulnbox.ExternalAddress,
+                gameHasStarted ? team.Vulnbox.RootPassword : null,
+                gameHasStarted ? team.Vulnbox.ExternalAddress : null,
                 Utils.VulnboxIpAddressForId(team.Id), // internal ip
                 team.Vulnbox.VulnboxStatus));
         }

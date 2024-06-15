@@ -1,5 +1,8 @@
 namespace EnoLandingPageBackend
 {
+    using System;
+    using EnoLandingPageCore;
+
     public class Utils
     {
         public const int TeamSubnetBytesLength = 15;
@@ -12,6 +15,11 @@ namespace EnoLandingPageBackend
         public static string TeamSubnetForId(long id)
         {
             return $"::ffff:10.1.{id}.0";
+        }
+
+        public static bool GameHasStarted(LandingPageSettings settings)
+        {
+            return settings.StartTime.ToUniversalTime() <= DateTime.UtcNow;
         }
     }
 }
