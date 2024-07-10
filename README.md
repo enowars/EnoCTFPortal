@@ -31,3 +31,9 @@ services:
 
 ## Reverse Proxy Configuration
 The reverse proxy must set the [XFP header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Proto) and allow https connections.
+
+## Development Configuration
+When you want to run the page in development mode (most notably without https), add the following environment variable:
+```
+"ASPNETCORE_ENVIRONMENT=Development"
+```
