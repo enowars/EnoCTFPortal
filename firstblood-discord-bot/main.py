@@ -1,6 +1,6 @@
 import requests
 import json
-from .config import SCOREBOARD_URL, WEBHOOK_URL
+from config import SCOREBOARD_URL, WEBHOOK_URL
 
 d = requests.get(SCOREBOARD_URL).json()
 
