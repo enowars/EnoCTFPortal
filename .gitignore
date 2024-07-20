@@ -357,3 +357,8 @@ MigrationBackup/
 /scoreboard
 /sessions
 docker-compose.yml
+
+
+/firstblood-discord-bot/venv
+/firstblood-discord-bot/config.py
+/firstblood-discord-bot/cache.json
