@@ -94,7 +94,7 @@
             try
             {
                 // TODO refactor this into always reading the file?
-                var rootPassword = File.ReadAllText($"{LandingPageBackendUtil.TeamDataDirectory}{Path.DirectorySeparatorChar}teamdata{Path.DirectorySeparatorChar}team{teamId}{Path.DirectorySeparatorChar}root.pw");
+                var rootPassword = File.ReadAllText($"{LandingPageBackendUtil.TeamDataDirectory}{Path.DirectorySeparatorChar}teamdata{Path.DirectorySeparatorChar}team{teamId}{Path.DirectorySeparatorChar}password.txt");
 
                 // Call "Get Servers" endpoint.
                 this.logger.LogInformation($"{nameof(this.DoGetServer)} for team {teamId}");
@@ -176,7 +176,7 @@
 
                 // Call "Create Server" endpoint.
                 var user_data = File.ReadAllText($"{LandingPageBackendUtil.TeamDataDirectory}{Path.DirectorySeparatorChar}teamdata{Path.DirectorySeparatorChar}team{teamId}{Path.DirectorySeparatorChar}user_data.sh");
-                var rootPassword = File.ReadAllText($"{LandingPageBackendUtil.TeamDataDirectory}{Path.DirectorySeparatorChar}teamdata{Path.DirectorySeparatorChar}team{teamId}{Path.DirectorySeparatorChar}root.pw");
+                var rootPassword = File.ReadAllText($"{LandingPageBackendUtil.TeamDataDirectory}{Path.DirectorySeparatorChar}teamdata{Path.DirectorySeparatorChar}team{teamId}{Path.DirectorySeparatorChar}password.txt");
                 dynamic createVmRequest = new JObject();
                 createVmRequest.name = $"team{teamId}";
                 createVmRequest.server_type = this.landingPageSettings.HetznerVulnboxType;
