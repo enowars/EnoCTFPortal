@@ -93,7 +93,7 @@
                 team.Id,
                 team.Confirmed,
                 team.Name,
-                System.IO.File.Exists($"{LandingPageBackendUtil.TeamDataDirectory}{Path.DirectorySeparatorChar}teamdata{Path.DirectorySeparatorChar}team{team.Id}{Path.DirectorySeparatorChar}client.conf"),
+                System.IO.File.Exists($"{LandingPageBackendUtil.TeamDataDirectory}{Path.DirectorySeparatorChar}teamdata{Path.DirectorySeparatorChar}team{team.Id}{Path.DirectorySeparatorChar}client.ovpn"),
                 gameHasStarted ? team.Vulnbox.RootPassword : null,
                 gameHasStarted ? team.Vulnbox.ExternalAddress : null,
                 Utils.VulnboxIpAddressForId(team.Id), // internal ip
@@ -105,7 +105,7 @@
         public async Task<ActionResult> VpnConfig()
         {
             var team = await this.db.GetTeamAndVulnbox(this.GetTeamId(), this.HttpContext.RequestAborted);
-            var config = System.IO.File.ReadAllText($"{LandingPageBackendUtil.TeamDataDirectory}{Path.DirectorySeparatorChar}teamdata{Path.DirectorySeparatorChar}team{team.Id}{Path.DirectorySeparatorChar}client.conf");
+            var config = System.IO.File.ReadAllText($"{LandingPageBackendUtil.TeamDataDirectory}{Path.DirectorySeparatorChar}teamdata{Path.DirectorySeparatorChar}team{team.Id}{Path.DirectorySeparatorChar}client.ovpn");
             var contentType = "application/force-download";
             return this.File(Encoding.ASCII.GetBytes(config), contentType, "client.ovpn");
         }

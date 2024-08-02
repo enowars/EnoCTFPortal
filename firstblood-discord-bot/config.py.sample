@@ -1,0 +1,2 @@
+SCOREBOARD_URL = "https://8.enowars.com/scoreboard/scoreboard.json"
+WEBHOOK_URL = "https://discordapp.com/api/webhooks/lalala"
