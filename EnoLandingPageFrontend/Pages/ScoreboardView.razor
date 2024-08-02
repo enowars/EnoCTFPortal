@@ -12,10 +12,134 @@
 @inject AuthenticationStateProvider authenticationStateProvider
 @inject ILogger<ScoreboardView> logger
 
+@functions {
+    private bool showAdvancedScoreboard = false;
+
+     private void ToggleAdvancedScoreboard()
+    {
+        showAdvancedScoreboard = !showAdvancedScoreboard;
+    }
+
+    private string HslToHex(double h, double s, double l)
+    {
+        // Normalize h, s, l
+        l /= 100.0;
+        s /= 100.0;
+
+        // Edge case where saturation is 0 (gray)
+        if (s == 0)
+        {
+            int gray = (int)Math.Round(l * 255.0);
+            return $"#{gray:X2}{gray:X2}{gray:X2}";
+        }
+
+        double a = s * Math.Min(l, 1 - l);
+        int ToHex(double value)
+        {
+            // Clamp value to the range 0-255 and convert to an integer
+            int clampedValue = (int)Math.Round(Math.Max(0.0, Math.Min(255.0, value)));
+            return clampedValue;
+        }
+
+        double f(int n)
+        {
+            double k = (n + h / 30.0) % 12.0;
+            double color = l - a * Math.Max(Math.Min(k - 3.0, 9.0 - k), -1.0);
+            return 255.0 * color;
+        }
+
+        // Convert to 2-digit hex values
+        string ToHexString(int value) => value.ToString("X2");
+
+        // Ensure HEX color is properly formatted
+        return $"#{ToHexString(ToHex(f(0)))}{ToHexString(ToHex(f(8)))}{ToHexString(ToHex(f(4)))}";
+    }
+
+    private double Clamp(double value, double min, double max)
+    {
+        return Math.Max(min, Math.Min(max, value));
+    }
+}
+
+
+
 @if (currentScoreboard != null)
 {
     var orderedTeams = currentScoreboard.Teams.OrderByDescending(t => t.TotalScore).ToArray();
     var orderedServices = currentScoreboard.Services.OrderBy(t => t.ServiceId).ToArray();
+
+    @if (showAdvancedScoreboard)
+    {
+        // Advanced Scoreboard Calculation
+        var states = new[] { "OK", "RECOVERING", "MUMBLE", "OFFLINE", "INTERNAL_ERROR", "EXPLOITED" };
+        var serviceNames = orderedServices.Select(s => s.ServiceName).ToArray();
+        var advancedScoreboardData = new double[orderedServices.Length, states.Length];
+
+        @for (int t = 0; t < currentScoreboard.Teams.Length; t++)
+        {
+            var team = orderedTeams[t];
+            var orderedTeamServiceDetails = team.ServiceDetails.OrderBy(sd => sd.ServiceId).ToArray();
+            @for (int s = 0; s < team.ServiceDetails.Length; s++)
+            {
+                var serviceDetails = orderedTeamServiceDetails[s];
+                var service = orderedServices[s];
+                var state = serviceDetails.ServiceStatus;
+                var stateName = Enum.GetName(state);
+                var dataStateIndex = Array.IndexOf(states, stateName);
+                advancedScoreboardData[s, dataStateIndex] += 1.0;
+
+                // check if team exploited this service
+                if (serviceDetails.AttackScore > 0)
+                {
+                    advancedScoreboardData[s, 5] += 1.0;
+                }
+            }
+        }
+
+
+        // Advanced Scoreboard display
+        <table class="adv-scoreboard">
+            <tr class="adv-scoreboard-header">
+                <th class="adv-scoreboard-header-cell">Service</th>
+                @foreach (var state in states)
+                {
+                    <th class="adv-scoreboard-header-cell">@state</th>
+                }
+            </tr>
+            @for (int s = 0; s < orderedServices.Length; s++)
+            {
+                var service = orderedServices[s];
+                <tr class="adv-scoreboard-row">
+                    <td class="adv-scoreboard-row-cell">@service.ServiceName</td>
+                    @for (int stateIndex = 0; stateIndex < states.Length; stateIndex++)
+                    {
+                        var value = advancedScoreboardData[s, stateIndex];
+                        var proportion = value / currentScoreboard.Teams.Length * 100;
+                        var brightness = 100 - (proportion / 2 + 10);
+                        var saturation = proportion * 0.5 + 50;
+                        var hue = stateIndex switch
+                        {
+                            0 => 110, // OK
+                            1 => 210, // RECOVERING
+                            2 => 40,  // MUMBLE
+                            3 => 0,   // OFFLINE
+                            4 => 240, // INTERNAL_ERROR
+                            5 => 300, // EXPLOITED
+                            _ => 0
+                        };
+                        var bgColor = HslToHex(hue, saturation, brightness);
+                        <td class="adv-scoreboard-row-cell" style="background-color: @bgColor;">
+                            @value
+                        </td>
+                    }
+                </tr>
+            }
+        </table>
+
+
+    }
+
+    // Normal Scoreboard
     <table class="scoreboard">
         <colgroup>
             <col class="team-rank" style="width:40px;" />
@@ -41,7 +165,7 @@
                                 <i class="p-2 fas fa-angle-left" />
                             }
                         </div>
-                        <div class="p-1">Round @currentScoreboard.CurrentRound</div>
+                        <div class="p-1" @onclick="ToggleAdvancedScoreboard">Round @currentScoreboard.CurrentRound</div>
                         <div>
                             @if (currentScoreboard.CurrentRound < ScoreboardService.LatestScoreboard?.CurrentRound)
                             {
@@ -193,12 +317,6 @@
             // We are in "show old round" mode.
             currentScoreboard = await ScoreboardService.TryGetOrRequest(roundId);
             previousScoreboard = await ScoreboardService.TryGetOrRequest(roundId - 1);
-
-            // Also request the neighbouring rounds
-            var a = ScoreboardService.TryGetOrRequest(roundId - 2);
-            var b = ScoreboardService.TryGetOrRequest(roundId + 1);
-            var c = ScoreboardService.TryGetOrRequest(roundId - 3);
-            var d = ScoreboardService.TryGetOrRequest(roundId + 2);
         }
         else
         {
