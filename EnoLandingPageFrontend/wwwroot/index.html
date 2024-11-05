@@ -1,49 +1,111 @@
 ﻿<!DOCTYPE html>
 <html>
-
-<head>
+  <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
     <title>ENOFLAG CTF Setup</title>
     <base href="/" />
     <link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />
     <link href="css/fontawesome-free/all.min.css" rel="stylesheet" />
     <link href="css/app.css" rel="stylesheet" />
     <link href="EnoLandingPageFrontend.styles.css" rel="stylesheet" />
-    <link rel="icon" type="image/png" href="/favicon.png">
-</head>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+  </head>
 
-<body>
+  <body>
     <div id="app">Loading...</div>
 
     <div id="blazor-error-ui">
-        An unhandled error has occurred.
-        <a href="" class="reload">Reload</a>
-        <a class="dismiss">🗙</a>
+      An unhandled error has occurred.
+      <a href="" class="reload">Reload</a>
+      <a class="dismiss">🗙</a>
     </div>
     <script src="_framework/blazor.webassembly.js" autostart="false"></script>
     <script type="module">
-        import { BrotliDecode } from './decode.min.js';
-        Blazor.start({
-            loadBootResource: function (type, name, defaultUri, integrity) {
-                if (type !== 'dotnetjs') {
-                    return (async function () {
-                        const response = await fetch(defaultUri + '.br', { cache: 'no-cache' });
-                        if (!response.ok) {
-                            throw new Error(response.statusText);
-                        }
-                        const originalResponseBuffer = await response.arrayBuffer();
-                        const originalResponseArray = new Int8Array(originalResponseBuffer);
-                        const decompressedResponseArray = BrotliDecode(originalResponseArray);
-                        const contentType = type ===
-                            'dotnetwasm' ? 'application/wasm' : 'application/octet-stream';
-                        return new Response(decompressedResponseArray,
-                            { headers: { 'content-type': contentType } });
-                    })();
-                }
-            }
-        });
+      import { BrotliDecode } from "./decode.min.js";
+      Blazor.start({
+        loadBootResource: function (type, name, defaultUri, integrity) {
+          if (type !== "dotnetjs") {
+            return (async function () {
+              const response = await fetch(defaultUri + ".br", {
+                cache: "no-cache",
+              });
+              if (!response.ok) {
+                throw new Error(response.statusText);
+              }
+              const originalResponseBuffer = await response.arrayBuffer();
+              const originalResponseArray = new Int8Array(
+                originalResponseBuffer
+              );
+              const decompressedResponseArray = BrotliDecode(
+                originalResponseArray
+              );
+              const contentType =
+                type === "dotnetwasm"
+                  ? "application/wasm"
+                  : "application/octet-stream";
+              return new Response(decompressedResponseArray, {
+                headers: { "content-type": contentType },
+              });
+            })();
+          }
+        },
+      });
     </script>
-</body>
 
+    <script>
+      let cooldown = false;
+
+      function createBouncingDiv() {
+        const freeFlags = document.createElement("div");
+        freeFlags.className = "free-flags";
+        freeFlags.innerHTML = "<div>FREE FLAGS*</div><div>not 1$ each</div>";
+        document.body.appendChild(freeFlags);
+
+        let posX = (Math.random() * (window.innerWidth - freeFlags.clientWidth - 10)) + 5;
+        let posY =
+          (Math.random() * (window.innerHeight - freeFlags.clientHeight- 10)) + 5;
+        let speedX = (Math.random() - 0.5) * 10;
+        let speedY = (Math.random() - 0.5) * 10;
+
+        function moveDiv() {
+          posX += speedX;
+          posY += speedY;
+
+          if (posX <= 5 || posX >= window.innerWidth - freeFlags.clientWidth - 5) {
+            speedX = -speedX;
+          }
+
+          if (
+            posY <= 5 ||
+            posY >= window.innerHeight - freeFlags.clientHeight - 5
+          ) {
+            speedY = -speedY;
+          }
+
+          freeFlags.style.left = posX + "px";
+          freeFlags.style.top = posY + "px";
+
+          requestAnimationFrame(moveDiv);
+        }
+
+        freeFlags.addEventListener("mouseenter", function () {
+          if (!cooldown) {
+            createBouncingDiv();
+            cooldown = true;
+            setTimeout(() => (cooldown = false), 500); // Cooldown of 500ms
+          }
+        });
+
+        moveDiv();
+
+        return freeFlags;
+      }
+
+      createBouncingDiv();
+    </script>
+  </body>
 </html>
