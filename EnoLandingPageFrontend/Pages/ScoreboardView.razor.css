@@ -140,3 +140,27 @@
 .service-INACTIVE {
     background-color: gray;
 }
+
+.adv-scoreboard {
+    width: 100%;
+    border-collapse : 'collapse';
+    margin-top: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.adv-scoreboard-header {
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+.adv-scoreboard-header-cell {
+    font-weight: bold;
+    text-align: center;
+}
+
+.adv-scoreboard-row, .adv-scoreboard-row-cell {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+
