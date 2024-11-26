@@ -1,8 +1,10 @@
-html, body {
+html,
+body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
-a, .btn-link {
+a,
+.btn-link {
     color: #0366d6;
 }
 
@@ -56,18 +58,34 @@ a, .btn-link {
     padding-top: 200px;
     padding-bottom: 200px;
 }
-    .bg div {
-        background-color: rgba(211, 211, 211, 0.8);
-    }
 
-    .bg div h1 {
-        font-size: 80px;
-        font-weight: bolder;
-        text-align: center;
-    }
+.bg div {
+    background-color: rgba(211, 211, 211, 0.8);
+}
 
-    .bg div h2 {
-        font-size: 50px;
-        font-weight: bold;
-        text-align: center;
-    }
+.bg div h1 {
+    font-size: 80px;
+    font-weight: bolder;
+    text-align: center;
+}
+
+.bg div h2 {
+    font-size: 50px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.free-flags {
+    background-color: red;
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: bold;
+    position: absolute;
+    width: 100px;
+    height: 50px;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
