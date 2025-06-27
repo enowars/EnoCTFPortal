@@ -24,6 +24,7 @@
                 <div class="alert alert-danger" role="alert">
                     Your participation hasn't been confirmed yet! Please check in after @(ctfInfo.StartTime.AddHours(-ctfInfo.CheckInBeginOffset).ToUniversalTime().ToString()) UTC.
                 </div>
+                <button @onclick="CheckIn" disabled=disabled>Check In!</button>
             }
             else
             {
