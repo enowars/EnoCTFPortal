@@ -1,26 +1,207 @@
 ﻿@page "/"
 
-<div class="bg">
-    <div>
-        <h1>Bambi CTF #7</h1>
-        <h2>Attack/Defense CTF by ENOFLAG / TU Berlin</h2>
+@using EnoLandingPageFrontend.Services
+@using EnoLandingPageCore.Messages
+@using System.Globalization
+@inject LandingPageDataApiService DataService
+
+<div id="main-bg">
+  <div id="main">
+    <div id="background">
+      <div class="background"></div>
     </div>
+
+    <div id="center">
+      <div id="sub-info" class="center">ENOWARS 9 is coming: @ctfInfo?.StartTime.ToString() UTC. Stay tuned!</div>
+      <h1 class="center">
+        <span>EN</span>
+        <div class="clock" @onmousedown="OnMouseDown" @ref="clockDiv">
+          <div class="hand hour" id="hour-hand" style="transform:@HourHandTransform"></div>
+          <div class="hand minute" id="hour-minute" style="transform:@MinuteHandTransform"></div>
+        </div>
+        <span>WARS</span>
+        <span class="red">9</span>
+      </h1>
+      <div id="display-diff" class="center">@DiffDisplay</div>
+    </div>
+  </div>
+
+  <div id="scroll-hint">
+    <div class="arrow-down"></div>
+  </div>
+
+  <div id="content">
+    <h2>Format</h2>
+    <p>ENOWARS 9 is an <NavLink class="link" href="howto">Attack/Defense CTF</NavLink>. You play in realtime against other teams. Try to steal flags of your opponents while keeping your own services secure.</p>
+    <p>We offer cloud hosted vulnboxes. You can join from anywhere as long as you have a connection to the internet. Please visit our <NavLink class="link" href="setup">setup page</NavLink> for details.</p>
+
+    <h2>Theme</h2>
+    <p>This year we will travel through time. So bring your TARDIS, DeLorean, ocarina, worm hole or time-travel device of your choice. Lets take a journey from the dawn of time (1970-01-01) up until the heat death of the universe (2038-01-19).</p>
+
+    <div class="images">
+      <img src="9/img/doctor_who.jpg">
+      <img src="9/img/back_to_the_future.jpg">
+      <img src="9/img/zelda.jpg">
+      <img src="9/img/terminator.jpg">
+    </div>
+
+    <h2>Registration</h2>
+    <p>Please <NavLink class="link" href="login">register here</NavLink> before @ctfInfo?.StartTime.AddHours(-ctfInfo.RegistrationCloseOffset).ToString() UTC.</p>
+
+    <h2>About</h2>
+    <p>The event is organized by <a class="link" href="https://www.enoflag.de">ENOFLAG</a> and the chair for <a class="link" href="https://www.tu.berlin/sect">Security in Telecommunications (SecT)</a> at <a class="link" href="https://www.tu.berlin">TU Berlin</a>. All challenges were developed by students as part of a project course.</p>
+
+    <h2>Sponsors</h2>
+    <div class="images">
+      <img src="9/img/iabg.png">
+    </div>
+
+  </div>
 </div>
 
-<!-- TODO thank the author somehow? https://pixabay.com/photos/deers-animal-wild-wildlife-mammal-88991/ -->
-<div class="container p-3">
-    <h1>News</h1>
-    <hr />
-    <!--
-    <h3>Updates (11.07.2022)</h3>
-    <p>We have updated our contact page. We have changed our email address, and may drop Matrix support for this year.</p>
-    -->
+@code {
+  ElementReference clockDiv;
 
-    <h3>Bambi CTF #7</h3>
-    <!--<p>ENOFLAG will host another ENOWARS CTF on the 16th of July. Registration is open, don't hesitate to sign up!</p>-->
-    <p>ENOFLAG will host another Bambi CTF event on the 5th of November 2022 at 2PM UTC! Like every year we invite beginner teams to participate, so you can practice playing Attack/Defense CTFs against opponents with a similar skill level. If you are interested, check out our <a href="/setup">setup page</a> and <a href="/login">sign up</a>!</p>
-    <p>This year's event is sponsored by IABG<!-- and Hetzner-->.</p>
-    <center><img src="/images/sponsors/iabg-logo.png" width="30%" /></center>
-    <br />
-    <!--<center><img src="/images/sponsors/hetzner-logo.svg" width="30%" /></center>-->
-</div>
+  private CtfInfoMessage? ctfInfo;
+
+  DateTime currentTime = DateTime.Now;
+
+  bool dragging = false;
+  double lastAngle = 0;
+
+  string HourHandTransform = "translateX(-50%) rotate(0deg)";
+  string MinuteHandTransform = "translateX(-50%) rotate(0deg)";
+  string DiffDisplay = "";
+
+  [Inject] IJSRuntime JS { get; set; }
+
+  DotNetObjectReference<Index>? objRef;
+
+  protected override async Task OnInitializedAsync() {
+    ctfInfo = await DataService.GetCtfInfo();
+  }
+
+  protected override async Task OnAfterRenderAsync(bool firstRender) {
+    if (firstRender) {
+      objRef = DotNetObjectReference.Create(this);
+      await JS.InvokeVoidAsync("registerGlobalMouseEvents", objRef);
+      UpdateClockDisplay();
+
+      _ = StartTimer();
+    }
+  }
+
+  async Task StartTimer() {
+    while (true) {
+      if (!dragging) {
+        currentTime = currentTime.AddSeconds(1);
+        UpdateClockDisplay();
+        StateHasChanged();
+      }
+
+      await Task.Delay(1000);
+    }
+  }
+
+  async Task OnMouseDown(MouseEventArgs e) {
+    var rect = await JS.InvokeAsync<DOMRect>("getBoundingClientRect", clockDiv);
+    dragging = true;
+    lastAngle = GetAngleFromCenter(e.ClientX, e.ClientY, rect);
+    StateHasChanged();
+  }
+
+  [JSInvokable]
+  public async Task OnGlobalMouseMove(double clientX, double clientY) {
+    if (!dragging)
+        return;
+
+    var rect = await JS.InvokeAsync<DOMRect>("getBoundingClientRect", clockDiv);
+    var angle = GetAngleFromCenter(clientX, clientY, rect);
+    var diffAngle = ((angle - lastAngle + 540) % 360) - 180;
+
+    currentTime = currentTime.AddMilliseconds(diffAngle * 10000);
+
+    lastAngle = angle;
+
+    UpdateClockDisplay();
+    StateHasChanged();
+  }
+
+  [JSInvokable]
+  public void OnGlobalMouseUp() {
+    dragging = false;
+    StateHasChanged();
+  }
+
+  void UpdateClockDisplay() {
+    if (ctfInfo?.StartTime == null) {
+      return;
+    }
+
+    var hours = currentTime.Hour;
+    var minutes = currentTime.Minute;
+
+    var hourAngle = (360.0 / 12) * ((hours % 12) + minutes / 60.0);
+    var minuteAngle = (360.0 / 60) * minutes;
+
+    HourHandTransform = $"translateX(-50%) rotate({hourAngle}deg)";
+    MinuteHandTransform = $"translateX(-50%) rotate({minuteAngle}deg)";
+
+    var diffTime = ctfInfo.StartTime - currentTime;
+
+    if (diffTime > TimeSpan.Zero) {
+      var diffDays = (int)diffTime.TotalDays;
+      var diffHours = diffTime.Hours;
+      var diffMinutes = diffTime.Minutes;
+      var diffSeconds = diffTime.Seconds;
+
+      DiffDisplay = $"Only {diffDays} days, {diffHours:D2} hours, {diffMinutes:D2} minutes and {diffSeconds:D2} seconds until ENOWARS 9!";
+    } else {
+      diffTime = diffTime.Negate();
+
+      var diffHours = (int)diffTime.TotalHours;
+      var diffMinutes = diffTime.Minutes;
+      var diffSeconds = diffTime.Seconds;
+
+      DiffDisplay = $"Already {diffHours:D2} hours, {diffMinutes:D2} minutes and {diffSeconds:D2} seconds into ENOWARS 9!";
+    }
+  }
+
+  double GetAngleFromCenter(double x, double y, DOMRect rect) {
+    var centerX = rect.Left + rect.Width / 2;
+    var centerY = rect.Top + rect.Height / 2;
+    var dx = x - centerX;
+    var dy = y - centerY;
+    var angle = Math.Atan2(dy, dx) * 180 / Math.PI;
+    return (angle + 360) % 360;
+  }
+
+  public void Dispose() {
+    if (objRef != null) {
+      JS.InvokeVoidAsync("unregisterGlobalMouseEvents");
+      objRef.Dispose();
+    }
+  }
+
+  public class DOMRect {
+    public double Bottom { get; set; }
+    public double Height { get; set; }
+    public double Left { get; set; }
+    public double Right { get; set; }
+    public double Top { get; set; }
+    public double Width { get; set; }
+    public double X { get; set; }
+    public double Y { get; set; }
+  }
+}
+
+<style>
+  .link {
+    color: white;
+    text-decoration-line: underline;
+  }
+
+  .link:hover {
+    color: #888;
+  }
+</style>

@@ -11,7 +11,7 @@
     public class LandingPageSettings
     {
         [Required]
-        public string Title { get; set; } = "BambiCTF";
+        public string Title { get; set; } = "ENOWARS 9";
 
         [Required]
         public DateTime StartTime { get; set; }
