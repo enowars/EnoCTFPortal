@@ -18,7 +18,7 @@
             string? countryUrl = null;
             if (team.CountryCode != null && team.CountryCode != string.Empty)
             {
-                countryUrl = $"https://cdn.ipregistry.co/flags/wikimedia/{team.CountryCode?.ToLower()}.png";
+                countryUrl = $"/images/flags/{team.CountryCode?.ToLower()}.png";
             }
             <div class="teams-list-container">
                 <div class="team-list-item-logo-container">
@@ -46,7 +46,7 @@
             string? countryUrl = null;
             if (team.CountryCode != null && team.CountryCode != string.Empty)
             {
-                countryUrl = $"https://cdn.ipregistry.co/flags/wikimedia/{team.CountryCode?.ToLower()}.png";
+                countryUrl = $"/images/flags/{team.CountryCode?.ToLower()}.png";
             }
             <div class="teams-list-container">
                 <div class="team-list-item-logo-container">

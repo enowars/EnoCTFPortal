@@ -211,7 +211,7 @@
             string? countryUrl = null;
             if (team.CountryCode != null && team.CountryCode != string.Empty)
             {
-                countryUrl = $"https://cdn.ipregistry.co/flags/wikimedia/{team.CountryCode?.ToLower()}.png";
+                countryUrl = $"/images/flags/{team.CountryCode?.ToLower()}.png";
             }
             var orderedTeamServiceDetails = team.ServiceDetails.OrderBy(sd => sd.ServiceId).ToArray();
             var previousRoundTeam = previousScoreboard?.Teams.Where(t => t.TeamId == team.TeamId).Single();
