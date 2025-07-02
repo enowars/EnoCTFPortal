@@ -71,3 +71,8 @@ a, .btn-link {
         font-weight: bold;
         text-align: center;
     }
+
+.page {
+  position: relative;
+  z-index: 0;
+}
