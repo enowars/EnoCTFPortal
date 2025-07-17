@@ -362,3 +362,4 @@ docker-compose.yml
 /firstblood-discord-bot/venv
 /firstblood-discord-bot/config.py
 /firstblood-discord-bot/cache.json
+vulnboxes.json
