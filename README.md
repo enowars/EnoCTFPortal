@@ -18,6 +18,7 @@ services:
       - "EnoLandingPage__HetznerVulnboxImage=..."
       - "EnoLandingPage__HetznerVulnboxPubkey=..."
       - "EnoLandingPage__HetznerVulnboxLocation=..."
+      - "EnoLandingPage__HetznerVulnboxLocationMapPath=/app/vulnboxes.json"
       - "EnoLandingPage__OAuthClientId=..."
       - "EnoLandingPage__OAuthClientSecret=..."
       - "EnoLandingPage__AdminSecret=..." 
@@ -28,6 +29,10 @@ services:
       - ./data:/app/data
       - ./scoreboard:/app/wwwroot/scoreboard
 ```
+
+## VM Placement
+If you want to place VMs in specific Hetzner data centers, creating a mapping in `vulnboxes.json` and adjust the `HetznerVulnboxLocationMapPath` accordingly. 
+The team-IDs in there are 0-indexed, so to map team1's VM, use `"0": "hel1"` in the JSON. If a key is not found, `HetznerVulnboxLocation` is used as the default.
 
 ## Reverse Proxy Configuration
 The reverse proxy must set the [XFP header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Proto) and allow https connections.

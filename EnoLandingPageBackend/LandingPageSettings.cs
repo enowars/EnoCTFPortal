@@ -5,6 +5,8 @@
     using System.ComponentModel.DataAnnotations;
     using System.Linq;
     using System.Text;
+    using System.IO;
+    using System.Text.Json;
     using System.Threading.Tasks;
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
@@ -42,6 +44,27 @@
 
         [Required]
         public string HetznerVulnboxLocation { get; set; }
+
+        [Required]
+        public string HetznerVulnboxLocationMapPath { get; set; } = "/app/data/vulnboxes.json";
+
+        private Dictionary<string, string> LoadHetznerVulnboxLocationMap()
+        {
+            if (!File.Exists(HetznerVulnboxLocationMapPath)) {
+                throw new FileNotFoundException($"JSON file not found: {HetznerVulnboxLocationMapPath}");
+            }
+            var json = File.ReadAllText(HetznerVulnboxLocationMapPath);
+            return JsonSerializer.Deserialize<Dictionary<string, string>>(json) 
+                         ?? new Dictionary<string, string>();
+        }
+
+        public string GetHetznerVulnboxLocation(string index)
+        {
+            var map = LoadHetznerVulnboxLocationMap();
+            return map.TryGetValue(index, out var location)
+                ? location
+                : HetznerVulnboxLocation;
+        }
 
         [Required]
         public string OAuthClientId { get; set; }

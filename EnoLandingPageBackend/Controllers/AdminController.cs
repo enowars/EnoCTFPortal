@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.Linq;
     using System.Security.Cryptography;
+    using System.Security.Claims;
     using System.Text.Json;
     using System.Threading.Tasks;
     using EnoCore;
@@ -14,7 +15,10 @@
     using EnoLandingPageBackend.Hetzner;
     using EnoLandingPageCore;
     using EnoLandingPageCore.Database;
+    using Microsoft.AspNetCore.Authentication;
+    using Microsoft.AspNetCore.Authentication.Cookies;
     using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
 
@@ -121,6 +125,39 @@
 
             await this.db.CheckInCtftimeid(id, this.HttpContext.RequestAborted);
             return this.NoContent();
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> ShowTeam(string adminSecret, long id)
+        {
+            if (adminSecret != this.settings.AdminSecret)
+            {
+                return this.Unauthorized();
+            }
+            return this.File(
+                JsonSerializer.SerializeToUtf8Bytes(
+                    (await this.db.GetTeamAndVulnbox(id, this.HttpContext.RequestAborted)),
+                    this.serializerOptions),
+                "application/force-download",
+                $"team{id}.json");
+        }
+
+
+        [HttpGet]
+        public async Task<ActionResult> LoginAsTeam(string adminSecret, long id)
+        {
+            if (adminSecret != this.settings.AdminSecret)
+            {
+                return this.Unauthorized();
+            }
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, $"{id}"),
+            };
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            await this.HttpContext.SignInAsync(new ClaimsPrincipal(claimsIdentity));
+            return this.Content("Open your DevConsole and set use: document.cookie=\".AspNetCore.Cookies=<COOKIEVALUE>;\"\n", "text/plain");
         }
     }
 }
