@@ -182,7 +182,7 @@
                 createVmRequest.server_type = this.landingPageSettings.HetznerVulnboxType;
                 createVmRequest.image = this.landingPageSettings.HetznerVulnboxImage;
                 createVmRequest.ssh_keys = new JArray(this.landingPageSettings.HetznerVulnboxPubkey);
-                createVmRequest.location = this.landingPageSettings.HetznerVulnboxLocation;
+                createVmRequest.location = this.landingPageSettings.GetHetznerVulnboxLocation($"{teamId-1}"); //The locations list is 0-indexed. this.landingPageSettings.HetznerVulnboxLocation;
                 createVmRequest.user_data = user_data;
                 var jsonContent = JsonConvert.SerializeObject(createVmRequest);
                 this.logger.LogDebug($"{nameof(this.DoCreateServer)} for team {teamId}: {jsonContent}");
