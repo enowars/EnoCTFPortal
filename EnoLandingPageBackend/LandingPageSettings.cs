@@ -60,7 +60,12 @@
 
         public string GetHetznerVulnboxLocation(string index)
         {
-            var map = LoadHetznerVulnboxLocationMap();
+            Dictionary<string, string> map;
+            try {
+                map = LoadHetznerVulnboxLocationMap();
+            } catch(FileNotFoundException ex) {
+                map = new Dictionary<string, string>();
+            }
             return map.TryGetValue(index, out var location)
                 ? location
                 : HetznerVulnboxLocation;
