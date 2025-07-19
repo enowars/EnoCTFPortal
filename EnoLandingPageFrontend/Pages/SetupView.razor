@@ -41,7 +41,7 @@
                 A round lasts 60 seconds, flags are valid for several rounds.
             </li>
             <li>
-                Flag format: <code>ENO[A-Za-z0-9+\/=]{48}</code>
+                Flag format: <code>ENO[A-Za-z0-9+\/=]{48}</code> to be submitted, <code>@[brainfuck code]@</code> inside the services
             </li>
             <li>
                 Flag submission: <code>nc 10.0.13.37 1337</code>
@@ -55,6 +55,9 @@
         <p>
             We will be providing hosted vulnboxes for all teams. You can start your vulnbox through the registration page after the start of the CTF.
             Note that you must check in before the start of the CTF, otherwise you will not be able to start your vulnbox!
+        </p>
+        <p>
+        The flags that you have to submit follow our given flag format <code>ENO[A-Za-z0-9+\/=]{48}</code>. But what is stored in the services is brainfuck code that prints the flag. As delimiter, we use the "@", so you will find <code>@[brainfuck code]@</code>.
         </p>
         <p>
             You can download an OpenVPN configuration file which allows you to access your vulnbox as well as the rest of the competition network.
