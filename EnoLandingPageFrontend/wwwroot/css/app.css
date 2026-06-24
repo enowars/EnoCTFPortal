@@ -1,15 +1,17 @@
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: Georgia, 'Times New Roman', serif;
+    background-color: #0b0f1c;
+    color: #e8e0d0;
 }
 
 a, .btn-link {
-    color: #0366d6;
+    color: #c9a84c;
 }
 
 .btn-primary {
     color: #fff;
-    background-color: #1b6ec2;
-    border-color: #1861ac;
+    background-color: #8b1a1a;
+    border-color: #6e1414;
 }
 
 .content {
@@ -47,27 +49,256 @@ a, .btn-link {
     top: 0.5rem;
 }
 
-.bg {
-    background-image: url('/images/deers-88991.jpg');
-    height: 50%;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-    padding-top: 200px;
-    padding-bottom: 200px;
+/* ── Classification bar (top + footer) ── */
+.classification-bar {
+    background-color: #8b1a1a;
+    color: #ffffff;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 11px;
+    font-variant: small-caps;
+    letter-spacing: 2px;
+    text-align: center;
+    padding: 6px 16px;
+    line-height: 1.4;
 }
-    .bg div {
-        background-color: rgba(211, 211, 211, 0.8);
+
+/* ── Navbar ── */
+.eno-navbar {
+    background-color: #0d1220 !important;
+    border-bottom: 2px solid #8b1a1a;
+}
+
+.eno-brand {
+    font-family: 'Courier New', Courier, monospace !important;
+    font-weight: 700 !important;
+    color: #c9a84c !important;
+    letter-spacing: 2px;
+}
+
+.eno-navbar .nav-link {
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+/* ── Hero ── */
+.hero {
+    background-color: #0b0f1c;
+    background-image:
+        repeating-linear-gradient(
+            45deg,
+            rgba(255, 255, 255, 0.015) 0px,
+            rgba(255, 255, 255, 0.015) 1px,
+            transparent 1px,
+            transparent 12px
+        );
+    padding: 110px 20px 100px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+/* "CLASSIFIED" watermark */
+.hero::before {
+    content: 'CLASSIFIED';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(30deg);
+    font-size: 140px;
+    font-weight: 900;
+    font-family: Georgia, serif;
+    color: rgba(139, 26, 26, 0.07);
+    letter-spacing: 12px;
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+}
+
+/* "TOP SECRET" stamp on the hero content */
+.hero-content {
+    position: relative;
+}
+
+.hero-content::after {
+    content: 'TOP SECRET';
+    position: absolute;
+    top: -18px;
+    right: 10%;
+    font-family: Georgia, serif;
+    font-size: 28px;
+    font-weight: 900;
+    color: rgba(139, 26, 26, 0.55);
+    border: 3px solid rgba(139, 26, 26, 0.45);
+    padding: 2px 10px;
+    transform: rotate(-15deg);
+    letter-spacing: 4px;
+    pointer-events: none;
+    user-select: none;
+}
+
+.hero-label {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: rgba(232, 224, 208, 0.5);
+    margin-bottom: 14px;
+}
+
+.hero-title {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 86px;
+    font-weight: 900;
+    color: #ffffff;
+    letter-spacing: 6px;
+    line-height: 1;
+    text-shadow: 0 0 40px rgba(139, 26, 26, 0.3);
+    margin-bottom: 12px;
+}
+
+.hero-subtitle {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 18px;
+    font-weight: 700;
+    color: #c9a84c;
+    letter-spacing: 3px;
+    margin-bottom: 0;
+}
+
+.hero-date {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 15px;
+    color: #c9a84c;
+    font-weight: bold;
+    margin-top: 18px;
+    opacity: 0.85;
+}
+
+.btn-eno {
+    color: #ffffff;
+    background-color: #8b1a1a;
+    border-color: #8b1a1a;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+    .btn-eno:hover {
+        color: #ffffff;
+        background-color: #a82020;
+        border-color: #a82020;
     }
 
-    .bg div h1 {
-        font-size: 80px;
-        font-weight: bolder;
-        text-align: center;
+.btn-outline-gold {
+    color: #c9a84c;
+    border-color: #c9a84c;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+    .btn-outline-gold:hover {
+        color: #0b0f1c;
+        background-color: #c9a84c;
+        border-color: #c9a84c;
     }
 
-    .bg div h2 {
-        font-size: 50px;
-        font-weight: bold;
-        text-align: center;
+/* ── Memo card (news section) ── */
+.memo-card {
+    background-color: #111827;
+    border-left: 3px solid #8b1a1a;
+    padding: 20px 24px;
+    margin-top: 8px;
+}
+
+.memo-header {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.memo-title {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #8b1a1a;
+    font-weight: 700;
+}
+
+.memo-meta {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 11px;
+    letter-spacing: 1px;
+    color: rgba(232, 224, 208, 0.5);
+}
+
+.memo-rule {
+    border-color: rgba(232, 224, 208, 0.15);
+    margin: 12px 0 16px;
+}
+
+.memo-card a {
+    color: #c9a84c;
+}
+
+    .memo-card a:hover {
+        color: #e0c06a;
     }
+
+/* ── Fix pre/code on dark background (beats Bootstrap's _code.scss specificity) ── */
+body pre, body code {
+    color: #e8e0d0;
+    background-color: #111827;
+}
+
+/* ── Memo steps ── */
+.memo-steps-title {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #8b1a1a;
+    font-weight: 700;
+    margin-top: 20px;
+    margin-bottom: 8px;
+}
+
+.memo-steps {
+    padding-left: 20px;
+    margin-bottom: 16px;
+}
+
+    .memo-steps li {
+        margin-bottom: 10px;
+        line-height: 1.6;
+    }
+
+.memo-timestamp {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 13px;
+    color: #c9a84c;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    .hero {
+        padding: 70px 16px 60px;
+    }
+
+    .hero-title {
+        font-size: 52px;
+        letter-spacing: 3px;
+    }
+
+    .hero-subtitle {
+        font-size: 14px;
+        letter-spacing: 2px;
+    }
+
+    .hero-content::after {
+        font-size: 18px;
+        right: 2%;
+    }
+}

@@ -1,26 +1,67 @@
 ﻿@page "/"
+@using EnoLandingPageFrontend.Services
+@using EnoLandingPageCore.Messages
+@inject LandingPageDataApiService DataService
 
-<div class="bg">
-    <div>
-        <h1>Bambi CTF #7</h1>
-        <h2>Attack/Defense CTF by ENOFLAG / TU Berlin</h2>
+<div class="hero">
+    <div class="hero-content">
+        <div class="hero-label">OPERATION FILE // REF: ENO-2026-0718</div>
+        <h1 class="hero-title">ENOWARS 10</h1>
+        <h2 class="hero-subtitle">OPERATION: ATTACK / DEFENSE</h2>
+        <p class="hero-date">SCHEDULED: 2026-07-18 // 1200&ndash;2100 UTC</p>
+        <div class="hero-actions mt-4">
+            <a class="btn btn-eno btn-lg me-2" href="/login">REGISTER &mdash; ACCESS PORTAL</a>
+            <a class="btn btn-outline-gold btn-lg" href="/setup">BRIEFING DOCS</a>
+        </div>
     </div>
 </div>
 
-<!-- TODO thank the author somehow? https://pixabay.com/photos/deers-animal-wild-wildlife-mammal-88991/ -->
 <div class="container p-3">
-    <h1>News</h1>
-    <hr />
-    <!--
-    <h3>Updates (11.07.2022)</h3>
-    <p>We have updated our contact page. We have changed our email address, and may drop Matrix support for this year.</p>
-    -->
+    <div class="memo-card">
+        <div class="memo-header">
+            <span class="memo-title">MEMORANDUM</span>
+            <span class="memo-meta">FROM: ENOFLAG OPERATIONS &nbsp;//&nbsp; TO: REGISTERED OPERATIVES &nbsp;//&nbsp; RE: ENOWARS 10</span>
+        </div>
+        <hr class="memo-rule" />
 
-    <h3>Bambi CTF #7</h3>
-    <!--<p>ENOFLAG will host another ENOWARS CTF on the 16th of July. Registration is open, don't hesitate to sign up!</p>-->
-    <p>ENOFLAG will host another Bambi CTF event on the 5th of November 2022 at 2PM UTC! Like every year we invite beginner teams to participate, so you can practice playing Attack/Defense CTFs against opponents with a similar skill level. If you are interested, check out our <a href="/setup">setup page</a> and <a href="/login">sign up</a>!</p>
-    <p>This year's event is sponsored by IABG<!-- and Hetzner-->.</p>
-    <center><img src="/images/sponsors/iabg-logo.png" width="30%" /></center>
-    <br />
-    <!--<center><img src="/images/sponsors/hetzner-logo.svg" width="30%" /></center>-->
+        <h3>ENOWARS 10 &mdash; July 18, 2026</h3>
+        <p>
+            ENOFLAG is proud to host the 10th installation of the epic ENOWARS trilogy!
+            ENOWARS 10 is a 9-hour online Attack/Defense CTF taking place on
+            <strong>July 18, 2026 from 12:00 to 21:00 UTC</strong>.
+        </p>
+
+        <h4 class="memo-steps-title">REQUIRED STEPS</h4>
+        <ol class="memo-steps">
+            <li>
+                <strong>REGISTER</strong> &mdash; <a href="/login">Create your account</a> before
+                <span class="memo-timestamp">@ctfInfo?.StartTime.AddHours(-ctfInfo.RegistrationCloseOffset).ToString("yyyy-MM-dd HH:mm") UTC</span>
+            </li>
+            <li>
+                <strong>CHECK IN</strong> &mdash; Visit your <a href="/profile">profile page</a> to check in between
+                <span class="memo-timestamp">@ctfInfo?.StartTime.AddHours(-ctfInfo.CheckInBeginOffset).ToString("yyyy-MM-dd HH:mm") UTC</span>
+                and
+                <span class="memo-timestamp">@ctfInfo?.StartTime.AddHours(-ctfInfo.CheckInEndOffset).ToString("yyyy-MM-dd HH:mm") UTC</span>.
+                This allocates your VM &mdash; <strong>you will not receive a vulnbox without checking in.</strong>
+            </li>
+            <li>
+                <strong>OPERATE</strong> &mdash; CTF starts <span class="memo-timestamp">@ctfInfo?.StartTime.ToString("yyyy-MM-dd HH:mm") UTC</span>.
+                Start your vulnbox from the profile page once the game begins.
+            </li>
+        </ol>
+
+        <p>
+            Check the <a href="/setup">setup page</a> for technical details and flag submission info.
+            New to Attack/Defense CTFs? Start with our <a href="/howto">beginner guide</a>.
+        </p>
+    </div>
 </div>
+
+@code {
+    private CtfInfoMessage? ctfInfo;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ctfInfo = await DataService.GetCtfInfo();
+    }
+}
