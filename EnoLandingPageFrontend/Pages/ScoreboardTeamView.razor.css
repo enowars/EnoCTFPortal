@@ -117,8 +117,11 @@
         text-align: right
     }
 
+/* Hues match the advanced scoreboard (ScoreboardView.razor), evaluated at
+   proportion = 100%: hsl(hue, 100%, 25%) */
 .service-OK {
-    background-color: rgb(125, 252, 116);
+    background-color: #158000;
+    color: #fff;
 }
 
 .service-INTERNAL_ERROR {
@@ -127,17 +130,21 @@
 }
 
 .service-RECOVERING {
-    background-color: rgb(81, 145, 255);
+    background-color: #004080;
+    color: #fff;
 }
 
 .service-MUMBLE {
-    background-color: rgb(255, 193, 0);
+    background-color: #805500;
+    color: #fff;
 }
 
 .service-OFFLINE {
-    background-color: rgb(255, 91, 91);
+    background-color: #800000;
+    color: #fff;
 }
 
 .service-INACTIVE {
     background-color: gray;
+    color: #fff;
 }
