@@ -123,6 +123,7 @@
 
 .service-INTERNAL_ERROR {
     background-color: white;
+    color: #495057;
 }
 
 .service-RECOVERING {
