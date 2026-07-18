@@ -5,6 +5,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Net;
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Text;
@@ -31,6 +32,19 @@
     public sealed class HetznerCloudApi : IDisposable
     {
         private const int HetznerApiCallDelay = 1100;
+
+        /// <summary>
+        /// Hetzner error codes that mean "this location cannot serve the request right now".
+        /// Only these make us fall through to the next configured location - anything else
+        /// (bad token, quota exceeded, invalid image, ...) would fail identically everywhere,
+        /// so retrying it would just burn rate-limited api calls.
+        /// </summary>
+        private static readonly HashSet<string> PlacementErrorCodes = new()
+        {
+            "resource_unavailable",
+            "placement_error",
+        };
+
         private static readonly ConcurrentDictionary<long, HetznerCloudApiScheduledCall> Tasks = new();
         private readonly CancellationTokenSource cancellationSource = new CancellationTokenSource();
         private readonly ILogger<HetznerCloudApi> logger;
@@ -177,31 +191,53 @@
                 // Call "Create Server" endpoint.
                 var user_data = File.ReadAllText($"{LandingPageBackendUtil.TeamDataDirectory}{Path.DirectorySeparatorChar}teamdata{Path.DirectorySeparatorChar}team{teamId}{Path.DirectorySeparatorChar}user_data.sh");
                 var rootPassword = File.ReadAllText($"{LandingPageBackendUtil.TeamDataDirectory}{Path.DirectorySeparatorChar}teamdata{Path.DirectorySeparatorChar}team{teamId}{Path.DirectorySeparatorChar}password.txt");
-                dynamic createVmRequest = new JObject();
-                createVmRequest.name = $"team{teamId}";
-                createVmRequest.server_type = this.landingPageSettings.HetznerVulnboxType;
-                createVmRequest.image = this.landingPageSettings.HetznerVulnboxImage;
-                createVmRequest.ssh_keys = new JArray(this.landingPageSettings.HetznerVulnboxPubkey);
-                createVmRequest.location = this.landingPageSettings.GetHetznerVulnboxLocation($"{teamId-1}"); //The locations list is 0-indexed. this.landingPageSettings.HetznerVulnboxLocation;
-                createVmRequest.user_data = user_data;
-                var jsonContent = JsonConvert.SerializeObject(createVmRequest);
-                this.logger.LogDebug($"{nameof(this.DoCreateServer)} for team {teamId}: {jsonContent}");
+                //The locations list is 0-indexed.
+                var locations = this.landingPageSettings.GetHetznerVulnboxLocations($"{teamId-1}");
+                string responseString = string.Empty;
 
-                var content = new StringContent(jsonContent);
-                content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                var response = await this.httpClient.PostAsync("https://api.hetzner.cloud/v1/servers", content, token);
-                var responseString = await response.Content.ReadAsStringAsync(token);
-                this.logger.LogDebug($"StartVm for team {teamId}: {responseString}");
-
-                if (responseString.Contains("uniqueness_error"))
+                for (int i = 0; i < locations.Count; i++)
                 {
-                    // Hetzner says the name already exists.
-                    throw new ServerExistsException("responseString contained uniqueness_error");
-                }
+                    var location = locations[i];
+                    if (i > 0)
+                    {
+                        // The worker's delay only applies between scheduled calls, so pace our own retries.
+                        await Task.Delay(HetznerApiCallDelay, token);
+                    }
 
-                if (!response.IsSuccessStatusCode)
-                {
-                    throw new HetznerException($"Invalid Status Code for team {teamId}: {response.StatusCode}\n{responseString}");
+                    var response = await this.PostCreateServer(teamId, location, user_data, token);
+                    responseString = await response.Content.ReadAsStringAsync(token);
+                    this.logger.LogDebug($"StartVm for team {teamId} in {location}: {responseString}");
+
+                    if (responseString.Contains("uniqueness_error"))
+                    {
+                        // Hetzner says the name already exists. The server is out there somewhere,
+                        // so trying another location would not help.
+                        throw new ServerExistsException("responseString contained uniqueness_error");
+                    }
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        break;
+                    }
+
+                    bool hasMoreLocations = i < locations.Count - 1;
+                    if (hasMoreLocations && IsPlacementFailure(response, responseString))
+                    {
+                        this.logger.LogWarning($"{nameof(this.DoCreateServer)} for team {teamId}: location {location} cannot place the vulnbox ({response.StatusCode}), trying {locations[i + 1]} next");
+                        continue;
+                    }
+
+                    if (hasMoreLocations)
+                    {
+                        throw new HetznerException($"Invalid Status Code for team {teamId} in {location}: {response.StatusCode}\n{responseString}");
+                    }
+
+                    if (locations.Count == 1)
+                    {
+                        throw new HetznerException($"Invalid Status Code for team {teamId} in {location}: {response.StatusCode}\n{responseString}");
+                    }
+
+                    throw new HetznerException($"Could not place vulnbox for team {teamId} in any of [{string.Join(", ", locations)}]. Last response ({location}): {response.StatusCode}\n{responseString}");
                 }
 
                 this.logger.LogInformation(responseString);
@@ -250,6 +286,51 @@
                 {
                     call.Tcs.TrySetException(e);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Issue a single "Create Server" call for one location.
+        /// </summary>
+        private async Task<HttpResponseMessage> PostCreateServer(long teamId, string location, string userData, CancellationToken token)
+        {
+            dynamic createVmRequest = new JObject();
+            createVmRequest.name = $"team{teamId}";
+            createVmRequest.server_type = this.landingPageSettings.HetznerVulnboxType;
+            createVmRequest.image = this.landingPageSettings.HetznerVulnboxImage;
+            createVmRequest.ssh_keys = new JArray(this.landingPageSettings.HetznerVulnboxPubkey);
+            createVmRequest.location = location;
+            createVmRequest.user_data = userData;
+            var jsonContent = JsonConvert.SerializeObject(createVmRequest);
+            this.logger.LogDebug($"{nameof(this.DoCreateServer)} for team {teamId}: {jsonContent}");
+
+            var content = new StringContent(jsonContent);
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            return await this.httpClient.PostAsync("https://api.hetzner.cloud/v1/servers", content, token);
+        }
+
+        /// <summary>
+        /// Whether a failed create response means the location could not serve the request,
+        /// and we should therefore try the next configured location.
+        /// </summary>
+        private static bool IsPlacementFailure(HttpResponseMessage response, string responseString)
+        {
+            if (response.StatusCode == HttpStatusCode.ServiceUnavailable)
+            {
+                return true;
+            }
+
+            try
+            {
+                // Hetzner reports failures as {"error": {"code": "...", "message": "..."}}.
+                // Match on the parsed code rather than scanning the raw body, so an unrelated
+                // field that happens to contain the word cannot trigger a fallback.
+                var code = JsonConvert.DeserializeObject<dynamic>(responseString)?.error?.code;
+                return code != null && PlacementErrorCodes.Contains((string)code);
+            }
+            catch (Newtonsoft.Json.JsonException)
+            {
+                return false;
             }
         }
 

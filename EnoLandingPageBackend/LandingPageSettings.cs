@@ -58,17 +58,35 @@
                          ?? new Dictionary<string, string>();
         }
 
-        public string GetHetznerVulnboxLocation(string index)
+        private static readonly char[] LocationSeparators = new[] { ' ', '\t', ',' };
+
+        /// <summary>
+        /// The locations a vulnbox may be placed in, in the order they should be tried.
+        /// A team listed in the location map is pinned to that single location; otherwise the
+        /// (possibly multi-valued) HetznerVulnboxLocation setting is used, e.g. "fsn1 nbg1 hel1".
+        /// </summary>
+        public IReadOnlyList<string> GetHetznerVulnboxLocations(string index)
         {
             Dictionary<string, string> map;
             try {
                 map = LoadHetznerVulnboxLocationMap();
-            } catch(FileNotFoundException ex) {
+            } catch(FileNotFoundException) {
                 map = new Dictionary<string, string>();
             }
-            return map.TryGetValue(index, out var location)
-                ? location
-                : HetznerVulnboxLocation;
+            if (map.TryGetValue(index, out var location))
+            {
+                return new[] { location };
+            }
+
+            var locations = HetznerVulnboxLocation.Split(
+                LocationSeparators,
+                StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            if (locations.Length == 0)
+            {
+                throw new InvalidOperationException($"{nameof(HetznerVulnboxLocation)} does not contain any location");
+            }
+
+            return locations;
         }
 
         [Required]

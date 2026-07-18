@@ -17,7 +17,7 @@ services:
       - "EnoLandingPage__HetznerCloudApiToken=..."
       - "EnoLandingPage__HetznerVulnboxImage=..."
       - "EnoLandingPage__HetznerVulnboxPubkey=..."
-      - "EnoLandingPage__HetznerVulnboxLocation=..."
+      - "EnoLandingPage__HetznerVulnboxLocation=fsn1 nbg1 hel1"
       - "EnoLandingPage__HetznerVulnboxLocationMapPath=/app/vulnboxes.json"
       - "EnoLandingPage__OAuthClientId=..."
       - "EnoLandingPage__OAuthClientSecret=..."
@@ -33,6 +33,14 @@ services:
 ## VM Placement
 If you want to place VMs in specific Hetzner data centers, creating a mapping in `vulnboxes.json` and adjust the `HetznerVulnboxLocationMapPath` accordingly. 
 The team-IDs in there are 0-indexed, so to map team1's VM, use `"0": "hel1"` in the JSON. If a key is not found, `HetznerVulnboxLocation` is used as the default.
+
+`HetznerVulnboxLocation` may hold several locations, separated by spaces or commas (e.g. `fsn1 nbg1 hel1`).
+They are tried in order: if Hetzner reports that a location cannot place the VM - because it is out of
+capacity for the configured `HetznerVulnboxType` - the next one is attempted. Other failures (invalid API
+token, exceeded quota, unknown image, ...) fail immediately without trying the remaining locations, since
+they would fail the same way everywhere.
+
+Teams pinned via `vulnboxes.json` always use exactly that one location and do **not** fall back.
 
 ## Reverse Proxy Configuration
 The reverse proxy must set the [XFP header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Proto) and allow https connections.
