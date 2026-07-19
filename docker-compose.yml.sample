@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  enolandingpage:
+    build: .
+    environment:
+      - "EnoLandingPage__Title=ENOWARS 10"
+      - "EnoLandingPage__StartTime=2026-07-18T12:00:00Z"
+      - "EnoLandingPage__EndTime=2026-07-18T21:00:00Z"
+      - "EnoLandingPage__RegistrationCloseOffset=48"
+      - "EnoLandingPage__CheckInBeginOffset=12"
+      - "EnoLandingPage__CheckInEndOffset=2"
+      - "EnoLandingPage__HetznerVulnboxType=cx11"
+      - "EnoLandingPage__HetznerCloudApiToken=..."
+      - "EnoLandingPage__HetznerVulnboxImage=..."
+      - "EnoLandingPage__HetznerVulnboxPubkey=..."
+      - "EnoLandingPage__HetznerVulnboxLocation=fsn1 nbg1 hel1"
+      - "EnoLandingPage__HetznerVulnboxLocationMapPath=/app/vulnboxes.json"
+      - "EnoLandingPage__OAuthClientId=..."
+      - "EnoLandingPage__OAuthClientSecret=..."
+      - "EnoLandingPage__AdminSecret=..." 
+      #- "ASPNETCORE_ENVIRONMENT=Development"
+    ports:
+      - "5001:80"
+    volumes:
+      - ./sessions:/root/.aspnet/DataProtection-Keys
+      - ./data:/app/data
+      - ./scoreboard:/app/wwwroot/scoreboard
