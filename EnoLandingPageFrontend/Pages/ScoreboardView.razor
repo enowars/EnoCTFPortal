@@ -211,7 +211,7 @@
             string? countryUrl = null;
             if (team.CountryCode != null && team.CountryCode != string.Empty)
             {
-                countryUrl = $"https://cdn.ipregistry.co/flags/wikimedia/{team.CountryCode?.ToLower()}.png";
+                countryUrl = $"https://cdn.jsdelivr.net/npm/country-flag-icons@latest/3x2/{team.CountryCode?.ToUpper()}.svg";
             }
             var orderedTeamServiceDetails = team.ServiceDetails.OrderBy(sd => sd.ServiceId).ToArray();
             var previousRoundTeam = previousScoreboard?.Teams.Where(t => t.TeamId == team.TeamId).Single();
@@ -222,7 +222,7 @@
                         <div class="team-logo-container">
                             <img src="@team.LogoUrl" class="team-logo" referrerpolicy="no-referrer" />
                         </div>
-                        <div class="team-name"><a href="/scoreboard/team/@team.TeamId">@team.TeamName</a></div>
+                        <div class="team-name"><a href="/scoreboard/team/@team.TeamId">@team.TeamName (#@team.TeamId)</a></div>
                         <img src="@countryUrl" class="team-countryflag" referrerpolicy="no-referrer" />
                     </div>
                 </td>

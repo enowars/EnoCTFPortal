@@ -2,8 +2,6 @@
 
 ## docker-compose
 ```yaml
-version: '3'
-
 services:
   enolandingpage:
     build: .
@@ -25,9 +23,9 @@ services:
     ports:
       - "5001:80"
     volumes:
-      - ./sessions:/root/.aspnet/DataProtection-Keys
-      - ./data:/app/data
-      - ./scoreboard:/app/wwwroot/scoreboard
+      - ./sessions:/root/.aspnet/DataProtection-Keys:Z
+      - ./data:/app/data:Z
+      - ./scoreboard:/app/wwwroot/scoreboard:Z
 ```
 
 ## VM Placement
